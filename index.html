@@ -2,866 +2,1097 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ff2a5f">
 <title>ShakibYS Premium</title>
-
-<script src="/socket.io/socket.io.js"></script>
 
 <style>
 :root{
- --primary:#ff285c;
- --primary2:#ff5278;
- --bg:#f5f7fb;
+ --primary:#ff2a5f;
+ --primary2:#e91e55;
+ --bg:#f4f6f9;
  --card:#fff;
- --text:#101828;
- --muted:#667085;
- --border:#e4e7ec;
- --green:#12b76a;
- --shadow:0 5px 25px rgba(16,24,40,.08);
+ --text:#111827;
+ --muted:#6b7280;
+ --border:#e5e7eb;
+ --soft:#fff0f4;
 }
-
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box}
 body{
+ margin:0;
  font-family:Arial,system-ui,sans-serif;
  background:var(--bg);
  color:var(--text);
- min-height:100vh;
+ transition:.25s;
 }
-button,input,textarea{font:inherit}
+body.dark{
+ --bg:#080d18;
+ --card:#111827;
+ --text:#f8fafc;
+ --muted:#9ca3af;
+ --border:#263247;
+ --soft:#28131c;
+}
+button,input,textarea,select{font:inherit}
 button{cursor:pointer}
+.app{max-width:900px;margin:auto;padding-bottom:85px}
 
-.hidden{display:none!important}
-
-/* AUTH */
-.auth{
- min-height:100vh;
- display:flex;
- justify-content:center;
- align-items:center;
- padding:20px;
- background:linear-gradient(135deg,#ff285c,#7f2cff);
-}
-.auth-card{
- width:100%;
- max-width:410px;
- background:#fff;
- border-radius:28px;
- padding:30px 22px;
- box-shadow:0 20px 60px rgba(0,0,0,.2);
-}
-.logo{
- text-align:center;
- font-size:35px;
- font-weight:900;
- color:var(--primary);
- margin-bottom:8px;
-}
-.auth-sub{
- text-align:center;
- color:#667085;
- font-size:14px;
- margin-bottom:25px;
-}
-.input{
- width:100%;
- padding:14px;
- border:1px solid var(--border);
- border-radius:13px;
- margin-bottom:12px;
- outline:none;
-}
-.input:focus{border-color:var(--primary)}
-.btn{
- width:100%;
- border:0;
- padding:13px;
- border-radius:13px;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
- color:#fff;
- font-weight:800;
- margin-top:5px;
-}
-.auth-links{
- display:flex;
- justify-content:space-between;
- margin-top:16px;
- font-size:13px;
- color:var(--primary);
-}
-.auth-box-title{
- font-size:20px;
- font-weight:800;
- margin-bottom:15px;
-}
-
-/* APP */
-.app{max-width:700px;margin:auto;padding-bottom:85px}
-
-.header{
+header{
  position:sticky;
  top:0;
- z-index:50;
- background:rgba(255,255,255,.94);
- backdrop-filter:blur(15px);
+ z-index:20;
+ background:var(--card);
  border-bottom:1px solid var(--border);
 }
-.top{
+.header{
+ height:62px;
  display:flex;
  align-items:center;
- justify-content:space-between;
- padding:13px 16px;
+ gap:8px;
+ padding:8px 14px;
 }
-.brand{
+.logo{
+ color:var(--primary);
  font-size:23px;
  font-weight:900;
- color:var(--primary);
+ margin-right:auto;
 }
-.header-actions{display:flex;gap:8px}
-.icon{
- width:39px;
- height:39px;
- border:0;
- border-radius:50%;
- background:#fff0f3;
- color:var(--primary);
+.search{
+ flex:1;
 }
-
-.section{
- display:none;
- padding:15px;
-}
-.section.active{display:block}
-
-/* STORIES */
-.stories{
- display:flex;
- gap:10px;
- overflow-x:auto;
- padding-bottom:12px;
-}
-.story{
- min-width:76px;
- height:110px;
- border-radius:16px;
- overflow:hidden;
- position:relative;
- background:linear-gradient(135deg,#ff285c,#8d38ff);
- color:#fff;
- border:2px solid var(--primary);
-}
-.story img,.story video{
+.search input,.input{
  width:100%;
- height:100%;
- object-fit:cover;
+ padding:11px 14px;
+ border-radius:25px;
+ border:1px solid var(--border);
+ background:var(--bg);
+ color:var(--text);
+ outline:none;
 }
-.story-name{
- position:absolute;
- bottom:5px;
- left:5px;
- right:5px;
- font-size:10px;
- font-weight:bold;
- text-shadow:0 1px 4px #000;
-}
-.add-story{
- display:flex;
- align-items:center;
- justify-content:center;
- flex-direction:column;
- font-size:12px;
- gap:5px;
+.icon{
+ width:40px;
+ height:40px;
+ border-radius:50%;
+ border:0;
+ background:var(--soft);
+ color:var(--primary);
+ font-size:18px;
 }
 
-/* CARDS */
+main{padding:14px}
+
+.page{display:none}
+.page.active{display:block}
+
 .card{
  background:var(--card);
  border:1px solid var(--border);
  border-radius:18px;
  padding:15px;
  margin-bottom:14px;
- box-shadow:var(--shadow);
 }
-.section-title{
- font-size:19px;
- font-weight:900;
- margin:4px 0 14px;
+
+.title{
+ font-size:20px;
+ font-weight:800;
+ margin:10px 0 14px;
 }
-.create{
+
+.row{
  display:flex;
- gap:10px;
  align-items:center;
+ gap:10px;
 }
+
 .avatar{
- width:42px;
- height:42px;
+ width:45px;
+ height:45px;
  border-radius:50%;
- background:linear-gradient(135deg,var(--primary),#823cff);
+ background:linear-gradient(135deg,#ff2a5f,#7c3aed);
  color:#fff;
- display:flex;
- align-items:center;
- justify-content:center;
- font-weight:900;
- flex-shrink:0;
-}
-.post-input{
- flex:1;
- border:0;
- background:var(--bg);
- border-radius:22px;
- padding:12px 15px;
- outline:none;
-}
-.post-head{
- display:flex;
- gap:10px;
- align-items:center;
- margin-bottom:12px;
-}
-.post-author{font-weight:800}
-.post-time{font-size:11px;color:var(--muted)}
-.post-content{
- font-size:15px;
- line-height:1.55;
- margin-bottom:12px;
- white-space:pre-wrap;
-}
-.post-actions{
- display:flex;
- border-top:1px solid var(--border);
- padding-top:9px;
- gap:5px;
-}
-.post-actions button{
- flex:1;
- border:0;
- background:transparent;
- padding:8px;
- color:var(--muted);
- border-radius:9px;
-}
-.post-actions button:hover{background:#f2f4f7}
-.comments{
- margin-top:10px;
- padding-top:10px;
- border-top:1px solid var(--border);
-}
-.comment{
- background:var(--bg);
- padding:8px 10px;
- border-radius:10px;
- margin-top:6px;
- font-size:12px;
-}
-
-/* CHAT */
-.chat{
- height:65vh;
- min-height:450px;
- background:var(--card);
- border:1px solid var(--border);
- border-radius:18px;
+ display:grid;
+ place-items:center;
+ font-weight:bold;
  overflow:hidden;
- display:flex;
- flex-direction:column;
-}
-.messages{
- flex:1;
- overflow-y:auto;
- padding:14px;
- display:flex;
- flex-direction:column;
- gap:8px;
-}
-.bubble{
- max-width:78%;
- padding:10px 13px;
- border-radius:15px;
- font-size:13px;
- line-height:1.4;
-}
-.mine{
- align-self:flex-end;
- background:var(--primary);
- color:#fff;
- border-bottom-right-radius:4px;
-}
-.theirs{
- align-self:flex-start;
- background:var(--bg);
- border:1px solid var(--border);
- border-bottom-left-radius:4px;
-}
-.msg-meta{
- font-size:9px;
- opacity:.7;
- margin-top:3px;
-}
-.typing{
- padding:5px 14px;
- font-size:11px;
- color:var(--muted);
-}
-.chat-input{
- display:flex;
- gap:7px;
- padding:10px;
- border-top:1px solid var(--border);
-}
-.chat-input input{
- flex:1;
- border:1px solid var(--border);
- border-radius:22px;
- padding:11px 14px;
- outline:none;
-}
-.send{
- width:44px;
- border:0;
- border-radius:50%;
- background:var(--primary);
- color:#fff;
 }
 
-/* USERS */
-.user-row{
- display:flex;
- align-items:center;
- gap:11px;
- padding:11px 0;
- border-bottom:1px solid var(--border);
+.avatar.big{
+ width:90px;
+ height:90px;
+ font-size:30px;
+ margin:auto;
 }
-.user-info{flex:1}
-.online{
- width:9px;
- height:9px;
- background:var(--green);
- border-radius:50%;
- display:inline-block;
+
+.small{
+ font-size:12px;
+ color:var(--muted);
 }
-.user-btn{
+
+.btn{
  border:0;
- background:#fff0f3;
+ padding:10px 14px;
+ border-radius:12px;
+ background:var(--soft);
  color:var(--primary);
- padding:8px 11px;
- border-radius:10px;
- font-size:11px;
  font-weight:bold;
 }
 
-/* MARKET */
-.market-grid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:10px;
+.primary{
+ color:white;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
 }
+
+.actions{
+ display:flex;
+ gap:4px;
+ margin-top:10px;
+ border-top:1px solid var(--border);
+ padding-top:8px;
+}
+
+.actions button{
+ flex:1;
+ border:0;
+ background:transparent;
+ color:var(--muted);
+ padding:8px 4px;
+ border-radius:10px;
+}
+
+.actions button:hover{
+ background:var(--soft);
+ color:var(--primary);
+}
+
+/* STORIES */
+
+.stories{
+ display:flex;
+ gap:10px;
+ overflow:auto;
+}
+
+.story{
+ min-width:90px;
+ height:140px;
+ border-radius:16px;
+ padding:9px;
+ display:flex;
+ align-items:end;
+ color:#fff;
+ font-weight:bold;
+ background:linear-gradient(150deg,#111827,#ff2a5f);
+}
+
+.story.add{
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+ color:var(--primary);
+ background:var(--soft);
+}
+
+/* REELS */
+
+.reel-video{
+ height:450px;
+ border-radius:15px;
+ display:grid;
+ place-items:center;
+ color:#fff;
+ font-size:60px;
+ background:
+ linear-gradient(160deg,#111827,#7c3aed,#ff2a5f);
+}
+
+/* PRODUCTS */
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:12px;
+}
+
 .product{
+ background:var(--card);
  border:1px solid var(--border);
  border-radius:15px;
- overflow:hidden;
- background:var(--card);
+ padding:10px;
 }
-.product img{
- width:100%;
- height:130px;
- object-fit:cover;
- background:#eee;
+
+.product-image{
+ height:160px;
+ border-radius:12px;
+ display:grid;
+ place-items:center;
+ font-size:55px;
+ background:linear-gradient(135deg,#dbeafe,#fce7f3);
 }
-.product-body{padding:10px}
+
 .price{
  color:var(--primary);
  font-size:18px;
  font-weight:900;
+ margin:5px 0;
 }
 
-/* AI */
-.ai{
- background:linear-gradient(135deg,#17122b,#452064);
- color:#fff;
- border:0;
-}
-.ai textarea{
- width:100%;
- min-height:100px;
- margin-top:10px;
- border:0;
- border-radius:12px;
- padding:12px;
- resize:none;
- outline:none;
-}
+/* CHAT */
 
-/* PROFILE */
-.profile-cover{
- height:130px;
- border-radius:18px 18px 0 0;
- background:linear-gradient(135deg,#ff285c,#743cff);
-}
-.profile-main{
- text-align:center;
- margin-top:-35px;
-}
-.big-avatar{
- margin:auto;
- width:80px;
- height:80px;
- border-radius:50%;
- border:4px solid #fff;
- background:linear-gradient(135deg,var(--primary),#733cff);
- color:#fff;
+.chat{
+ height:62vh;
  display:flex;
- justify-content:center;
- align-items:center;
- font-size:28px;
- font-weight:900;
+ flex-direction:column;
+ background:var(--bg);
+ border-radius:15px;
+ overflow:hidden;
 }
 
-/* NAV */
-.bottom-nav{
+.messages{
+ flex:1;
+ overflow:auto;
+ padding:12px;
+}
+
+.message{
+ max-width:78%;
+ padding:9px 12px;
+ border-radius:15px;
+ background:var(--card);
+ border:1px solid var(--border);
+ margin:7px 0;
+}
+
+.message.mine{
+ margin-left:auto;
+ background:var(--primary);
+ color:#fff;
+ border:0;
+}
+
+.composer{
+ display:flex;
+ gap:7px;
+ padding:10px;
+ background:var(--card);
+ border-top:1px solid var(--border);
+}
+
+.composer input{
+ flex:1;
+}
+
+.send{
+ width:44px;
+ border-radius:50%;
+ border:0;
+ background:var(--primary);
+ color:#fff;
+}
+
+/* MENU */
+
+.menu{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:10px;
+}
+
+.menu button{
+ border:1px solid var(--border);
+ border-radius:15px;
+ padding:15px 6px;
+ background:var(--card);
+ color:var(--text);
+}
+
+.menu span{
+ display:block;
+ font-size:24px;
+ margin-bottom:5px;
+}
+
+/* BOTTOM NAV */
+
+.bottom{
  position:fixed;
+ left:0;
+ right:0;
  bottom:0;
- left:50%;
- transform:translateX(-50%);
- width:100%;
- max-width:700px;
- height:67px;
- background:rgba(255,255,255,.96);
- backdrop-filter:blur(15px);
+ height:70px;
+ background:var(--card);
  border-top:1px solid var(--border);
  display:flex;
- z-index:100;
+ z-index:50;
+ max-width:900px;
+ margin:auto;
 }
-.nav{
+
+.bottom button{
  flex:1;
  border:0;
  background:transparent;
  color:var(--muted);
- font-size:10px;
- font-weight:bold;
+ font-size:11px;
 }
-.nav span{
+
+.bottom button b{
  display:block;
  font-size:21px;
  margin-bottom:3px;
 }
-.nav.active{color:var(--primary)}
+
+.bottom button.active{
+ color:var(--primary);
+}
 
 /* MODAL */
+
 .modal{
+ display:none;
  position:fixed;
  inset:0;
  background:rgba(0,0,0,.6);
- display:flex;
- align-items:center;
- justify-content:center;
- padding:15px;
- z-index:200;
+ z-index:100;
+ align-items:end;
 }
-.modal-card{
+
+.modal.show{display:flex}
+
+.sheet{
  width:100%;
- max-width:430px;
- background:#fff;
- border-radius:22px;
- padding:20px;
+ max-width:900px;
  max-height:90vh;
  overflow:auto;
+ background:var(--card);
+ margin:auto;
+ padding:20px;
+ border-radius:22px 22px 0 0;
 }
-.modal-head{
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin-bottom:15px;
-}
+
 .close{
+ float:right;
  border:0;
- background:#f2f4f7;
  width:35px;
  height:35px;
  border-radius:50%;
+ background:var(--bg);
+ color:var(--text);
+ font-size:22px;
 }
 
-/* DARK */
-body.dark{
- --bg:#0b1220;
- --card:#111a2a;
- --text:#f8fafc;
- --muted:#98a2b3;
- --border:#253247;
-}
-body.dark .header,
-body.dark .bottom-nav{
- background:rgba(17,26,42,.96);
-}
-body.dark .icon,
-body.dark .post-input,
-body.dark .bg-btn{
- background:#1b2638;
- color:#fff;
-}
-body.dark .modal-card{background:#111a2a}
-body.dark .input{background:#111a2a;color:#fff}
-body.dark .chat-input input{background:#111a2a;color:#fff}
+/* LOGIN */
 
-/* TOAST */
-#toast{
+.login{
  position:fixed;
- left:50%;
- bottom:82px;
- transform:translate(-50%,100px);
- background:#101828;
- color:#fff;
- padding:11px 18px;
- border-radius:30px;
- font-size:12px;
- z-index:500;
- transition:.3s;
+ inset:0;
+ z-index:200;
+ background:var(--bg);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
 }
-#toast.show{transform:translate(-50%,0)}
 
-@media(max-width:480px){
- .section{padding:11px}
- .market-grid{grid-template-columns:1fr 1fr}
+.login-box{
+ width:100%;
+ max-width:400px;
+ text-align:center;
+}
+
+.brand{
+ font-size:42px;
+ color:var(--primary);
+ font-weight:950;
+}
+
+.form{
+ display:grid;
+ gap:10px;
+}
+
+.form input,
+.form textarea,
+.form select{
+ width:100%;
+ padding:12px;
+ border-radius:12px;
+ border:1px solid var(--border);
+ background:var(--bg);
+ color:var(--text);
+ outline:none;
+}
+
+.theme-grid{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:10px;
+}
+
+.theme{
+ height:70px;
+ border-radius:14px;
+ border:0;
+ color:white;
+ font-weight:bold;
+}
+
+@media(min-width:700px){
+ .grid{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= AUTH ================= -->
+<!-- LOGIN -->
 
-<div id="auth" class="auth">
+<div id="login" class="login">
+ <div class="login-box card">
 
- <div class="auth-card">
+  <div class="brand">ShakibYS</div>
 
-  <div class="logo">ShakibYS</div>
-  <div class="auth-sub">Connect • Chat • Share • Buy</div>
+  <p class="small">
+   Premium Social • Messenger • Reels • Marketplace • AI
+  </p>
 
-  <!-- LOGIN -->
-  <div id="loginBox">
+  <input
+   id="username"
+   class="input"
+   placeholder="আপনার নাম"
+  >
 
-   <div class="auth-box-title">Login</div>
+  <button
+   class="btn primary"
+   style="width:100%;margin-top:10px"
+   onclick="login()"
+  >
+   🚀 ShakibYS-এ প্রবেশ
+  </button>
 
-   <input id="loginPhone" class="input"
-          placeholder="📱 Phone Number">
-
-   <input id="loginPassword" class="input"
-          type="password"
-          placeholder="🔐 Password">
-
-   <button class="btn" onclick="login()">Login</button>
-
-   <div class="auth-links">
-    <span onclick="showAuth('register')">Create Account</span>
-    <span onclick="showAuth('forgot')">Forgot Password?</span>
-   </div>
-
-  </div>
-
-  <!-- REGISTER -->
-  <div id="registerBox" class="hidden">
-
-   <div class="auth-box-title">Create Account</div>
-
-   <input id="regName" class="input"
-          placeholder="আপনার নাম">
-
-   <input id="regPhone" class="input"
-          placeholder="📱 Phone Number">
-
-   <input id="regPassword" class="input"
-          type="password"
-          placeholder="🔐 Password">
-
-   <button class="btn" onclick="register()">Create Account</button>
-
-   <div class="auth-links">
-    <span onclick="showAuth('login')">← Login</span>
-   </div>
-
-  </div>
-
-  <!-- FORGOT -->
-  <div id="forgotBox" class="hidden">
-
-   <div class="auth-box-title">Forgot Password</div>
-
-   <input id="forgotPhone" class="input"
-          placeholder="📱 Phone Number">
-
-   <button class="btn" onclick="requestOTP()">Send OTP</button>
-
-   <div id="otpArea" class="hidden">
-
-    <input id="otp" class="input"
-           placeholder="6 digit OTP"
-           style="margin-top:12px">
-
-    <button class="btn" onclick="verifyOTP()">Verify OTP</button>
-
-   </div>
-
-   <div id="newPasswordArea" class="hidden">
-
-    <input id="newPassword" class="input"
-           type="password"
-           placeholder="New Password">
-
-    <button class="btn" onclick="resetPassword()">Set New Password</button>
-
-   </div>
-
-   <div class="auth-links">
-    <span onclick="showAuth('login')">← Login</span>
-   </div>
-
-  </div>
+  <button
+   class="btn"
+   style="width:100%;margin-top:8px"
+   onclick="forgotPassword()"
+  >
+   🔐 Forgot Password
+  </button>
 
  </div>
 </div>
 
 
-<!-- ================= APP ================= -->
+<div id="app" class="app" style="display:none">
 
-<div id="app" class="app hidden">
+<header>
+ <div class="header">
 
- <header class="header">
+  <div class="logo">ShakibYS</div>
 
-  <div class="top">
-
-   <div class="brand">ShakibYS</div>
-
-   <div class="header-actions">
-
-    <button class="icon" onclick="openSearch()">🔎</button>
-    <button class="icon" onclick="openNotifications()">🔔</button>
-
-   </div>
-
+  <div class="search">
+   <input
+    placeholder="Search people, posts, reels..."
+    oninput="search(this.value)"
+   >
   </div>
 
- </header>
+  <button class="icon" onclick="openPage('search')">🔎</button>
 
-
- <!-- HOME -->
-
- <section id="home" class="section active">
-
-  <div class="stories" id="stories"></div>
-
-  <div class="card create">
-
-   <div class="avatar" id="smallAvatar">S</div>
-
-   <input class="post-input"
-          id="postInput"
-          placeholder="What's on your mind?">
-
-   <button class="user-btn"
-           onclick="createPost()">Post</button>
-
-  </div>
-
-  <div id="feed"></div>
-
- </section>
-
-
- <!-- MESSENGER -->
-
- <section id="messenger" class="section">
-
-  <div class="section-title">💬 Messenger</div>
-
-  <div class="chat">
-
-   <div id="messages" class="messages"></div>
-
-   <div id="typing" class="typing"></div>
-
-   <div class="chat-input">
-
-    <input id="chatInput"
-           placeholder="Message everyone..."
-           oninput="typing()"
-           onkeydown="chatKey(event)">
-
-    <button class="send"
-            onclick="sendMessage()">➤</button>
-
-   </div>
-
-  </div>
-
- </section>
-
-
- <!-- FRIENDS -->
-
- <section id="friends" class="section">
-
-  <div class="section-title">👥 Friends & Users</div>
-
-  <div class="card">
-
-   <input class="input"
-          id="userSearch"
-          placeholder="Search users..."
-          oninput="filterUsers()">
-
-   <div id="users"></div>
-
-  </div>
-
- </section>
-
-
- <!-- MARKET -->
-
- <section id="market" class="section">
-
-  <div class="section-title">🛒 Marketplace</div>
-
-  <button class="btn"
-          onclick="openMarketModal()">
-   + Sell Something
+  <button
+   class="icon"
+   onclick="openModal('notifications')"
+  >
+   🔔
   </button>
 
-  <div style="height:12px"></div>
+  <button
+   class="icon"
+   onclick="openModal('settings')"
+  >
+   ⚙️
+  </button>
 
-  <div id="marketGrid" class="market-grid"></div>
+ </div>
+</header>
 
- </section>
 
+<main>
 
- <!-- AI -->
+<!-- HOME -->
 
- <section id="ai" class="section">
+<section id="home" class="page active">
 
-  <div class="card ai">
+ <div class="card">
 
-   <div class="section-title">
-    🤖 AI Marketplace Assistant
-   </div>
+  <div class="row">
 
-   <p style="font-size:13px;opacity:.8">
-    Product description, price idea অথবা buyer reply তৈরি করুন।
-   </p>
+   <div class="avatar" id="homeAvatar">S</div>
 
-   <textarea id="aiInput"
-             placeholder="যেমন: আমার একটি পুরোনো ফোন বিক্রি করব..."></textarea>
+   <input
+    class="input"
+    placeholder="সবার সাথে কিছু শেয়ার করুন..."
+    onclick="openModal('post')"
+   >
 
-   <button class="btn"
-           onclick="askAI()">
-    ✨ Generate
+  </div>
+
+  <div class="actions">
+
+   <button onclick="openModal('post')">
+    📷 Photo/Video
    </button>
 
-   <div id="aiResult"
-        style="margin-top:15px;line-height:1.6;font-size:13px">
+   <button onclick="openModal('story')">
+    📖 Story
+   </button>
+
+   <button onclick="openModal('poll')">
+    📊 Poll
+   </button>
+
+   <button onclick="openModal('music')">
+    🎵 Music
+   </button>
+
+  </div>
+
+ </div>
+
+
+ <div class="title">📖 Stories</div>
+
+ <div class="stories">
+
+  <div
+   class="story add"
+   onclick="openModal('story')"
+  >
+   ＋<br>
+   Add Story
+  </div>
+
+  <div class="story">🌅<br>Friends</div>
+  <div class="story">🎬<br>Today</div>
+  <div class="story">🌙<br>Night</div>
+  <div class="story">🔥<br>Trending</div>
+
+ </div>
+
+
+ <div class="title">🔥 Feed</div>
+
+ <div class="tabs">
+
+  <button onclick="toast('Trending Feed')">
+   🔥 Trending
+  </button>
+
+  <button onclick="toast('Latest Feed')">
+   🆕 Latest
+  </button>
+
+  <button onclick="toast('Friends Feed')">
+   👥 Friends
+  </button>
+
+  <button onclick="openModal('saved')">
+   📌 Saved
+  </button>
+
+ </div>
+
+
+ <article class="card">
+
+  <div class="row">
+
+   <div class="avatar">S</div>
+
+   <div>
+    <b id="postName">Mohammad Nazmus Sakib</b>
+    <div class="small">
+     Just now • 🌐 Public
+    </div>
    </div>
 
   </div>
 
- </section>
+  <p>
+   স্বাগতম ShakibYS Premium Social Super App-এ! ❤️
+  </p>
 
+  <div class="actions">
 
- <!-- NOTIFICATIONS -->
+   <button onclick="like(this)">
+    ❤️ Like
+   </button>
 
- <section id="notifications" class="section">
+   <button onclick="toast('Comment section')">
+    💬 Comment
+   </button>
 
-  <div class="section-title">🔔 Notifications</div>
+   <button onclick="toast('Post shared')">
+    🔄 Share
+   </button>
 
-  <div id="notificationList"></div>
-
- </section>
-
-
- <!-- PROFILE -->
-
- <section id="profile" class="section">
-
-  <div class="card" style="padding:0;overflow:hidden">
-
-   <div class="profile-cover"></div>
-
-   <div class="profile-main" style="padding:15px">
-
-    <div class="big-avatar" id="bigAvatar">S</div>
-
-    <h2 id="profileName" style="margin-top:8px">
-     ShakibYS User
-    </h2>
-
-    <p id="profilePhone"
-       style="font-size:12px;color:var(--muted);margin-top:4px">
-    </p>
-
-    <div style="height:15px"></div>
-
-    <button class="btn"
-            onclick="openSettings()">
-     ⚙️ Settings
-    </button>
-
-    <button class="btn"
-            style="background:#ef4444;margin-top:8px"
-            onclick="logout()">
-     Logout
-    </button>
-
-   </div>
+   <button onclick="toast('Saved')">
+    🔖 Save
+   </button>
 
   </div>
 
- </section>
+ </article>
+
+</section>
 
 
- <!-- BOTTOM NAV -->
+<!-- REELS -->
 
- <nav class="bottom-nav">
+<section id="reels" class="page">
 
-  <button class="nav active"
-          onclick="go('home',this)">
-   <span>🏠</span>Home
+ <div class="title">🎬 Reels</div>
+
+ <div class="tabs">
+
+  <button>🔥 Trending</button>
+  <button>👥 Following</button>
+  <button>🎵 Music</button>
+  <button>🔖 Saved</button>
+
+ </div>
+
+ <article class="card">
+
+  <div class="reel-video">
+   ▶
+  </div>
+
+  <h3>ShakibYS Reel</h3>
+
+  <div class="small">
+   🎵 Original audio • 1.2K views
+  </div>
+
+  <div class="actions">
+
+   <button onclick="like(this)">❤️ Like</button>
+
+   <button>💬 Comment</button>
+
+   <button>🔄 Share</button>
+
+   <button>🔖 Save</button>
+
+   <button>🚫 Not interested</button>
+
+  </div>
+
+  <div class="actions">
+
+   <button>🎵 Use Audio</button>
+   <button>🔀 Remix</button>
+   <button>🚩 Report</button>
+   <button>➕ Follow Creator</button>
+
+  </div>
+
+ </article>
+
+ <button
+  class="btn primary"
+  style="width:100%"
+  onclick="openModal('reel')"
+ >
+  ＋ Create Reel
+ </button>
+
+</section>
+
+
+<!-- MESSENGER -->
+
+<section id="messenger" class="page">
+
+ <div class="title">💬 Messenger</div>
+
+ <div class="tabs">
+
+  <button onclick="openChat('Messenger')">
+   💬 Chats
   </button>
 
-  <button class="nav"
-          onclick="go('messenger',this)">
-   <span>💬</span>Messenger
+  <button onclick="openModal('group')">
+   👥 Create Group
   </button>
 
-  <button class="nav"
-          onclick="go('friends',this)">
+  <button onclick="openModal('community')">
+   🌐 Community
+  </button>
+
+  <button onclick="openModal('theme')">
+   🎨 Themes
+  </button>
+
+ </div>
+
+
+ <div class="card">
+
+  <div class="row">
+
+   <div class="avatar">🌐</div>
+
+   <div>
+    <b>Global Chat</b>
+    <div class="small">
+     🟢 Everyone • Online
+    </div>
+   </div>
+
+   <button
+    class="btn"
+    style="margin-left:auto"
+    onclick="openChat('Global Chat')"
+   >
+    Open
+   </button>
+
+  </div>
+
+ </div>
+
+
+ <div class="card">
+
+  <div class="row">
+
+   <div class="avatar">👥</div>
+
+   <div>
+    <b>Friends Group</b>
+
+    <div class="small">
+     5 members • Admin
+    </div>
+
+   </div>
+
+   <button
+    class="btn"
+    style="margin-left:auto"
+    onclick="openChat('Friends Group')"
+   >
+    Open
+   </button>
+
+  </div>
+
+ </div>
+
+
+ <div class="card">
+
+  <div class="row">
+
+   <div class="avatar">A</div>
+
+   <div>
+    <b>Alex</b>
+
+    <div class="small">
+     🟢 Online • Typing...
+    </div>
+
+   </div>
+
+   <button
+    class="btn"
+    style="margin-left:auto"
+    onclick="openChat('Alex')"
+   >
+    Open
+   </button>
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- MARKETPLACE -->
+
+<section id="market" class="page">
+
+ <div class="title">🛒 Marketplace</div>
+
+ <div class="card">
+
+  <input
+   class="input"
+   placeholder="পণ্য খুঁজুন..."
+   oninput="filterProducts(this.value)"
+  >
+
+ </div>
+
+ <div class="tabs">
+
+  <button>All</button>
+  <button>📱 Phones</button>
+  <button>👕 Fashion</button>
+  <button>💻 Electronics</button>
+  <button>🏠 Home</button>
+
+ </div>
+
+
+ <div id="products" class="grid">
+
+  <div class="product">
+
+   <div class="product-image">
+    📱
+   </div>
+
+   <b>Premium Smartphone</b>
+
+   <div class="price">
+    ৳25,000
+   </div>
+
+   ⭐ 4.8 • Verified Seller
+
+   <button
+    class="btn primary"
+    style="width:100%;margin-top:8px"
+    onclick="product('Premium Smartphone','৳25,000')"
+   >
+    View / Buy
+   </button>
+
+  </div>
+
+
+  <div class="product">
+
+   <div class="product-image">
+    ⌚
+   </div>
+
+   <b>Premium Smart Watch</b>
+
+   <div class="price">
+    ৳3,500
+   </div>
+
+   ⭐ 4.7 • Verified Seller
+
+   <button
+    class="btn primary"
+    style="width:100%;margin-top:8px"
+    onclick="product('Premium Smart Watch','৳3,500')"
+   >
+    View / Buy
+   </button>
+
+  </div>
+
+
+  <div class="product">
+
+   <div class="product-image">
+    🎧
+   </div>
+
+   <b>Wireless Headphone</b>
+
+   <div class="price">
+    ৳2,000
+   </div>
+
+   ⭐ 4.6 • Verified Seller
+
+   <button
+    class="btn primary"
+    style="width:100%;margin-top:8px"
+    onclick="product('Wireless Headphone','৳2,000')"
+   >
+    View / Buy
+   </button>
+
+  </div>
+
+ </div>
+
+
+ <div class="card">
+
+  <button
+   class="btn primary"
+   style="width:100%"
+   onclick="openModal('seller')"
+  >
+   🏪 Seller Dashboard
+  </button>
+
+ </div>
+
+</section>
+
+
+<!-- PROFILE -->
+
+<section id="profile" class="page">
+
+ <div class="card" style="text-align:center">
+
+  <div class="avatar big">
+   S
+  </div>
+
+  <h2 id="profileName">
+   Mohammad Nazmus Sakib
+  </h2>
+
+  <p class="small">
+   ShakibYS Creator • Social • Marketplace
+  </p>
+
+  <div
+   class="row"
+   style="justify-content:center;margin:15px"
+  >
+
+   <b>
+    1.2K<br>
+    <span class="small">Friends</span>
+   </b>
+
+   <b>
+    8.4K<br>
+    <span class="small">Followers</span>
+   </b>
+
+   <b>
+    120<br>
+    <span class="small">Following</span>
+   </b>
+
+  </div>
+
+  <button
+   class="btn primary"
+   onclick="openModal('editProfile')"
+  >
+   Edit Profile
+  </button>
+
+ </div>
+
+
+ <div class="menu">
+
+  <button onclick="openModal('saved')">
+   <span>🔖</span>Saved
+  </button>
+
+  <button onclick="openModal('orders')">
+   <span>📦</span>Orders
+  </button>
+
+  <button onclick="openModal('friends')">
    <span>👥</span>Friends
   </button>
 
-  <button class="nav"
-          onclick="go('market',this)">
-   <span>🛒</span>Market
+  <button onclick="openModal('activity')">
+   <span>📊</span>Activity
   </button>
 
-  <button class="nav"
-          onclick="go('profile',this)">
-   <span>👤</span>Profile
+  <button onclick="openModal('settings')">
+   <span>⚙️</span>Settings
   </button>
 
- </nav>
+  <button onclick="openModal('about')">
+   <span>ℹ️</span>About
+  </button>
+
+ </div>
+
+</section>
+
+
+<!-- SEARCH -->
+
+<section id="search" class="page">
+
+ <div class="title">🔎 Search Everything</div>
+
+ <input
+  class="input"
+  placeholder="People, Posts, Reels, Groups, Marketplace, Hashtags..."
+  oninput="search(this.value)"
+ >
+
+ <div
+  id="searchResult"
+  class="card"
+  style="margin-top:12px"
+ >
+  Search শুরু করুন...
+ </div>
+
+</section>
+
+</main>
+
+
+<nav class="bottom">
+
+ <button
+  class="active"
+  onclick="nav(this,'home')"
+ >
+  <b>🏠</b>
+  Home
+ </button>
+
+ <button onclick="nav(this,'reels')">
+  <b>🎬</b>
+  Reels
+ </button>
+
+ <button onclick="nav(this,'messenger')">
+  <b>💬</b>
+  Messenger
+ </button>
+
+ <button onclick="nav(this,'market')">
+  <b>🛒</b>
+  Market
+ </button>
+
+ <button onclick="nav(this,'profile')">
+  <b>👤</b>
+  Profile
+ </button>
+
+</nav>
 
 </div>
 
 
-<!-- ================= MODALS ================= -->
+<!-- MODAL -->
 
-<div id="modal" class="modal hidden">
+<div id="modal" class="modal">
 
- <div class="modal-card">
+ <div class="sheet">
 
-  <div class="modal-head">
-
-   <h3 id="modalTitle">ShakibYS</h3>
-
-   <button class="close"
-           onclick="closeModal()">✕</button>
-
-  </div>
+  <button
+   class="close"
+   onclick="closeModal()"
+  >
+   ×
+  </button>
 
   <div id="modalBody"></div>
 
@@ -870,1104 +1101,1047 @@ body.dark .chat-input input{background:#111a2a;color:#fff}
 </div>
 
 
-<div id="toast"></div>
-
+<script src="/socket.io/socket.io.js"></script>
 
 <script>
 
-/* =========================================
-   SOCKET
-========================================= */
+let socket;
 
-const socket = io();
+const user =
+ localStorage.getItem("shakibys_user") || "";
 
-let currentUser =
- JSON.parse(localStorage.getItem("shakibys_user") || "null");
+function boot(){
 
-let posts = [];
-let marketItems = [];
-let users = [];
-let notifications = [];
+ if(user){
 
-let typingTimer;
+  document.getElementById("login").style.display="none";
 
+  document.getElementById("app").style.display="block";
 
-/* =========================================
-   HELPERS
-========================================= */
+  document.getElementById("postName").textContent=user;
 
-function $(id){
- return document.getElementById(id);
-}
+  document.getElementById("profileName").textContent=user;
 
-function toast(message){
+  document.getElementById("homeAvatar").textContent=
+   user.charAt(0).toUpperCase();
 
- $("toast").textContent = message;
+  connectSocket();
 
- $("toast").classList.add("show");
+ }else{
 
- setTimeout(()=>{
-  $("toast").classList.remove("show");
- },2500);
-}
+  document.getElementById("login").style.display="flex";
 
-function escapeHTML(text){
-
- const div=document.createElement("div");
- div.textContent=text || "";
- return div.innerHTML;
-}
-
-
-/* =========================================
-   AUTH
-========================================= */
-
-function showAuth(type){
-
- $("loginBox").classList.add("hidden");
- $("registerBox").classList.add("hidden");
- $("forgotBox").classList.add("hidden");
-
- if(type==="login")
-  $("loginBox").classList.remove("hidden");
-
- if(type==="register")
-  $("registerBox").classList.remove("hidden");
-
- if(type==="forgot")
-  $("forgotBox").classList.remove("hidden");
-}
-
-
-async function register(){
-
- const name=$("regName").value.trim();
- const phone=$("regPhone").value.trim();
- const password=$("regPassword").value;
-
- if(!name||!phone||!password){
-  toast("সব তথ্য পূরণ করুন");
-  return;
  }
+
+}
+
+
+function connectSocket(){
 
  try{
 
-  const r=await fetch("/api/register",{
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({name,phone,password})
+  socket=io();
+
+  socket.emit("user:online",{name:user});
+
+  socket.on("chat:message",data=>{
+
+   if(
+    window.currentChat &&
+    data.room===window.currentChat
+   ){
+
+    addMessage(
+     data.sender,
+     data.text,
+     data.sender===user
+    );
+
+   }
+
   });
 
-  const data=await r.json();
+  socket.on("group:created",data=>{
 
-  if(!data.success){
-   toast(data.message);
-   return;
-  }
+   toast("👥 Group তৈরি হয়েছে: "+data.name);
 
-  toast("Account তৈরি হয়েছে");
-  showAuth("login");
-
- }catch(e){
-  toast("Server error");
- }
-}
-
-
-async function login(){
-
- const phone=$("loginPhone").value.trim();
- const password=$("loginPassword").value;
-
- if(!phone||!password){
-  toast("Phone ও Password দিন");
-  return;
- }
-
- try{
-
-  const r=await fetch("/api/login",{
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({phone,password})
   });
 
-  const data=await r.json();
-
-  if(!data.success){
-   toast(data.message);
-   return;
-  }
-
-  currentUser=data.user;
-
-  localStorage.setItem(
-   "shakibys_user",
-   JSON.stringify(currentUser)
-  );
-
-  startApp();
-
  }catch(e){
-  toast("Login failed");
+
+  console.log(e);
+
  }
+
 }
 
 
-async function requestOTP(){
+function login(){
 
- const phone=$("forgotPhone").value.trim();
+ const name=
+  document.getElementById("username").value.trim();
 
- if(!phone){
-  toast("Phone number দিন");
+ if(!name){
+
+  toast("আপনার নাম লিখুন");
+
   return;
+
  }
 
- try{
+ localStorage.setItem(
+  "shakibys_user",
+  name
+ );
 
-  const r=await fetch("/api/forgot-password",{
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({phone})
-  });
+ location.reload();
 
-  const data=await r.json();
-
-  if(!data.success){
-   toast(data.message);
-   return;
-  }
-
-  $("otpArea").classList.remove("hidden");
-
-  /*
-   Demo mode:
-   OTP Render log-এ থাকবে।
-  */
-
-  if(data.demoOtp){
-   toast("Demo OTP: "+data.demoOtp);
-  }
-
- }catch(e){
-  toast("OTP error");
- }
 }
 
 
-async function verifyOTP(){
+function forgotPassword(){
 
- const phone=$("forgotPhone").value.trim();
- const otp=$("otp").value.trim();
+ toast(
+  "Password reset চালাতে SMS/Email OTP backend এবং database প্রয়োজন।"
+ );
 
- const r=await fetch("/api/verify-otp",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({phone,otp})
- });
-
- const data=await r.json();
-
- if(!data.success){
-  toast(data.message);
-  return;
- }
-
- $("newPasswordArea").classList.remove("hidden");
-
- toast("OTP verified");
 }
 
 
-async function resetPassword(){
+function nav(btn,page){
 
- const phone=$("forgotPhone").value.trim();
- const newPassword=$("newPassword").value;
+ sound();
 
- if(newPassword.length<6){
-  toast("কমপক্ষে ৬ অক্ষরের Password দিন");
-  return;
- }
-
- const r=await fetch("/api/reset-password",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({phone,newPassword})
- });
-
- const data=await r.json();
-
- if(!data.success){
-  toast(data.message);
-  return;
- }
-
- toast("Password changed successfully");
-
- showAuth("login");
-}
-
-
-function logout(){
-
- localStorage.removeItem("shakibys_user");
-
- currentUser=null;
-
- $("app").classList.add("hidden");
- $("auth").classList.remove("hidden");
-
- toast("Logged out");
-}
-
-
-/* =========================================
-   APP START
-========================================= */
-
-function startApp(){
-
- if(!currentUser){
-  $("auth").classList.remove("hidden");
-  $("app").classList.add("hidden");
-  return;
- }
-
- $("auth").classList.add("hidden");
- $("app").classList.remove("hidden");
-
- const name=currentUser.name || "S";
-
- $("smallAvatar").textContent=name[0].toUpperCase();
- $("bigAvatar").textContent=name[0].toUpperCase();
-
- $("profileName").textContent=name;
- $("profilePhone").textContent=currentUser.phone || "";
-
- socket.emit("user:join",{
-  username:name
- });
-}
-
-
-if(currentUser){
- startApp();
-}
-
-
-/* =========================================
-   NAVIGATION
-========================================= */
-
-function go(section,button){
-
- document.querySelectorAll(".section")
+ document
+  .querySelectorAll(".bottom button")
   .forEach(x=>x.classList.remove("active"));
 
- $(section).classList.add("active");
+ btn.classList.add("active");
 
- document.querySelectorAll(".nav")
-  .forEach(x=>x.classList.remove("active"));
+ openPage(page);
 
- button.classList.add("active");
 }
 
 
-/* =========================================
-   SOCKET INIT
-========================================= */
+function openPage(page){
 
-socket.on("app:init",(data)=>{
+ document
+  .querySelectorAll(".page")
+  .forEach(x=>x.classList.remove("active"));
 
- posts=data.posts || [];
- marketItems=data.marketplace || [];
+ document
+  .getElementById(page)
+  .classList.add("active");
 
- renderPosts();
- renderMarket();
+ window.scrollTo(0,0);
 
- renderStories(data.stories || []);
-
-});
+}
 
 
-/* =========================================
-   CHAT
-========================================= */
+function sound(){
 
-socket.on("chat:new",(message)=>{
+ try{
 
- const box=$("messages");
+  const AudioContext=
+   window.AudioContext||
+   window.webkitAudioContext;
 
- const mine=
- message.sender===currentUser?.name;
+  const ctx=new AudioContext();
 
- const div=document.createElement("div");
+  const osc=ctx.createOscillator();
 
- div.className="bubble "+(mine?"mine":"theirs");
+  const gain=ctx.createGain();
 
- div.innerHTML=`
-  <b>${escapeHTML(message.sender)}</b><br>
-  ${escapeHTML(message.text)}
-  <div class="msg-meta">
-   ${new Date(message.time).toLocaleTimeString()}
-   ${mine && message.seen ? " • Seen" : ""}
+  osc.frequency.value=600;
+
+  gain.gain.value=.025;
+
+  osc.connect(gain);
+
+  gain.connect(ctx.destination);
+
+  osc.start();
+
+  osc.stop(ctx.currentTime+.06);
+
+ }catch(e){}
+
+}
+
+
+function toast(text){
+
+ sound();
+
+ alert(text);
+
+}
+
+
+function openModal(type){
+
+ sound();
+
+ let html="";
+
+ if(type==="notifications"){
+
+  html=`
+
+   <h2>🔔 Notifications</h2>
+
+   <div class="card">
+    ❤️ Someone liked your post
+   </div>
+
+   <div class="card">
+    💬 New Messenger message
+   </div>
+
+   <div class="card">
+    👥 Friend request
+   </div>
+
+   <div class="card">
+    🛒 Marketplace order update
+   </div>
+
+   <div class="card">
+    📖 Story reaction
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="settings"){
+
+  html=`
+
+   <h2>⚙️ Settings</h2>
+
+   <div class="menu">
+
+    <button onclick="toast('Account Settings')">
+     <span>👤</span>Account
+    </button>
+
+    <button onclick="toast('Privacy Settings')">
+     <span>🔐</span>Privacy
+    </button>
+
+    <button onclick="toast('Security Settings')">
+     <span>🛡️</span>Security
+    </button>
+
+    <button onclick="forgotPassword()">
+     <span>🔑</span>Password
+    </button>
+
+    <button onclick="toast('Phone / Email')">
+     <span>📱</span>Phone/Email
+    </button>
+
+    <button onclick="toast('2FA')">
+     <span>🔒</span>2FA
+    </button>
+
+    <button onclick="toast('Notification Settings')">
+     <span>🔔</span>Notifications
+    </button>
+
+    <button onclick="toast('Messenger Settings')">
+     <span>💬</span>Messenger
+    </button>
+
+    <button onclick="openModal('theme')">
+     <span>🎨</span>Chat Themes
+    </button>
+
+    <button onclick="toggleDark()">
+     <span>🌙</span>Dark Mode
+    </button>
+
+    <button onclick="toast('Blocked Users')">
+     <span>🚫</span>Blocked
+    </button>
+
+    <button onclick="toast('Language')">
+     <span>🌐</span>Language
+    </button>
+
+    <button onclick="toast('Data Saver')">
+     <span>📶</span>Data Saver
+    </button>
+
+    <button onclick="toast('Storage')">
+     <span>💾</span>Storage
+    </button>
+
+    <button onclick="toast('Download Data')">
+     <span>⬇️</span>Download Data
+    </button>
+
+    <button onclick="openModal('about')">
+     <span>ℹ️</span>App পরিচিতি
+    </button>
+
+    <button onclick="logout()">
+     <span>🚪</span>Logout
+    </button>
+
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="theme"){
+
+  html=`
+
+   <h2>🎨 Messenger Themes</h2>
+
+   <div class="theme-grid">
+
+    <button class="theme"
+     style="background:#ff2a5f"
+     onclick="theme('#ff2a5f')">
+     Pink
+    </button>
+
+    <button class="theme"
+     style="background:#2563eb"
+     onclick="theme('#2563eb')">
+     Ocean
+    </button>
+
+    <button class="theme"
+     style="background:#7c3aed"
+     onclick="theme('#7c3aed')">
+     Purple
+    </button>
+
+    <button class="theme"
+     style="background:#111827"
+     onclick="theme('#111827')">
+     Dark
+    </button>
+
+    <button class="theme"
+     style="background:#16a34a"
+     onclick="theme('#16a34a')">
+     Nature
+    </button>
+
+    <button class="theme"
+     style="background:#f97316"
+     onclick="theme('#f97316')">
+     Sunset
+    </button>
+
+    <button class="theme"
+     style="background:#ec4899"
+     onclick="theme('#ec4899')">
+     Galaxy
+    </button>
+
+    <button class="theme"
+     style="background:#0891b2"
+     onclick="theme('#0891b2')">
+     Aqua
+    </button>
+
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="group"){
+
+  html=`
+
+   <h2>👥 Create Group</h2>
+
+   <div class="form">
+
+    <input
+     id="groupName"
+     placeholder="Group name"
+    >
+
+    <input
+     id="groupMembers"
+     placeholder="Members"
+    >
+
+    <select id="groupPrivacy">
+     <option>Public</option>
+     <option>Private</option>
+    </select>
+
+    <button
+     class="btn primary"
+     onclick="createGroup()"
+    >
+     Create Group
+    </button>
+
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="community"){
+
+  html=`
+
+   <h2>🌐 Community</h2>
+
+   <div class="card">
+    Community তৈরি করে একসাথে অনেক Group পরিচালনা করুন।
+   </div>
+
+   <button
+    class="btn primary"
+    onclick="toast('Community creator')"
+   >
+    ＋ Create Community
+   </button>
+
+  `;
+
+ }
+
+
+ else if(type==="post"){
+
+  html=`
+
+   <h2>📝 Create Post</h2>
+
+   <div class="form">
+
+    <textarea
+     rows="5"
+     placeholder="What's on your mind?"
+    ></textarea>
+
+    <input
+     type="file"
+     accept="image/*,video/*"
+    >
+
+    <select>
+     <option>🌐 Public</option>
+     <option>👥 Friends</option>
+     <option>🔒 Only me</option>
+    </select>
+
+    <input
+     placeholder="#Hashtag"
+    >
+
+    <input
+     placeholder="📍 Location"
+    >
+
+    <button
+     class="btn primary"
+     onclick="toast('Post published');closeModal()"
+    >
+     Publish Post
+    </button>
+
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="story"){
+
+  html=`
+
+   <h2>📖 Create Story</h2>
+
+   <div class="form">
+
+    <textarea
+     placeholder="Story text"
+    ></textarea>
+
+    <input
+     type="file"
+     accept="image/*,video/*"
+    >
+
+    <select>
+     <option>Everyone</option>
+     <option>Friends</option>
+     <option>Close Friends</option>
+    </select>
+
+    <input
+     placeholder="🎵 Music"
+    >
+
+    <button
+     class="btn primary"
+     onclick="toast('Story published — 24-hour expiry configured in backend');closeModal()"
+    >
+     Publish Story
+    </button>
+
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="poll"){
+
+  html=`
+
+   <h2>📊 Poll</h2>
+
+   <div class="form">
+
+    <input placeholder="Question">
+
+    <input placeholder="Option 1">
+
+    <input placeholder="Option 2">
+
+    <button
+     class="btn primary"
+     onclick="toast('Poll created');closeModal()"
+    >
+     Create Poll
+    </button>
+
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="music"){
+
+  html=`
+
+   <h2>🎵 Music Post</h2>
+
+   <div class="form">
+
+    <input
+     type="file"
+     accept="audio/*"
+    >
+
+    <button
+     class="btn primary"
+     onclick="toast('Music post created');closeModal()"
+    >
+     Publish Music
+    </button>
+
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="reel"){
+
+  html=`
+
+   <h2>🎬 Create Reel</h2>
+
+   <div class="form">
+
+    <input
+     type="file"
+     accept="video/*"
+    >
+
+    <input
+     placeholder="Caption"
+    >
+
+    <input
+     placeholder="#Hashtags"
+    >
+
+    <select>
+     <option>Public</option>
+     <option>Friends</option>
+    </select>
+
+    <button
+     class="btn primary"
+     onclick="toast('Reel published');closeModal()"
+    >
+     Publish Reel
+    </button>
+
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="saved"){
+
+  html=`
+
+   <h2>🔖 Saved</h2>
+
+   <div class="card">
+    আপনার Saved Posts, Reels এবং Marketplace products এখানে থাকবে।
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="orders"){
+
+  html=`
+
+   <h2>📦 Orders</h2>
+
+   <div class="card">
+    No orders yet.
+   </div>
+
+   <div class="tabs">
+    <button>Pending</button>
+    <button>Confirmed</button>
+    <button>Shipped</button>
+    <button>Delivered</button>
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="friends"){
+
+  html=`
+
+   <h2>👥 Friends</h2>
+
+   <div class="card">
+    🟢 Online Friends
+   </div>
+
+   <div class="card">
+    👥 Friend Requests
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="activity"){
+
+  html=`
+
+   <h2>📊 Activity History</h2>
+
+   <div class="card">
+    ❤️ Likes
+    <hr>
+    💬 Comments
+    <hr>
+    🎬 Reels watched
+    <hr>
+    🛒 Marketplace activity
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="about"){
+
+  html=`
+
+   <h2>ℹ️ About ShakibYS</h2>
+
+   <div class="card">
+
+    <h3>ShakibYS Premium</h3>
+
+    <p>
+     ShakibYS একটি সামাজিক যোগাযোগ ও
+     ডিজিটাল মার্কেটপ্লেস প্ল্যাটফর্ম।
+    </p>
+
+    <p>
+     <b>প্রতিষ্ঠাতা:</b>
+     মোহাম্মদ নাজমুজ সাকিব
+    </p>
+
+    <hr>
+
+    <p>📱 App Version: 1.0</p>
+    <p>👨‍💻 Developer: Mohammad Nazmus Sakib</p>
+    <p>📜 Terms</p>
+    <p>🔐 Privacy Policy</p>
+    <p>👥 Community Guidelines</p>
+    <p>📞 Contact</p>
+    <p>❓ Help Center</p>
+
+   </div>
+
+  `;
+
+ }
+
+
+ else if(type==="seller"){
+
+  html=`
+
+   <h2>🏪 Seller Dashboard</h2>
+
+   <div class="menu">
+
+    <button onclick="toast('Add Product')">
+     <span>➕</span>Add Product
+    </button>
+
+    <button onclick="toast('Edit Products')">
+     <span>✏️</span>Edit
+    </button>
+
+    <button onclick="toast('Stock')">
+     <span>📦</span>Stock
+    </button>
+
+    <button onclick="toast('Sales')">
+     <span>💰</span>Sales
+    </button>
+
+    <button onclick="toast('Orders')">
+     <span>🧾</span>Orders
+    </button>
+
+   </div>
+
+  `;
+
+ }
+
+ document.getElementById("modalBody").innerHTML=html;
+
+ document.getElementById("modal").classList.add("show");
+
+}
+
+
+function closeModal(){
+
+ document
+  .getElementById("modal")
+  .classList.remove("show");
+
+}
+
+
+function openChat(room){
+
+ window.currentChat=room;
+
+ openModal("chat");
+
+ document.getElementById("modalBody").innerHTML=`
+
+  <h2>💬 ${room}</h2>
+
+  <div class="chat">
+
+   <div
+    class="messages"
+    id="messages"
+   ></div>
+
+   <div class="composer">
+
+    <input
+     id="chatInput"
+     class="input"
+     placeholder="Message..."
+     onkeydown="if(event.key==='Enter')sendMessage()"
+    >
+
+    <button
+     class="send"
+     onclick="sendMessage()"
+    >
+     ➤
+    </button>
+
+   </div>
+
   </div>
+
  `;
 
- box.appendChild(div);
-
- box.scrollTop=box.scrollHeight;
-
-});
+}
 
 
 function sendMessage(){
 
- const input=$("chatInput");
+ const input=document.getElementById("chatInput");
+
+ if(!input)return;
 
  const text=input.value.trim();
 
  if(!text)return;
 
- socket.emit("chat:send",{text});
-
- input.value="";
-
-}
-
-
-function chatKey(e){
-
- if(e.key==="Enter"){
-  sendMessage();
- }
-}
-
-
-function typing(){
-
- socket.emit("chat:typing",true);
-
- clearTimeout(typingTimer);
-
- typingTimer=setTimeout(()=>{
-  socket.emit("chat:typing",false);
- },800);
-}
-
-
-socket.on("chat:typing",(data)=>{
-
- $("typing").textContent=
- data.typing
- ? `${data.username} is typing...`
- : "";
-
-});
-
-
-/* =========================================
-   POSTS
-========================================= */
-
-function createPost(){
-
- const input=$("postInput");
-
- const content=input.value.trim();
-
- if(!content){
-  toast("Post লিখুন");
-  return;
- }
-
- socket.emit("post:create",{content});
-
- input.value="";
-}
-
-
-socket.on("post:new",(post)=>{
-
- posts.unshift(post);
-
- renderPosts();
-
-});
-
-
-socket.on("post:updated",(post)=>{
-
- const index=posts.findIndex(
-  x=>x.id===post.id
- );
-
- if(index>=0)
-  posts[index]=post;
-
- renderPosts();
-
-});
-
-
-function renderPosts(){
-
- const feed=$("feed");
-
- feed.innerHTML="";
-
- posts.forEach(post=>{
-
-  const div=document.createElement("div");
-
-  div.className="card";
-
-  div.innerHTML=`
-
-   <div class="post-head">
-
-    <div class="avatar">
-     ${escapeHTML((post.author||"S")[0].toUpperCase())}
-    </div>
-
-    <div>
-     <div class="post-author">
-      ${escapeHTML(post.author)}
-     </div>
-
-     <div class="post-time">
-      ${new Date(post.time).toLocaleString()}
-     </div>
-    </div>
-
-   </div>
-
-   <div class="post-content">
-    ${escapeHTML(post.content)}
-   </div>
-
-   <div class="post-actions">
-
-    <button onclick="likePost('${post.id}')">
-     ❤️ ${post.likes?.length||0}
-    </button>
-
-    <button onclick="commentPost('${post.id}')">
-     💬 ${post.comments?.length||0}
-    </button>
-
-    <button onclick="sharePost('${post.id}')">
-     🔄 ${post.shares||0}
-    </button>
-
-   </div>
-
-   <div class="comments">
-
-    ${(post.comments||[]).slice(-5).map(c=>`
-     <div class="comment">
-      <b>${escapeHTML(c.username)}</b>
-      ${escapeHTML(c.text)}
-     </div>
-    `).join("")}
-
-   </div>
-
-  `;
-
-  feed.appendChild(div);
-
- });
-
-}
-
-
-function likePost(id){
- socket.emit("post:like",id);
-}
-
-
-function commentPost(id){
-
- const text=prompt("Comment লিখুন:");
-
- if(text?.trim()){
-  socket.emit("post:comment",{
-   postId:id,
-   text:text.trim()
-  });
- }
-
-}
-
-
-function sharePost(id){
-
- socket.emit("post:share",id);
-
- toast("Post shared");
-}
-
-
-/* =========================================
-   STORIES
-========================================= */
-
-function renderStories(storyList){
-
- const container=$("stories");
-
- container.innerHTML=`
-
-  <div class="story add-story"
-       onclick="openStoryModal()">
-
-   <b style="font-size:25px">＋</b>
-   Story
-
-  </div>
-
- `;
-
- storyList.forEach(story=>{
-
-  const div=document.createElement("div");
-
-  div.className="story";
-
-  if(story.type==="video"){
-
-   div.innerHTML=`
-    <video src="${escapeHTML(story.media)}"
-           muted></video>
-    <div class="story-name">
-     ${escapeHTML(story.username)}
-    </div>
-   `;
-
-  }else{
-
-   div.innerHTML=`
-    <img src="${escapeHTML(story.media)}">
-    <div class="story-name">
-     ${escapeHTML(story.username)}
-    </div>
-   `;
-
-  }
-
-  div.onclick=()=>{
-
-   socket.emit("story:view",story.id);
-
-   openStory(story);
-
-  };
-
-  container.appendChild(div);
-
- });
-
-}
-
-
-socket.on("story:new",(story)=>{
-
- const container=$("stories");
-
- const existing=[];
-
- document.querySelectorAll(".story")
- .forEach((x,i)=>{
-  if(i>0) existing.push(x);
- });
-
- renderStories([story,...existing.map(()=>({}))]);
-
- toast("New Story 🔥");
-
-});
-
-
-socket.on("stories:update",(stories)=>{
-
- renderStories(stories);
-
-});
-
-
-function openStoryModal(){
-
- openModal(
-  "Create Story",
-  `
-
-  <input id="storyMedia"
-         class="input"
-         placeholder="Image/Video URL">
-
-  <input id="storyCaption"
-         class="input"
-         placeholder="Story caption">
-
-  <button class="btn"
-          onclick="createStory()">
-   Publish Story
-  </button>
-
-  <p style="font-size:11px;color:var(--muted);margin-top:10px">
-   Story 24 ঘণ্টা পর expire হবে।
-  </p>
-
-  `
- );
-
-}
-
-
-function createStory(){
-
- const media=$("storyMedia").value.trim();
-
- const caption=$("storyCaption").value.trim();
-
- if(!media){
-  toast("Media URL দিন");
-  return;
- }
-
- const type=
- /\.(mp4|webm|mov)(\?.*)?$/i.test(media)
- ? "video"
- : "image";
-
- socket.emit("story:create",{
-  media,
-  caption,
-  type
- });
-
- closeModal();
-
- toast("Story published");
-}
-
-
-function openStory(story){
-
- openModal(
-  story.username+"'s Story",
-  `
-
-  ${
-   story.type==="video"
-   ? `<video src="${escapeHTML(story.media)}"
-             controls autoplay
-             style="width:100%;border-radius:15px"></video>`
-   : `<img src="${escapeHTML(story.media)}"
-           style="width:100%;border-radius:15px">`
-  }
-
-  <p style="margin-top:10px">
-   ${escapeHTML(story.caption||"")}
-  </p>
-
-  <small style="color:var(--muted)">
-   👀 ${story.views?.length||0} views
-  </small>
-
-  `
- );
-
-}
-
-
-/* =========================================
-   USERS
-========================================= */
-
-socket.on("users:update",(list)=>{
-
- users=list;
-
- renderUsers();
-
-});
-
-
-function renderUsers(){
-
- const box=$("users");
-
- const search=$("userSearch")?.value.toLowerCase()||"";
-
- box.innerHTML="";
-
- users
- .filter(u=>
-  u.username.toLowerCase().includes(search)
- )
- .forEach(user=>{
-
-  const div=document.createElement("div");
-
-  div.className="user-row";
-
-  div.innerHTML=`
-
-   <div class="avatar">
-    ${escapeHTML(user.username[0].toUpperCase())}
-   </div>
-
-   <div class="user-info">
-
-    <b>${escapeHTML(user.username)}</b>
-
-    <div style="font-size:10px">
-     <span class="online"></span>
-     Online
-    </div>
-
-   </div>
-
-   <button class="user-btn"
-           onclick="sendFriend('${user.id}')">
-    Add Friend
-   </button>
-
-  `;
-
-  box.appendChild(div);
-
- });
-
-}
-
-
-function filterUsers(){
- renderUsers();
-}
-
-
-function sendFriend(id){
-
- socket.emit("friend:request",id);
-
- toast("Friend Request sent");
-}
-
-
-socket.on("friend:request",(request)=>{
-
- toast(
-  request.from+" sent you a Friend Request"
- );
-
-});
-
-
-/* =========================================
-   MARKETPLACE
-========================================= */
-
-function renderMarket(){
-
- const grid=$("marketGrid");
-
- grid.innerHTML="";
-
- marketItems.forEach(item=>{
-
-  const div=document.createElement("div");
-
-  div.className="product";
-
-  div.innerHTML=`
-
-   ${
-    item.image
-    ? `<img src="${escapeHTML(item.image)}">`
-    : `<div style="height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;background:#eee">🛒</div>`
+ if(socket){
+
+  socket.emit(
+   "chat:message",
+   {
+    room:window.currentChat,
+    sender:user,
+    text:text
    }
+  );
 
-   <div class="product-body">
-
-    <b>${escapeHTML(item.title)}</b>
-
-    <div class="price">
-     ${escapeHTML(item.price)}
-    </div>
-
-    <p style="font-size:11px;color:var(--muted);margin-top:5px">
-     ${escapeHTML(item.description)}
-    </p>
-
-    <small>
-     👤 ${escapeHTML(item.seller)}
-    </small>
-
-   </div>
-
-  `;
-
-  grid.appendChild(div);
-
- });
-
-}
-
-
-socket.on("market:new",(item)=>{
-
- marketItems.unshift(item);
-
- renderMarket();
-
- toast("New Marketplace item");
-
-});
-
-
-function openMarketModal(){
-
- openModal(
-  "Sell Product",
-  `
-
-  <input id="productTitle"
-         class="input"
-         placeholder="Product name">
-
-  <input id="productPrice"
-         class="input"
-         placeholder="Price">
-
-  <input id="productImage"
-         class="input"
-         placeholder="Image URL">
-
-  <textarea id="productDescription"
-            class="input"
-            placeholder="Description"
-            style="min-height:100px"></textarea>
-
-  <button class="btn"
-          onclick="publishProduct()">
-   Publish Product
-  </button>
-
-  `
- );
-
-}
-
-
-function publishProduct(){
-
- const title=$("productTitle").value.trim();
- const price=$("productPrice").value.trim();
- const image=$("productImage").value.trim();
- const description=$("productDescription").value.trim();
-
- if(!title||!price){
-  toast("Product name ও price দিন");
-  return;
  }
 
- socket.emit("market:create",{
-  title,
-  price,
-  image,
-  description
- });
+ addMessage(user,text,true);
+
+ input.value="";
+
+ sound();
+
+}
+
+
+function addMessage(sender,text,mine){
+
+ const box=document.getElementById("messages");
+
+ if(!box)return;
+
+ const div=document.createElement("div");
+
+ div.className="message"+(mine?" mine":"");
+
+ div.innerHTML=
+  "<b>"+escapeHTML(sender)+
+  "</b><br>"+
+  escapeHTML(text);
+
+ box.appendChild(div);
+
+ box.scrollTop=box.scrollHeight;
+
+}
+
+
+function createGroup(){
+
+ const name=
+  document.getElementById("groupName").value.trim();
+
+ if(!name){
+
+  toast("Group name দিন");
+
+  return;
+
+ }
+
+ if(socket){
+
+  socket.emit(
+   "group:create",
+   {
+    name:name,
+    creator:user
+   }
+  );
+
+ }
+
+ toast("Group created: "+name);
 
  closeModal();
 
 }
 
 
-/* =========================================
-   AI ASSISTANT
-========================================= */
+function product(name,price){
 
-function askAI(){
+ openModal("product");
 
- const input=$("aiInput").value.trim();
+ document.getElementById("modalBody").innerHTML=`
 
- if(!input){
-  toast("আপনার প্রশ্ন লিখুন");
-  return;
- }
+  <h2>${name}</h2>
 
- $("aiResult").innerHTML=`
-  <b>✨ AI Suggestion</b><br><br>
+  <div class="price">${price}</div>
 
-  আপনার পণ্যটির জন্য একটি পরিষ্কার title দিন,
-  তারপর ভালো ছবি ব্যবহার করুন এবং description-এ
-  product condition, price এবং delivery information
-  লিখুন।
+  <p>
+   ⭐ 4.8 • Verified Seller
+  </p>
 
-  <br><br>
+  <div class="form">
 
-  <b>Suggested reply:</b><br>
+   <input
+    placeholder="Quantity"
+    value="1"
+   >
 
-  আসসালামু আলাইকুম। পণ্যটি এখনো available আছে।
-  আপনি চাইলে product details এবং delivery সম্পর্কে
-  জানতে পারেন।
+   <input
+    placeholder="Delivery address"
+   >
+
+   <select>
+
+    <option>
+     Cash on Delivery
+    </option>
+
+    <option>
+     Payment Gateway
+    </option>
+
+    <option>
+     Card / Mobile Payment
+    </option>
+
+   </select>
+
+   <button
+    class="btn"
+    onclick="toast('Added to Cart')"
+   >
+    🛒 Add to Cart
+   </button>
+
+   <button
+    class="btn primary"
+    onclick="toast('Order created — real payment gateway must be connected on backend');closeModal()"
+   >
+    💳 Buy Now
+   </button>
+
+  </div>
+
  `;
 
 }
 
 
-/* =========================================
-   NOTIFICATIONS
-========================================= */
+function search(q){
 
-socket.on("notification:new",(notification)=>{
+ const box=
+  document.getElementById("searchResult");
 
- notifications.unshift(notification);
+ if(!box)return;
 
- renderNotifications();
+ if(!q){
 
-});
-
-
-function renderNotifications(){
-
- const box=$("notificationList");
-
- box.innerHTML="";
-
- if(!notifications.length){
-
-  box.innerHTML=`
-   <div class="card">
-    No notifications
-   </div>
-  `;
+  box.innerHTML="Search শুরু করুন...";
 
   return;
+
  }
 
- notifications.forEach(n=>{
+ box.innerHTML=`
 
-  const div=document.createElement("div");
+  <b>Search results:</b>
+  ${escapeHTML(q)}
 
-  div.className="card";
+  <hr>
 
-  div.innerHTML=`
-   🔔 ${escapeHTML(n.message)}
-   <div style="font-size:10px;color:var(--muted);margin-top:5px">
-    ${new Date(n.time).toLocaleString()}
-   </div>
-  `;
+  👤 People
 
-  box.appendChild(div);
+  <hr>
 
- });
+  📝 Posts
+
+  <hr>
+
+  🎬 Reels
+
+  <hr>
+
+  👥 Groups
+
+  <hr>
+
+  🛒 Marketplace
+
+  <hr>
+
+  #️⃣ Hashtags
+
+ `;
 
 }
 
 
-function openNotifications(){
+function filterProducts(q){
 
- document.querySelectorAll(".section")
- .forEach(x=>x.classList.remove("active"));
+ document
+  .querySelectorAll(".product")
+  .forEach(card=>{
 
- $("notifications").classList.add("active");
+   card.style.display=
+    card.innerText
+    .toLowerCase()
+    .includes(q.toLowerCase())
+    ?"block":"none";
+
+  });
 
 }
 
 
-function openSearch(){
+function like(button){
 
- openModal(
-  "Search ShakibYS",
-  `
+ button.textContent="❤️ Liked";
 
-  <input id="searchAll"
-         class="input"
-         placeholder="Search users / products / posts..."
-         oninput="globalSearch()">
+ sound();
 
-  <div id="searchResults"></div>
+}
 
-  `
+
+function theme(color){
+
+ document.documentElement
+  .style.setProperty("--primary",color);
+
+ localStorage.setItem(
+  "shakibys_theme",
+  color
  );
 
-}
-
-
-function globalSearch(){
-
- const q=$("searchAll").value.toLowerCase();
-
- const results=$("searchResults");
-
- results.innerHTML="";
-
- users
- .filter(u=>u.username.toLowerCase().includes(q))
- .forEach(u=>{
-
-  results.innerHTML+=`
-   <div class="user-row">
-    <div class="avatar">${u.username[0]}</div>
-    <div>${escapeHTML(u.username)}</div>
-   </div>
-  `;
-
- });
-
-}
-
-
-/* =========================================
-   SETTINGS
-========================================= */
-
-function openSettings(){
-
- openModal(
-  "Settings",
-  `
-
-  <div class="card">
-
-   <b>Appearance</b>
-
-   <button class="btn"
-           onclick="toggleDark()">
-    🌙 Toggle Dark Mode
-   </button>
-
-  </div>
-
-  <div class="card">
-
-   <b>Account</b>
-
-   <p style="font-size:12px;color:var(--muted);margin-top:8px">
-    Phone: ${escapeHTML(currentUser?.phone||"")}
-   </p>
-
-  </div>
-
-  <div class="card">
-
-   <b>Safety</b>
-
-   <button class="btn"
-           onclick="toast('Block system ready')">
-    🚫 Block / Report
-   </button>
-
-  </div>
-
-  `
- );
-
+ closeModal();
 
 }
 
@@ -1984,44 +2158,54 @@ function toggleDark(){
 }
 
 
-if(localStorage.getItem("shakibys_dark")==="true"){
+function logout(){
+
+ localStorage.removeItem("shakibys_user");
+
+ location.reload();
+
+}
+
+
+function escapeHTML(text){
+
+ return text
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+
+if(
+ localStorage.getItem("shakibys_dark")
+ ==="true"
+){
+
  document.body.classList.add("dark");
-}
-
-
-/* =========================================
-   MODAL
-========================================= */
-
-function openModal(title,body){
-
- $("modalTitle").textContent=title;
- $("modalBody").innerHTML=body;
-
- $("modal").classList.remove("hidden");
 
 }
 
 
-function closeModal(){
+const savedTheme=
+ localStorage.getItem("shakibys_theme");
 
- $("modal").classList.add("hidden");
+if(savedTheme){
+
+ document.documentElement
+  .style.setProperty(
+   "--primary",
+   savedTheme
+  );
 
 }
 
 
-/* =========================================
-   ONLINE STATUS
-========================================= */
-
-window.addEventListener("beforeunload",()=>{
-
- socket.disconnect();
-
-});
-
+boot();
 
 </script>
 
 </body>
-    </html>
+</html>
