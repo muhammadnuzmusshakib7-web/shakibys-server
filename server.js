@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const express = require("express");
 const http = require("http");
 const path = require("path");
@@ -10,21 +8,11 @@ const app = express();
 const server = http.createServer(app);
 
 const PORT = process.env.PORT || 10000;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
 
 app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
-
-/* =========================================================
-   FRONTEND STATIC FILES
-========================================================= */
-
 app.use(express.static(__dirname));
-
-/* =========================================================
-   SOCKET.IO
-========================================================= */
 
 const io = new Server(server, {
   cors: {
@@ -33,1101 +21,582 @@ const io = new Server(server, {
   }
 });
 
-/* =========================================================
-   IN-MEMORY DATA
-========================================================= */
+/* =========================
+   MEMORY DATABASE
+========================= */
 
+const users = [];
 const posts = [];
 const messages = [];
 
-const onlineUsers = new Map();
-const userSockets = new Map();
+const socketsByUser = new Map();
+const userBySocket = new Map();
 
-/* =========================================================
+/* =========================
    HELPERS
-========================================================= */
+========================= */
 
-function clean(value, fallback = "") {
-  return String(value ?? fallback).trim();
-}
-
-function makeId(prefix) {
-  return (
-    prefix +
-    "_" +
-    Date.now() +
-    "_" +
-    Math.random()
-      .toString(36)
-      .substring(2, 10)
-  );
+function clean(v, fallback = "") {
+  return String(v ?? fallback).trim();
 }
 
 function conversationId(a, b) {
-  return [String(a), String(b)]
-    .sort()
-    .join("_");
+  return [String(a), String(b)].sort().join("_");
 }
 
-function sendToUser(userId, event, data) {
-  const socketId =
-    userSockets.get(String(userId));
+function sendUser(userId, event, data) {
+  const socketId = socketsByUser.get(String(userId));
 
-  if (!socketId) {
-    return false;
-  }
+  if (!socketId) return false;
 
-  io.to(socketId).emit(
-    event,
-    data
-  );
-
+  io.to(socketId).emit(event, data);
   return true;
 }
 
-/* =========================================================
-   SOCKET CONNECTION
-========================================================= */
+function publicUser(user) {
+  return {
+    id: user.id,
+    phone: user.phone,
+    name: user.name,
+    avatar: user.avatar || "",
+    online: !!user.online,
+    lastSeen: user.lastSeen
+  };
+}
 
-io.on("connection", (socket) => {
-  console.log(
-    "🟢 Socket connected:",
-    socket.id
+/* =========================
+   HEALTH
+========================= */
+
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    app: "ShakibYS",
+    server: "online",
+    messenger: "enabled",
+    voiceCall: "enabled",
+    videoCall: "enabled",
+    newsFeed: "enabled",
+    ai: process.env.OPENAI_API_KEY ? "enabled" : "not configured",
+    users: users.length,
+    posts: posts.length
+  });
+});
+
+/* =========================
+   REGISTER / LOGIN
+========================= */
+
+app.post("/api/auth", (req, res) => {
+  const phone = clean(req.body.phone);
+  const name = clean(req.body.name, "Shakib");
+
+  if (!phone) {
+    return res.status(400).json({
+      success: false,
+      message: "মোবাইল নম্বর দিন"
+    });
+  }
+
+  if (phone.length < 5) {
+    return res.status(400).json({
+      success: false,
+      message: "সঠিক মোবাইল নম্বর দিন"
+    });
+  }
+
+  let user = users.find(u => u.phone === phone);
+
+  if (!user) {
+    user = {
+      id: "u_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
+      phone,
+      name,
+      avatar: "",
+      online: false,
+      lastSeen: new Date().toISOString()
+    };
+
+    users.push(user);
+  } else if (name) {
+    user.name = name;
+  }
+
+  res.json({
+    success: true,
+    user: publicUser(user)
+  });
+});
+
+/* =========================
+   USER SEARCH
+========================= */
+
+app.get("/api/users", (req, res) => {
+  const q = clean(req.query.q).toLowerCase();
+  const current = clean(req.query.current);
+
+  let result = users.filter(u => u.phone !== current);
+
+  if (q) {
+    result = result.filter(u =>
+      u.name.toLowerCase().includes(q) ||
+      u.phone.toLowerCase().includes(q)
+    );
+  }
+
+  res.json({
+    success: true,
+    users: result.slice(0, 50).map(publicUser)
+  });
+});
+
+/* =========================
+   GET POSTS
+========================= */
+
+app.get("/api/posts", (req, res) => {
+  res.json({
+    success: true,
+    posts: posts.slice(-50).reverse()
+  });
+});
+
+/* =========================
+   CREATE POST
+========================= */
+
+app.post("/api/posts", (req, res) => {
+  const author = clean(req.body.author, "Shakib");
+  const authorId = clean(req.body.authorId);
+  const content = clean(req.body.content);
+
+  if (!content) {
+    return res.status(400).json({
+      success: false,
+      message: "Post লিখুন"
+    });
+  }
+
+  const post = {
+    id: "p_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+    author,
+    authorId,
+    content,
+    likes: 0,
+    comments: 0,
+    shares: 0,
+    createdAt: new Date().toISOString()
+  };
+
+  posts.push(post);
+
+  io.emit("post:created", post);
+
+  res.status(201).json({
+    success: true,
+    post
+  });
+});
+
+/* =========================
+   CHAT HISTORY
+========================= */
+
+app.get("/api/messages/:a/:b", (req, res) => {
+  const cid = conversationId(
+    req.params.a,
+    req.params.b
   );
 
-  /* =======================================================
-     USER ONLINE
-  ======================================================= */
+  const result = messages.filter(
+    m => m.conversationId === cid
+  );
 
-  socket.on(
-    "user:online",
-    (data) => {
-      try {
-        const userId = clean(
-          data?.userId ||
-          data?.phone ||
-          socket.id
-        );
+  res.json({
+    success: true,
+    messages: result
+  });
+});
 
-        const name = clean(
-          data?.name,
-          "Shakib"
-        );
+/* =========================
+   AI
+========================= */
 
-        onlineUsers.set(
-          socket.id,
-          {
-            userId,
-            name
-          }
-        );
+app.post("/api/ai", async (req, res) => {
+  const question = clean(req.body.message);
 
-        userSockets.set(
-          userId,
-          socket.id
-        );
+  if (!question) {
+    return res.status(400).json({
+      success: false,
+      message: "প্রশ্ন লিখুন"
+    });
+  }
 
-        io.emit(
-          "user:status",
-          {
-            userId,
-            name,
-            online: true
-          }
-        );
+  if (!process.env.OPENAI_API_KEY) {
+    return res.json({
+      success: true,
+      answer:
+        "AI চালু করতে Render Environment Variables-এ OPENAI_API_KEY যোগ করতে হবে।"
+    });
+  }
 
-        console.log(
-          "🟢 User online:",
-          name
-        );
-
-      } catch (error) {
-        console.error(
-          "user:online:",
-          error.message
-        );
+  try {
+    const response = await fetch(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization":
+            "Bearer " + process.env.OPENAI_API_KEY
+        },
+        body: JSON.stringify({
+          model: process.env.AI_MODEL || "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are ShakibYS AI. Reply naturally. If user writes Bengali, reply in Bengali."
+            },
+            {
+              role: "user",
+              content: question
+            }
+          ],
+          max_tokens: 700
+        })
       }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(500).json({
+        success: false,
+        message: data?.error?.message || "AI error"
+      });
     }
-  );
 
-  /* =======================================================
-     NEWS FEED INITIAL
-  ======================================================= */
+    res.json({
+      success: true,
+      answer:
+        data?.choices?.[0]?.message?.content ||
+        "AI উত্তর দিতে পারেনি।"
+    });
 
-  socket.emit(
-    "posts:init",
-    posts
-      .filter(
-        (post) =>
-          post.privacy ===
-          "public"
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "AI server error"
+    });
+  }
+});
+
+/* =========================
+   SOCKET.IO
+========================= */
+
+io.on("connection", socket => {
+
+  console.log("Socket connected:", socket.id);
+
+  /* USER ONLINE */
+
+  socket.on("user:online", data => {
+    const userId = clean(data?.userId);
+    const phone = clean(data?.phone);
+    const name = clean(data?.name, "Shakib");
+
+    const id = userId || phone;
+
+    if (!id) return;
+
+    socketsByUser.set(String(id), socket.id);
+    userBySocket.set(socket.id, String(id));
+
+    const user = users.find(
+      u => u.id === id || u.phone === phone || u.phone === id
+    );
+
+    if (user) {
+      user.online = true;
+      user.lastSeen = new Date().toISOString();
+      if (name) user.name = name;
+    }
+
+    io.emit("user:status", {
+      userId: id,
+      online: true
+    });
+
+    socket.emit(
+      "posts:init",
+      posts.slice(-50).reverse()
+    );
+  });
+
+  /* POST */
+
+  socket.on("post:create", data => {
+    const author = clean(data?.author, "Shakib");
+    const authorId = clean(data?.authorId);
+    const content = clean(data?.content);
+
+    if (!content) {
+      socket.emit("post:error", {
+        message: "Post লিখুন"
+      });
+      return;
+    }
+
+    const post = {
+      id: "p_" + Date.now(),
+      author,
+      authorId,
+      content,
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      createdAt: new Date().toISOString()
+    };
+
+    posts.push(post);
+
+    io.emit("post:created", post);
+  });
+
+  /* MESSAGE */
+
+  socket.on("message:send", data => {
+    const senderId = clean(data?.senderId);
+    const senderName = clean(data?.senderName, "Shakib");
+    const receiverId = clean(data?.receiverId);
+    const text = clean(data?.text);
+
+    if (!senderId || !receiverId || !text) return;
+
+    const message = {
+      id: "m_" + Date.now() + "_" +
+        Math.random().toString(36).slice(2, 7),
+      conversationId:
+        conversationId(senderId, receiverId),
+      senderId,
+      senderName,
+      receiverId,
+      text,
+      type: clean(data?.type, "text"),
+      createdAt: new Date().toISOString()
+    };
+
+    messages.push(message);
+
+    socket.emit("message:new", message);
+
+    sendUser(
+      receiverId,
+      "message:new",
+      message
+    );
+  });
+
+  /* MESSAGE HISTORY */
+
+  socket.on("message:history", data => {
+    const a = clean(data?.userA);
+    const b = clean(data?.userB);
+
+    if (!a || !b) return;
+
+    const cid = conversationId(a, b);
+
+    socket.emit(
+      "message:history",
+      messages.filter(
+        m => m.conversationId === cid
       )
-      .slice(0, 50)
-  );
+    );
+  });
 
-  /* =======================================================
-     CREATE POST
-  ======================================================= */
+  /* TYPING */
 
-  socket.on(
-    "post:create",
-    (data) => {
-      try {
-        const author = clean(
-          data?.author,
-          "Shakib"
-        );
-
-        const authorId = clean(
-          data?.authorId
-        );
-
-        const content = clean(
-          data?.content
-        );
-
-        const privacy = clean(
-          data?.privacy,
-          "public"
-        );
-
-        if (!content) {
-          socket.emit(
-            "post:error",
-            {
-              message:
-                "Post লিখুন"
-            }
-          );
-
-          return;
-        }
-
-        const post = {
-          id: makeId("post"),
-
-          author,
-
-          authorId,
-
-          content,
-
-          privacy:
-            privacy ===
-            "public"
-              ? "public"
-              : privacy,
-
-          likes: 0,
-
-          comments: 0,
-
-          shares: 0,
-
-          createdAt:
-            new Date().toISOString()
-        };
-
-        posts.unshift(post);
-
-        if (posts.length > 200) {
-          posts.pop();
-        }
-
-        if (
-          post.privacy ===
-          "public"
-        ) {
-          io.emit(
-            "post:created",
-            post
-          );
-        } else {
-          socket.emit(
-            "post:created",
-            post
-          );
-        }
-
-        console.log(
-          "📝 Post created:",
-          author
-        );
-
-      } catch (error) {
-        console.error(
-          "post:create:",
-          error.message
-        );
-
-        socket.emit(
-          "post:error",
-          {
-            message:
-              "Post তৈরি করা যায়নি"
-          }
-        );
+  socket.on("typing:start", data => {
+    sendUser(
+      clean(data?.receiverId),
+      "typing:start",
+      {
+        senderName:
+          clean(data?.senderName, "Someone")
       }
-    }
-  );
+    );
+  });
 
-  /* =======================================================
-     LIKE
-  ======================================================= */
+  socket.on("typing:stop", data => {
+    sendUser(
+      clean(data?.receiverId),
+      "typing:stop",
+      {}
+    );
+  });
 
-  socket.on(
-    "post:like",
-    (postId) => {
-      try {
-        const post =
-          posts.find(
-            (item) =>
-              item.id ===
-              postId
-          );
+  /* =========================
+     WEBRTC AUDIO / VIDEO CALL
+  ========================= */
 
-        if (!post) {
-          return;
-        }
-
-        post.likes++;
-
-        io.emit(
-          "post:updated",
-          post
-        );
-
-      } catch (error) {
-        console.error(
-          "post:like:",
-          error.message
-        );
+  socket.on("call:offer", data => {
+    sendUser(
+      clean(data?.receiverId),
+      "call:offer",
+      {
+        callerId: clean(data?.callerId),
+        callerName:
+          clean(data?.callerName, "Someone"),
+        callType:
+          clean(data?.callType, "voice"),
+        offer: data?.offer
       }
-    }
-  );
+    );
+  });
 
-  /* =======================================================
-     SEND MESSAGE
-  ======================================================= */
-
-  socket.on(
-    "message:send",
-    (data) => {
-      try {
-        const senderId =
-          clean(
-            data?.senderId
-          );
-
-        const senderName =
-          clean(
-            data?.senderName,
-            "Shakib"
-          );
-
-        const receiverId =
-          clean(
-            data?.receiverId
-          );
-
-        const text =
-          clean(
-            data?.text
-          );
-
-        const type =
-          clean(
-            data?.type,
-            "text"
-          );
-
-        if (
-          !senderId ||
-          !receiverId ||
-          !text
-        ) {
-          socket.emit(
-            "message:error",
-            {
-              message:
-                "Message data অসম্পূর্ণ"
-            }
-          );
-
-          return;
-        }
-
-        const message = {
-          id:
-            makeId("msg"),
-
-          conversationId:
-            conversationId(
-              senderId,
-              receiverId
-            ),
-
-          senderId,
-
-          senderName,
-
-          receiverId,
-
-          text,
-
-          type:
-            [
-              "text",
-              "image",
-              "file"
-            ].includes(type)
-              ? type
-              : "text",
-
-          createdAt:
-            new Date().toISOString()
-        };
-
-        messages.push(message);
-
-        if (
-          messages.length >
-          2000
-        ) {
-          messages.shift();
-        }
-
-        /* Sender */
-
-        socket.emit(
-          "message:new",
-          message
-        );
-
-        /* Receiver */
-
-        sendToUser(
-          receiverId,
-          "message:new",
-          message
-        );
-
-        console.log(
-          "💬 Message:",
-          senderName,
-          "→",
-          receiverId
-        );
-
-      } catch (error) {
-        console.error(
-          "message:send:",
-          error.message
-        );
-
-        socket.emit(
-          "message:error",
-          {
-            message:
-              "Message পাঠানো যায়নি"
-          }
-        );
+  socket.on("call:answer", data => {
+    sendUser(
+      clean(data?.callerId),
+      "call:answer",
+      {
+        receiverId:
+          clean(data?.receiverId),
+        answer: data?.answer
       }
-    }
-  );
+    );
+  });
 
-  /* =======================================================
-     MESSAGE HISTORY
-  ======================================================= */
-
-  socket.on(
-    "message:history",
-    (data) => {
-      try {
-        const userA =
-          clean(
-            data?.userA
-          );
-
-        const userB =
-          clean(
-            data?.userB
-          );
-
-        if (
-          !userA ||
-          !userB
-        ) {
-          return;
-        }
-
-        const cid =
-          conversationId(
-            userA,
-            userB
-          );
-
-        const history =
-          messages.filter(
-            (message) =>
-              message.conversationId ===
-              cid
-          );
-
-        socket.emit(
-          "message:history",
-          history.slice(-200)
-        );
-
-      } catch (error) {
-        console.error(
-          "message:history:",
-          error.message
-        );
+  socket.on("call:ice", data => {
+    sendUser(
+      clean(data?.targetUserId),
+      "call:ice",
+      {
+        candidate: data?.candidate
       }
-    }
-  );
+    );
+  });
 
-  /* =======================================================
-     TYPING START
-  ======================================================= */
+  socket.on("call:reject", data => {
+    sendUser(
+      clean(data?.callerId),
+      "call:rejected",
+      {
+        receiverId:
+          clean(data?.receiverId)
+      }
+    );
+  });
 
-  socket.on(
-    "typing:start",
-    (data) => {
-      const receiverId =
-        clean(
-          data?.receiverId
-        );
+  socket.on("call:end", data => {
+    sendUser(
+      clean(data?.targetUserId),
+      "call:ended",
+      {
+        from: clean(data?.from)
+      }
+    );
+  });
 
-      const senderName =
-        clean(
-          data?.senderName,
-          "Someone"
-        );
+  /* DISCONNECT */
 
-      sendToUser(
-        receiverId,
-        "typing:start",
-        {
-          senderName
-        }
+  socket.on("disconnect", () => {
+    const userId =
+      userBySocket.get(socket.id);
+
+    if (userId) {
+      socketsByUser.delete(userId);
+      userBySocket.delete(socket.id);
+
+      const user = users.find(
+        u => u.id === userId ||
+             u.phone === userId
       );
-    }
-  );
 
-  /* =======================================================
-     TYPING STOP
-  ======================================================= */
-
-  socket.on(
-    "typing:stop",
-    (data) => {
-      const receiverId =
-        clean(
-          data?.receiverId
-        );
-
-      sendToUser(
-        receiverId,
-        "typing:stop",
-        {}
-      );
-    }
-  );
-
-  /* =======================================================
-     AUDIO / VIDEO CALL
-     WEBRTC SIGNALING
-  ======================================================= */
-
-  /* CALL OFFER */
-
-  socket.on(
-    "call:offer",
-    (data) => {
-      const receiverId =
-        clean(
-          data?.receiverId
-        );
-
-      if (!receiverId) {
-        return;
+      if (user) {
+        user.online = false;
+        user.lastSeen =
+          new Date().toISOString();
       }
 
-      sendToUser(
-        receiverId,
-        "call:offer",
-        {
-          callerId:
-            clean(
-              data?.callerId
-            ),
-
-          callerName:
-            clean(
-              data?.callerName,
-              "Shakib"
-            ),
-
-          callType:
-            clean(
-              data?.callType,
-              "voice"
-            ),
-
-          offer:
-            data?.offer
-        }
-      );
-
-      console.log(
-        "📞 Call offer →",
-        receiverId
-      );
+      io.emit("user:status", {
+        userId,
+        online: false
+      });
     }
-  );
 
-  /* CALL ANSWER */
+    console.log(
+      "Socket disconnected:",
+      socket.id
+    );
+  });
+});
 
-  socket.on(
-    "call:answer",
-    (data) => {
-      const callerId =
-        clean(
-          data?.callerId
-        );
+/* =========================
+   FRONTEND
+========================= */
 
-      if (!callerId) {
-        return;
-      }
-
-      sendToUser(
-        callerId,
-        "call:answer",
-        {
-          receiverId:
-            clean(
-              data?.receiverId
-            ),
-
-          answer:
-            data?.answer
-        }
-      );
-    }
-  );
-
-  /* ICE */
-
-  socket.on(
-    "call:ice",
-    (data) => {
-      const targetUserId =
-        clean(
-          data?.targetUserId
-        );
-
-      if (!targetUserId) {
-        return;
-      }
-
-      sendToUser(
-        targetUserId,
-        "call:ice",
-        {
-          candidate:
-            data?.candidate
-        }
-      );
-    }
-  );
-
-  /* REJECT */
-
-  socket.on(
-    "call:reject",
-    (data) => {
-      const callerId =
-        clean(
-          data?.callerId
-        );
-
-      sendToUser(
-        callerId,
-        "call:rejected",
-        {
-          receiverId:
-            clean(
-              data?.receiverId
-            )
-        }
-      );
-    }
-  );
-
-  /* END */
-
-  socket.on(
-    "call:end",
-    (data) => {
-      const targetUserId =
-        clean(
-          data?.targetUserId
-        );
-
-      sendToUser(
-        targetUserId,
-        "call:ended",
-        {
-          from:
-            clean(
-              data?.from
-            )
-        }
-      );
-    }
-  );
-
-  /* =======================================================
-     DISCONNECT
-  ======================================================= */
-
-  socket.on(
-    "disconnect",
-    () => {
-      const info =
-        onlineUsers.get(
-          socket.id
-        );
-
-      onlineUsers.delete(
-        socket.id
-      );
-
-      if (!info) {
-        return;
-      }
-
-      const currentSocket =
-        userSockets.get(
-          info.userId
-        );
-
-      if (
-        currentSocket ===
-        socket.id
-      ) {
-        userSockets.delete(
-          info.userId
-        );
-
-        io.emit(
-          "user:status",
-          {
-            userId:
-              info.userId,
-
-            name:
-              info.name,
-
-            online:
-              false
-          }
-        );
-      }
-
-      console.log(
-        "🔴 User offline:",
-        info.name
-      );
-    }
+app.get("/", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "index.html")
   );
 });
 
-/* =========================================================
-   HEALTH API
-========================================================= */
+/* Express 5 compatible fallback */
 
-app.get(
-  "/api/health",
-  (req, res) => {
-    res.json({
-      success: true,
-
-      app:
-        "ShakibYS",
-
-      server:
-        "online",
-
-      database:
-        "in-memory",
-
-      socket:
-        "enabled",
-
-      messenger:
-        "enabled",
-
-      voiceCall:
-        "enabled",
-
-      videoCall:
-        "enabled",
-
-      newsFeed:
-        "enabled",
-
-      ai:
-        OPENAI_API_KEY
-          ? "enabled"
-          : "not configured",
-
-      time:
-        new Date().toISOString()
-    });
-  }
-);
-
-/* =========================================================
-   GET POSTS
-========================================================= */
-
-app.get(
-  "/api/posts",
-  (req, res) => {
-    res.json({
-      success: true,
-
-      posts:
-        posts
-          .filter(
-            (post) =>
-              post.privacy ===
-              "public"
-          )
-          .slice(0, 50)
-    });
-  }
-);
-
-/* =========================================================
-   CREATE POST API
-========================================================= */
-
-app.post(
-  "/api/posts",
-  (req, res) => {
-    try {
-      const author =
-        clean(
-          req.body?.author,
-          "Shakib"
-        );
-
-      const content =
-        clean(
-          req.body?.content
-        );
-
-      if (!content) {
-        return res.status(400).json({
-          success: false,
-
-          message:
-            "Post লিখুন"
-        });
-      }
-
-      const post = {
-        id:
-          makeId("post"),
-
-        author,
-
-        authorId:
-          clean(
-            req.body?.authorId
-          ),
-
-        content,
-
-        privacy:
-          "public",
-
-        likes: 0,
-
-        comments: 0,
-
-        shares: 0,
-
-        createdAt:
-          new Date().toISOString()
-      };
-
-      posts.unshift(post);
-
-      io.emit(
-        "post:created",
-        post
-      );
-
-      res.status(201).json({
-        success: true,
-
-        post
-      });
-
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-
-        message:
-          "Post তৈরি করা যায়নি"
-      });
-    }
-  }
-);
-
-/* =========================================================
-   CHAT HISTORY API
-========================================================= */
-
-app.get(
-  "/api/messages/:userA/:userB",
-  (req, res) => {
-    try {
-      const cid =
-        conversationId(
-          req.params.userA,
-          req.params.userB
-        );
-
-      const result =
-        messages.filter(
-          (message) =>
-            message.conversationId ===
-            cid
-        );
-
-      res.json({
-        success: true,
-
-        messages:
-          result.slice(-200)
-      });
-
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-
-        message:
-          "Messages পাওয়া যায়নি"
-      });
-    }
-  }
-);
-
-/* =========================================================
-   AI API
-========================================================= */
-
-app.post(
-  "/api/ai",
-  async (req, res) => {
-    try {
-      const question =
-        clean(
-          req.body?.message
-        );
-
-      if (!question) {
-        return res.status(400).json({
-          success: false,
-
-          message:
-            "প্রশ্ন লিখুন"
-        });
-      }
-
-      if (!OPENAI_API_KEY) {
-        return res.status(503).json({
-          success: false,
-
-          message:
-            "OPENAI_API_KEY সেট করা হয়নি"
-        });
-      }
-
-      const response =
-        await fetch(
-          "https://api.openai.com/v1/chat/completions",
-          {
-            method:
-              "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-
-              Authorization:
-                `Bearer ${OPENAI_API_KEY}`
-            },
-
-            body:
-              JSON.stringify({
-                model:
-                  process.env.AI_MODEL ||
-                  "gpt-4o-mini",
-
-                messages: [
-                  {
-                    role:
-                      "system",
-
-                    content:
-                      "You are ShakibYS AI. Answer naturally and helpfully. If the user writes Bengali, respond in Bengali."
-                  },
-
-                  {
-                    role:
-                      "user",
-
-                    content:
-                      question
-                  }
-                ],
-
-                temperature:
-                  0.7,
-
-                max_tokens:
-                  700
-              })
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-        return res.status(
-          response.status
-        ).json({
-          success: false,
-
-          message:
-            data?.error?.message ||
-            "AI response পাওয়া যায়নি"
-        });
-      }
-
-      const answer =
-        data?.choices?.[0]
-          ?.message?.content ||
-        "AI কোনো উত্তর দেয়নি।";
-
-      res.json({
-        success: true,
-
-        answer
-      });
-
-    } catch (error) {
-      console.error(
-        "AI error:",
-        error.message
-      );
-
-      res.status(500).json({
-        success: false,
-
-        message:
-          "AI server error"
-      });
-    }
-  }
-);
-
-/* =========================================================
-   FRONTEND FALLBACK
-   IMPORTANT:
-   Express 5 এ app.get("*") ব্যবহার করা হয়নি।
-========================================================= */
-
-app.use(
-  (req, res) => {
+app.use((req, res) => {
+  if (req.method === "GET") {
     res.sendFile(
-      path.join(
-        __dirname,
-        "index.html"
-      )
+      path.join(__dirname, "index.html")
     );
+  } else {
+    res.status(404).json({
+      success: false,
+      message: "Not found"
+    });
   }
-);
+});
 
-/* =========================================================
+/* =========================
    START
-========================================================= */
+========================= */
 
 server.listen(
   PORT,
   "0.0.0.0",
   () => {
-    console.log("");
     console.log(
-      "================================="
+      "================================"
     );
-
     console.log(
-      "🚀 SHAKIBYS SERVER ONLINE"
+      "🚀 ShakibYS SERVER ONLINE"
     );
-
     console.log(
-      "================================="
+      "💬 Messenger: ON"
     );
-
     console.log(
-      "📰 News Feed : ON"
+      "📞 Audio Call: ON"
     );
-
-    console.log(
-      "💬 Messenger : ON"
-    );
-
-    console.log(
-      "📞 Voice Call : ON"
-    );
-
     console.log(
       "🎥 Video Call: ON"
     );
-
     console.log(
-      "🔌 Socket.IO : ON"
+      "📰 News Feed: ON"
     );
-
     console.log(
-      "🤖 AI API    :",
-      OPENAI_API_KEY
+      "🤖 AI: " +
+      (process.env.OPENAI_API_KEY
         ? "ON"
-        : "OFF"
+        : "OFF")
     );
-
     console.log(
-      "💾 Database  : IN-MEMORY"
+      "🌐 PORT: " + PORT
     );
-
     console.log(
-      "🌐 PORT      :",
-      PORT
+      "================================"
     );
-
-    console.log(
-      "================================="
-    );
-
-    console.log("");
   }
 );
