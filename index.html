@@ -1,0 +1,4402 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>ShakibYS — Premium Social Marketplace</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+:root{
+    --primary:#ff245c;
+    --primary2:#ff4b7d;
+    --primary-dark:#dc1749;
+
+    --bg:#f5f7fb;
+    --surface:#ffffff;
+    --surface2:#f8fafc;
+
+    --text:#111827;
+    --muted:#6b7280;
+
+    --border:#e5e7eb;
+
+    --success:#16a34a;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+    --blue:#2563eb;
+
+    --shadow:0 10px 35px rgba(15,23,42,.08);
+    --radius:20px;
+
+    --nav-height:70px;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:"Inter","Noto Sans Bengali",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+button,
+input,
+textarea,
+select{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+img,
+video{
+    max-width:100%;
+    display:block;
+}
+
+.hidden{
+    display:none!important;
+}
+
+/* =========================
+   APP HEADER
+========================= */
+
+.app-header{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:64px;
+    background:rgba(255,255,255,.94);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    z-index:1000;
+}
+
+.header-inner{
+    height:100%;
+    max-width:1200px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 16px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:900;
+    color:var(--primary);
+    letter-spacing:-1px;
+}
+
+.logo span{
+    color:var(--text);
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.icon-btn{
+    width:42px;
+    height:42px;
+    border:none;
+    border-radius:50%;
+    background:var(--surface2);
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    transition:.2s;
+}
+
+.icon-btn:active{
+    transform:scale(.9);
+}
+
+.icon-btn:hover{
+    background:#ffe8ef;
+    color:var(--primary);
+}
+
+.badge{
+    position:absolute;
+    top:-2px;
+    right:-2px;
+    min-width:19px;
+    height:19px;
+    border-radius:50%;
+    background:var(--primary);
+    color:#fff;
+    font-size:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px solid #fff;
+}
+
+/* =========================
+   APP
+========================= */
+
+.app{
+    padding-top:64px;
+    padding-bottom:calc(var(--nav-height) + 15px);
+    min-height:100vh;
+}
+
+.page{
+    display:none;
+    max-width:760px;
+    margin:auto;
+    padding:16px;
+    animation:pageIn .25s ease;
+}
+
+.page.active{
+    display:block;
+}
+
+@keyframes pageIn{
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:var(--nav-height);
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(20px);
+    border-top:1px solid var(--border);
+    z-index:2000;
+    display:flex;
+    justify-content:center;
+}
+
+.nav-inner{
+    width:100%;
+    max-width:700px;
+    display:flex;
+}
+
+.nav-item{
+    flex:1;
+    border:none;
+    background:none;
+    color:#8a94a6;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    font-size:11px;
+    position:relative;
+}
+
+.nav-item i{
+    font-size:20px;
+}
+
+.nav-item.active{
+    color:var(--primary);
+}
+
+.nav-item.active:after{
+    content:"";
+    position:absolute;
+    bottom:0;
+    width:35px;
+    height:3px;
+    border-radius:10px;
+    background:var(--primary);
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+}
+
+.section-title{
+    font-size:21px;
+    font-weight:800;
+    margin:10px 0 16px;
+}
+
+.small{
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:12px 15px;
+    border-radius:16px;
+    margin-bottom:15px;
+}
+
+.search-box i{
+    color:var(--muted);
+}
+
+.search-box input{
+    width:100%;
+    border:none;
+    outline:none;
+    background:none;
+    color:var(--text);
+    font-size:14px;
+}
+
+/* =========================
+   STORIES
+========================= */
+
+.stories{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    padding:4px 1px 14px;
+    scrollbar-width:none;
+}
+
+.stories::-webkit-scrollbar{
+    display:none;
+}
+
+.story{
+    min-width:82px;
+    height:122px;
+    border-radius:18px;
+    overflow:hidden;
+    position:relative;
+    background:linear-gradient(145deg,#ff245c,#7c3aed);
+    color:#fff;
+    box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+
+.story img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.story:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(transparent 45%,rgba(0,0,0,.65));
+}
+
+.story-name{
+    position:absolute;
+    bottom:8px;
+    left:7px;
+    right:5px;
+    z-index:2;
+    font-size:11px;
+    font-weight:700;
+}
+
+.add-story{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:2px dashed #ff7396;
+    background:var(--surface);
+    color:var(--primary);
+}
+
+.add-story:after{
+    display:none;
+}
+
+.add-story i{
+    font-size:25px;
+}
+
+/* =========================
+   CREATE POST
+========================= */
+
+.create-card{
+    padding:15px;
+    margin-bottom:16px;
+}
+
+.create-top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ff245c,#7c3aed);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    flex-shrink:0;
+}
+
+.create-input{
+    flex:1;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:25px;
+    padding:12px 16px;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.create-actions{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-top:13px;
+}
+
+.create-action{
+    border:none;
+    background:var(--surface2);
+    padding:10px 5px;
+    border-radius:12px;
+    color:var(--text);
+    font-size:11px;
+    font-weight:700;
+}
+
+.create-action i{
+    margin-right:4px;
+}
+
+.create-action.photo i{
+    color:#22c55e;
+}
+
+.create-action.video i{
+    color:#ef4444;
+}
+
+.create-action.short i{
+    color:#7c3aed;
+}
+
+.create-action.emoji i{
+    color:#f59e0b;
+}
+
+/* =========================
+   POST
+========================= */
+
+.post{
+    padding:15px;
+    margin-bottom:15px;
+}
+
+.post-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+}
+
+.user-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.user-info strong{
+    font-size:14px;
+    display:block;
+}
+
+.user-info span{
+    font-size:10px;
+    color:var(--muted);
+}
+
+.more-btn{
+    border:none;
+    background:none;
+    padding:8px;
+    color:var(--muted);
+}
+
+.post-text{
+    font-size:14px;
+    line-height:1.65;
+    margin-bottom:12px;
+}
+
+.post-media{
+    width:100%;
+    border-radius:16px;
+    overflow:hidden;
+    background:#000;
+    margin-bottom:10px;
+}
+
+.post-media img,
+.post-media video{
+    width:100%;
+    max-height:500px;
+    object-fit:cover;
+}
+
+.post-stats{
+    display:flex;
+    justify-content:space-between;
+    color:var(--muted);
+    font-size:11px;
+    padding:7px 3px;
+    border-bottom:1px solid var(--border);
+}
+
+.post-buttons{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:5px;
+    margin-top:5px;
+}
+
+.post-buttons button{
+    border:none;
+    background:none;
+    padding:10px;
+    border-radius:10px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.post-buttons button:hover{
+    background:var(--surface2);
+}
+
+.post-buttons button.liked{
+    color:var(--primary);
+}
+
+/* =========================
+   CREATE PAGE
+========================= */
+
+.create-page-card{
+    padding:18px;
+}
+
+textarea{
+    width:100%;
+    min-height:130px;
+    border:1px solid var(--border);
+    background:var(--surface2);
+    border-radius:16px;
+    padding:14px;
+    resize:none;
+    outline:none;
+    color:var(--text);
+}
+
+.upload-box{
+    border:2px dashed #cbd5e1;
+    border-radius:18px;
+    padding:30px 15px;
+    text-align:center;
+    margin:15px 0;
+    color:var(--muted);
+}
+
+.upload-box i{
+    font-size:35px;
+    color:var(--primary);
+    margin-bottom:10px;
+}
+
+.primary-btn{
+    width:100%;
+    border:none;
+    color:#fff;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    padding:13px;
+    border-radius:14px;
+    font-weight:800;
+    box-shadow:0 7px 20px rgba(255,36,92,.25);
+}
+
+.secondary-btn{
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+    padding:11px 15px;
+    border-radius:12px;
+}
+
+/* =========================
+   MARKETPLACE
+========================= */
+
+.market-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.product-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.product{
+    overflow:hidden;
+    border-radius:18px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    box-shadow:0 6px 20px rgba(0,0,0,.05);
+}
+
+.product-image{
+    height:170px;
+    background:#e2e8f0;
+    overflow:hidden;
+}
+
+.product-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.product-body{
+    padding:12px;
+}
+
+.product-title{
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:5px;
+}
+
+.product-price{
+    color:var(--primary);
+    font-size:17px;
+    font-weight:900;
+}
+
+.product-old{
+    color:var(--muted);
+    font-size:10px;
+    text-decoration:line-through;
+    margin-left:5px;
+}
+
+.product-buy{
+    width:100%;
+    margin-top:9px;
+    padding:9px;
+    border:none;
+    border-radius:10px;
+    background:var(--primary);
+    color:#fff;
+    font-weight:700;
+}
+
+/* =========================
+   PRODUCT DETAIL
+========================= */
+
+.product-detail{
+    padding:0;
+    overflow:hidden;
+}
+
+.detail-image{
+    height:320px;
+    background:#eee;
+}
+
+.detail-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.detail-content{
+    padding:18px;
+}
+
+.detail-content h2{
+    font-size:22px;
+    margin-bottom:8px;
+}
+
+.detail-price{
+    font-size:25px;
+    color:var(--primary);
+    font-weight:900;
+    margin:10px 0;
+}
+
+.detail-description{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.7;
+}
+
+.quantity{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border:1px solid var(--border);
+    padding:8px 12px;
+    border-radius:13px;
+    margin:15px 0;
+}
+
+.qty-controls{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.qty-controls button{
+    width:32px;
+    height:32px;
+    border:none;
+    border-radius:9px;
+    background:var(--surface2);
+}
+
+/* =========================
+   CART
+========================= */
+
+.cart-item{
+    display:flex;
+    gap:12px;
+    padding:13px;
+    margin-bottom:10px;
+}
+
+.cart-img{
+    width:70px;
+    height:70px;
+    border-radius:12px;
+    object-fit:cover;
+}
+
+.cart-info{
+    flex:1;
+}
+
+.cart-info strong{
+    font-size:13px;
+}
+
+.cart-info p{
+    color:var(--primary);
+    font-weight:800;
+    margin-top:4px;
+}
+
+.cart-total{
+    padding:17px;
+    margin-top:15px;
+}
+
+.total-row{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+    font-size:13px;
+}
+
+.total-row.final{
+    font-size:18px;
+    font-weight:900;
+    border-top:1px solid var(--border);
+    padding-top:12px;
+}
+
+/* =========================
+   PAYMENT
+========================= */
+
+.payment-options{
+    display:grid;
+    gap:10px;
+    margin:15px 0;
+}
+
+.payment-option{
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--surface);
+}
+
+.payment-option input{
+    accent-color:var(--primary);
+}
+
+.payment-icon{
+    width:40px;
+    height:40px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    color:#fff;
+}
+
+.bkash{
+    background:#e2136e;
+}
+
+.nagad{
+    background:#f58220;
+}
+
+.upay{
+    background:#174ea6;
+}
+
+.cod{
+    background:#16a34a;
+}
+
+.cod-alert{
+    background:#fff7ed;
+    border:1px solid #fed7aa;
+    color:#9a3412;
+    padding:12px;
+    border-radius:13px;
+    font-size:12px;
+    line-height:1.6;
+    margin:10px 0;
+}
+
+/* =========================
+   MESSENGER
+========================= */
+
+.messenger-list{
+    display:grid;
+    gap:8px;
+}
+
+.chat-user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px;
+    border-radius:16px;
+    background:var(--surface);
+    border:1px solid var(--border);
+}
+
+.chat-user:active{
+    transform:scale(.98);
+}
+
+.online-dot{
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    background:#22c55e;
+    border:2px solid var(--surface);
+    position:absolute;
+    right:0;
+    bottom:1px;
+}
+
+.avatar-wrap{
+    position:relative;
+}
+
+.chat-user-info{
+    flex:1;
+}
+
+.chat-user-info strong{
+    display:block;
+    font-size:14px;
+}
+
+.chat-user-info span{
+    color:var(--muted);
+    font-size:10px;
+}
+
+.chat-user-time{
+    color:var(--muted);
+    font-size:10px;
+}
+
+/* FULL CHAT */
+
+.chat-screen{
+    position:fixed;
+    inset:0;
+    background:var(--bg);
+    z-index:5000;
+    display:none;
+    flex-direction:column;
+}
+
+.chat-screen.active{
+    display:flex;
+}
+
+.chat-header{
+    height:65px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    padding:0 12px;
+    gap:10px;
+}
+
+.back-btn{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:50%;
+    background:var(--surface2);
+}
+
+.chat-title{
+    flex:1;
+}
+
+.chat-title strong{
+    display:block;
+    font-size:14px;
+}
+
+.chat-title span{
+    color:#22c55e;
+    font-size:10px;
+}
+
+.chat-actions{
+    display:flex;
+    gap:3px;
+}
+
+.chat-actions button{
+    width:39px;
+    height:39px;
+    border:none;
+    background:none;
+    border-radius:50%;
+}
+
+.chat-messages{
+    flex:1;
+    overflow-y:auto;
+    padding:15px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.message{
+    max-width:78%;
+    padding:10px 13px;
+    border-radius:17px;
+    font-size:13px;
+    line-height:1.45;
+}
+
+.message.me{
+    align-self:flex-end;
+    background:var(--primary);
+    color:#fff;
+    border-bottom-right-radius:5px;
+}
+
+.message.other{
+    align-self:flex-start;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-bottom-left-radius:5px;
+}
+
+.message-time{
+    font-size:8px;
+    opacity:.7;
+    margin-top:3px;
+}
+
+.chat-composer{
+    background:var(--surface);
+    border-top:1px solid var(--border);
+    padding:9px;
+    display:flex;
+    gap:7px;
+    align-items:center;
+}
+
+.chat-composer input{
+    flex:1;
+    border:none;
+    background:var(--surface2);
+    border-radius:22px;
+    padding:11px 14px;
+    outline:none;
+}
+
+.chat-composer button{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:50%;
+    background:var(--primary);
+    color:#fff;
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+.profile-cover{
+    height:160px;
+    border-radius:20px 20px 0 0;
+    background:linear-gradient(135deg,#ff245c,#7c3aed,#2563eb);
+}
+
+.profile-card{
+    overflow:hidden;
+    margin-bottom:15px;
+}
+
+.profile-main{
+    padding:0 18px 18px;
+}
+
+.profile-avatar{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    margin-top:-45px;
+    border:5px solid var(--surface);
+    background:linear-gradient(135deg,#ff245c,#7c3aed);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    font-weight:900;
+}
+
+.profile-main h2{
+    margin-top:8px;
+}
+
+.profile-stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:15px;
+}
+
+.stat{
+    text-align:center;
+    background:var(--surface2);
+    border-radius:12px;
+    padding:10px;
+}
+
+.stat strong{
+    display:block;
+}
+
+.stat span{
+    font-size:10px;
+    color:var(--muted);
+}
+
+.profile-menu{
+    display:grid;
+    gap:8px;
+}
+
+.profile-option{
+    width:100%;
+    border:1px solid var(--border);
+    background:var(--surface);
+    border-radius:15px;
+    padding:14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-align:left;
+    color:var(--text);
+}
+
+.profile-option i{
+    width:35px;
+    text-align:center;
+    color:var(--primary);
+    font-size:18px;
+}
+
+.profile-option span{
+    flex:1;
+}
+
+.profile-option small{
+    color:var(--muted);
+}
+
+/* =========================
+   SETTINGS
+========================= */
+
+.settings-section{
+    margin-bottom:20px;
+}
+
+.settings-title{
+    font-size:11px;
+    color:var(--muted);
+    text-transform:uppercase;
+    font-weight:800;
+    padding:0 5px 7px;
+}
+
+.setting-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+}
+
+.setting-row:first-of-type{
+    border-radius:15px 15px 0 0;
+}
+
+.setting-row:last-of-type{
+    border-radius:0 0 15px 15px;
+    border-bottom:none;
+}
+
+.setting-icon{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    background:var(--surface2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--primary);
+}
+
+.setting-text{
+    flex:1;
+}
+
+.setting-text strong{
+    display:block;
+    font-size:13px;
+}
+
+.setting-text span{
+    font-size:10px;
+    color:var(--muted);
+}
+
+.toggle{
+    width:43px;
+    height:24px;
+    border-radius:20px;
+    background:#cbd5e1;
+    position:relative;
+    border:none;
+}
+
+.toggle:after{
+    content:"";
+    width:18px;
+    height:18px;
+    background:#fff;
+    border-radius:50%;
+    position:absolute;
+    top:3px;
+    left:3px;
+    transition:.2s;
+}
+
+.toggle.on{
+    background:var(--primary);
+}
+
+.toggle.on:after{
+    left:22px;
+}
+
+/* =========================
+   NOTIFICATIONS
+========================= */
+
+.notification-panel{
+    position:fixed;
+    top:70px;
+    right:12px;
+    width:min(360px,calc(100% - 24px));
+    max-height:70vh;
+    overflow:auto;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    box-shadow:0 20px 50px rgba(0,0,0,.2);
+    z-index:3000;
+    display:none;
+}
+
+.notification-panel.show{
+    display:block;
+    animation:pop .2s ease;
+}
+
+@keyframes pop{
+    from{
+        opacity:0;
+        transform:scale(.95) translateY(-5px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.notification-head{
+    padding:15px;
+    font-weight:800;
+    border-bottom:1px solid var(--border);
+}
+
+.notification-item{
+    padding:13px 15px;
+    border-bottom:1px solid var(--border);
+    font-size:12px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    backdrop-filter:blur(7px);
+    z-index:6000;
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:100%;
+    max-width:650px;
+    max-height:90vh;
+    overflow:auto;
+    background:var(--surface);
+    border-radius:25px 25px 0 0;
+    padding:20px;
+    animation:sheet .25s ease;
+}
+
+@keyframes sheet{
+    from{
+        transform:translateY(100%);
+    }
+    to{
+        transform:none;
+    }
+}
+
+.modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.close-btn{
+    width:38px;
+    height:38px;
+    border:none;
+    border-radius:50%;
+    background:var(--surface2);
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:85px;
+    transform:translate(-50%,120px);
+    background:#111827;
+    color:#fff;
+    padding:12px 20px;
+    border-radius:30px;
+    font-size:12px;
+    font-weight:700;
+    z-index:9999;
+    transition:.3s;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    white-space:nowrap;
+}
+
+.toast.show{
+    transform:translate(-50%,0);
+}
+
+/* =========================
+   CALL UI
+========================= */
+
+.call-screen{
+    position:fixed;
+    inset:0;
+    z-index:9000;
+    background:linear-gradient(160deg,#111827,#312e81,#111827);
+    color:#fff;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.call-screen.show{
+    display:flex;
+}
+
+.call-avatar{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ff245c,#7c3aed);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+    font-weight:900;
+    box-shadow:0 0 0 15px rgba(255,255,255,.06);
+}
+
+.call-name{
+    margin-top:20px;
+    font-size:22px;
+    font-weight:800;
+}
+
+.call-status{
+    margin-top:6px;
+    opacity:.7;
+    font-size:12px;
+}
+
+.call-controls{
+    position:absolute;
+    bottom:60px;
+    display:flex;
+    gap:18px;
+}
+
+.call-controls button{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    border:none;
+    background:rgba(255,255,255,.13);
+    color:#fff;
+    font-size:18px;
+}
+
+.call-controls .end{
+    background:#ef4444;
+}
+
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark{
+    --bg:#090d16;
+    --surface:#111827;
+    --surface2:#172033;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --border:#263247;
+}
+
+body.dark .app-header,
+body.dark .bottom-nav{
+    background:rgba(17,24,39,.94);
+}
+
+body.dark .cod-alert{
+    background:#321b08;
+    border-color:#854d0e;
+    color:#fed7aa;
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+@media(min-width:800px){
+
+    .bottom-nav{
+        top:64px;
+        bottom:auto;
+        height:55px;
+        border-top:none;
+        border-bottom:1px solid var(--border);
+    }
+
+    .app{
+        padding-top:119px;
+        padding-bottom:20px;
+    }
+
+    .nav-item.active:after{
+        bottom:auto;
+        top:0;
+    }
+
+    .product-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .modal{
+        align-items:center;
+    }
+
+    .modal-box{
+        border-radius:22px;
+        max-height:85vh;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="app-header">
+
+    <div class="header-inner">
+
+        <div class="logo">
+            Shakib<span>YS</span>
+        </div>
+
+        <div class="header-actions">
+
+            <button class="icon-btn" onclick="openSearch()">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            <button class="icon-btn" onclick="toggleNotifications()">
+                <i class="fa-regular fa-bell"></i>
+                <span class="badge" id="notificationBadge">3</span>
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- NOTIFICATION -->
+
+<div class="notification-panel" id="notificationPanel">
+
+    <div class="notification-head">
+        Notifications
+    </div>
+
+    <div class="notification-item">
+        ❤️ রাহিম আপনার পোস্টে লাইক দিয়েছে।
+    </div>
+
+    <div class="notification-item">
+        👥 করিম আপনাকে Friend Request পাঠিয়েছে।
+    </div>
+
+    <div class="notification-item">
+        🛍️ আপনার অর্ডারটি Processing হয়েছে।
+    </div>
+
+</div>
+
+
+<!-- =========================
+     APP
+========================= -->
+
+<main class="app">
+
+
+<!-- ================= HOME ================= -->
+
+<section class="page active" id="homePage">
+
+    <div class="search-box">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+            type="text"
+            placeholder="ShakibYS-এ সার্চ করুন..."
+            oninput="searchContent(this.value)"
+        >
+
+    </div>
+
+
+    <!-- STORIES -->
+
+    <div class="stories">
+
+        <div class="story add-story" onclick="openCreate('story')">
+            <i class="fa-solid fa-plus"></i>
+            <span>Story</span>
+        </div>
+
+        <div class="story">
+            <div class="avatar"
+                 style="position:absolute;top:8px;left:8px;width:30px;height:30px;border:2px solid #fff;">
+                R
+            </div>
+            <div class="story-name">
+                Rahim
+            </div>
+        </div>
+
+        <div class="story">
+            <div class="avatar"
+                 style="position:absolute;top:8px;left:8px;width:30px;height:30px;border:2px solid #fff;">
+                S
+            </div>
+            <div class="story-name">
+                Sadia
+            </div>
+        </div>
+
+        <div class="story">
+            <div class="avatar"
+                 style="position:absolute;top:8px;left:8px;width:30px;height:30px;border:2px solid #fff;">
+                A
+            </div>
+            <div class="story-name">
+                Arif
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- CREATE -->
+
+    <div class="card create-card">
+
+        <div class="create-top">
+
+            <div class="avatar">
+                S
+            </div>
+
+            <button
+                class="create-input"
+                onclick="openCreate('text')">
+                সবার সাথে কিছু শেয়ার করুন...
+            </button>
+
+        </div>
+
+        <div class="create-actions">
+
+            <button
+                class="create-action photo"
+                onclick="openCreate('photo')">
+
+                <i class="fa-solid fa-image"></i>
+                Photo
+
+            </button>
+
+            <button
+                class="create-action video"
+                onclick="openCreate('video')">
+
+                <i class="fa-solid fa-video"></i>
+                Video
+
+            </button>
+
+            <button
+                class="create-action short"
+                onclick="openCreate('short')">
+
+                <i class="fa-solid fa-bolt"></i>
+                Short
+
+            </button>
+
+            <button
+                class="create-action emoji"
+                onclick="openEmoji()">
+
+                <i class="fa-regular fa-face-smile"></i>
+                Emoji
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- POST 1 -->
+
+    <article class="card post">
+
+        <div class="post-head">
+
+            <div class="user-row">
+
+                <div class="avatar">
+                    S
+                </div>
+
+                <div class="user-info">
+
+                    <strong>
+                        ShakibYS
+                        <i
+                        class="fa-solid fa-circle-check"
+                        style="color:#2563eb;font-size:12px;">
+                        </i>
+                    </strong>
+
+                    <span>
+                        5 মিনিট আগে · 🌎
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button class="more-btn">
+                <i class="fa-solid fa-ellipsis"></i>
+            </button>
+
+        </div>
+
+
+        <div class="post-text">
+
+            ShakibYS-এর নতুন Premium Social Marketplace এখন প্রস্তুত! 🚀
+
+        </div>
+
+
+        <div class="post-media"
+             style="height:260px;background:linear-gradient(135deg,#ff245c,#7c3aed,#2563eb);display:flex;align-items:center;justify-content:center;">
+
+            <div style="color:#fff;text-align:center;">
+
+                <i
+                class="fa-solid fa-bolt"
+                style="font-size:55px;">
+                </i>
+
+                <h2 style="margin-top:12px;">
+                    ShakibYS
+                </h2>
+
+                <p style="opacity:.8;">
+                    Premium Social Experience
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="post-stats">
+
+            <span>
+                ❤️ 1.2K likes
+            </span>
+
+            <span>
+                87 comments · 23 shares
+            </span>
+
+        </div>
+
+
+        <div class="post-buttons">
+
+            <button onclick="likePost(this)">
+                <i class="fa-regular fa-heart"></i>
+                Like
+            </button>
+
+            <button onclick="openToast('Comment section opened')">
+                <i class="fa-regular fa-comment"></i>
+                Comment
+            </button>
+
+            <button onclick="sharePost()">
+                <i class="fa-solid fa-share"></i>
+                Share
+            </button>
+
+        </div>
+
+    </article>
+
+
+    <!-- MARKETPLACE SHORTCUT -->
+
+    <div class="card"
+         style="padding:17px;margin-bottom:15px;">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+
+            <div>
+
+                <h3>
+                    🛍️ ShakibYS Marketplace
+                </h3>
+
+                <p class="small">
+                    পছন্দের Product কিনুন
+                </p>
+
+            </div>
+
+            <button
+                class="secondary-btn"
+                onclick="showPage('marketPage')">
+
+                View All
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+<!-- ================= CREATE PAGE ================= -->
+
+<section class="page" id="createPage">
+
+    <div class="section-title">
+        Create Post
+    </div>
+
+    <div class="card create-page-card">
+
+        <div class="user-row" style="margin-bottom:15px;">
+
+            <div class="avatar">
+                S
+            </div>
+
+            <div class="user-info">
+
+                <strong>
+                    Shakib
+                </strong>
+
+                <span>
+                    Public 🌎
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <textarea
+            id="postText"
+            placeholder="আপনার মনের কথা লিখুন..."></textarea>
+
+
+        <div class="upload-box"
+             onclick="document.getElementById('mediaInput').click()">
+
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+
+            <h3>
+                Photo / Video Upload
+            </h3>
+
+            <p>
+                ছবি, Long Video অথবা Short Video
+            </p>
+
+        </div>
+
+
+        <input
+            type="file"
+            id="mediaInput"
+            accept="image/*,video/*"
+            hidden
+            onchange="previewMedia(this)">
+
+
+        <div id="mediaPreview"></div>
+
+
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+
+            <button
+                class="secondary-btn"
+                onclick="openEmoji()">
+                😊 Emoji
+            </button>
+
+            <button
+                class="secondary-btn"
+                onclick="openToast('Audience: Public 🌎')">
+                🌎 Public
+            </button>
+
+        </div>
+
+
+        <button
+            class="primary-btn"
+            onclick="publishPost()">
+
+            <i class="fa-solid fa-paper-plane"></i>
+            পোস্ট করুন
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= MARKETPLACE ================= -->
+
+<section class="page" id="marketPage">
+
+    <div class="market-header">
+
+        <div>
+            <h2>
+                Marketplace
+            </h2>
+
+            <p class="small">
+                Premium products
+            </p>
+        </div>
+
+        <button
+            class="icon-btn"
+            onclick="showPage('cartPage')">
+
+            <i class="fa-solid fa-cart-shopping"></i>
+
+            <span
+            class="badge"
+            id="cartBadge">
+            0
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <div class="search-box">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+            placeholder="Product search করুন..."
+            oninput="filterProducts(this.value)">
+
+    </div>
+
+
+    <div
+    class="product-grid"
+    id="productGrid">
+
+        <!-- Products generated by JS -->
+
+    </div>
+
+</section>
+
+
+<!-- ================= PRODUCT DETAIL ================= -->
+
+<section class="page" id="productPage">
+
+    <button
+        class="secondary-btn"
+        onclick="showPage('marketPage')"
+        style="margin-bottom:12px;">
+
+        <i class="fa-solid fa-arrow-left"></i>
+        Marketplace
+
+    </button>
+
+
+    <div class="card product-detail">
+
+        <div class="detail-image">
+
+            <img
+                id="detailImage"
+                src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80">
+
+        </div>
+
+
+        <div class="detail-content">
+
+            <h2 id="detailTitle">
+                Premium Watch
+            </h2>
+
+            <div class="detail-price">
+                ৳<span id="detailPrice">1299</span>
+            </div>
+
+            <p
+            class="detail-description"
+            id="detailDescription">
+
+                Premium quality product with stylish design.
+                Fast delivery available.
+
+            </p>
+
+
+            <div class="quantity">
+
+                <span>
+                    Quantity
+                </span>
+
+                <div class="qty-controls">
+
+                    <button onclick="changeQty(-1)">
+                        −
+                    </button>
+
+                    <strong id="quantity">
+                        1
+                    </strong>
+
+                    <button onclick="changeQty(1)">
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="primary-btn"
+                onclick="addCurrentToCart()">
+
+                <i class="fa-solid fa-cart-plus"></i>
+                Cart-এ যোগ করুন
+
+            </button>
+
+
+            <button
+                class="secondary-btn"
+                onclick="buyNow()"
+                style="width:100%;margin-top:8px;">
+
+                এখনই অর্ডার করুন
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CART ================= -->
+
+<section class="page" id="cartPage">
+
+    <div class="section-title">
+        🛒 Your Cart
+    </div>
+
+    <div id="cartItems"></div>
+
+    <div
+        class="card cart-total"
+        id="cartTotal">
+
+    </div>
+
+</section>
+
+
+<!-- ================= CHECKOUT ================= -->
+
+<section class="page" id="checkoutPage">
+
+    <div class="section-title">
+        Checkout
+    </div>
+
+
+    <div class="card" style="padding:17px;">
+
+        <h3>
+            Delivery Information
+        </h3>
+
+        <br>
+
+        <input
+            id="deliveryName"
+            placeholder="আপনার নাম"
+            class="search-box"
+            style="width:100%;">
+
+        <input
+            id="deliveryPhone"
+            placeholder="মোবাইল নম্বর"
+            class="search-box"
+            style="width:100%;">
+
+        <textarea
+            id="deliveryAddress"
+            style="min-height:100px;"
+            placeholder="সম্পূর্ণ ঠিকানা"></textarea>
+
+
+        <h3 style="margin-top:20px;">
+            Payment Method
+        </h3>
+
+
+        <div class="payment-options">
+
+            <label class="payment-option">
+
+                <input
+                    type="radio"
+                    name="payment"
+                    value="bkash">
+
+                <div class="payment-icon bkash">
+                    ৳
+                </div>
+
+                <div>
+                    <strong>bKash</strong>
+                    <div class="small">
+                        Online Payment
+                    </div>
+                </div>
+
+            </label>
+
+
+            <label class="payment-option">
+
+                <input
+                    type="radio"
+                    name="payment"
+                    value="nagad">
+
+                <div class="payment-icon nagad">
+                    ৳
+                </div>
+
+                <div>
+                    <strong>Nagad</strong>
+                    <div class="small">
+                        Online Payment
+                    </div>
+                </div>
+
+            </label>
+
+
+            <label class="payment-option">
+
+                <input
+                    type="radio"
+                    name="payment"
+                    value="upay">
+
+                <div class="payment-icon upay">
+                    ৳
+                </div>
+
+                <div>
+                    <strong>Upay</strong>
+                    <div class="small">
+                        Online Payment
+                    </div>
+                </div>
+
+            </label>
+
+
+            <label class="payment-option">
+
+                <input
+                    type="radio"
+                    name="payment"
+                    value="cod"
+                    onchange="showCODAlert()">
+
+                <div class="payment-icon cod">
+                    <i class="fa-solid fa-truck"></i>
+                </div>
+
+                <div>
+                    <strong>
+                        Cash on Delivery
+                    </strong>
+
+                    <div class="small">
+                        Delivery charge ৳150
+                    </div>
+
+                </div>
+
+            </label>
+
+        </div>
+
+
+        <div
+            id="codAlert"
+            class="cod-alert hidden">
+
+            ⚠️ Cash on Delivery নিলে
+            <b>৳150 ডেলিভারি চার্জ</b>
+            যোগ হবে।
+
+            অর্ডার Confirm করার আগে মোট টাকা দেখে নিন।
+
+        </div>
+
+
+        <div id="checkoutSummary"
+             style="margin:15px 0;">
+
+        </div>
+
+
+        <button
+            class="primary-btn"
+            onclick="confirmOrder()">
+
+            <i class="fa-solid fa-lock"></i>
+            Order Confirm করুন
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= MESSENGER ================= -->
+
+<section class="page" id="messengerPage">
+
+    <div class="section-title">
+        Messenger
+    </div>
+
+
+    <div class="card"
+         style="padding:8px;margin-bottom:15px;">
+
+        <div style="display:flex;">
+
+            <button
+                class="secondary-btn"
+                style="flex:1;border:none;"
+                onclick="openToast('Friends selected')">
+
+                👥 Friends
+
+            </button>
+
+            <button
+                class="secondary-btn"
+                style="flex:1;border:none;"
+                onclick="openToast('Requests selected')">
+
+                🔔 Requests
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="messenger-list">
+
+        <div class="chat-user"
+             onclick="openChat('Rahim','R')">
+
+            <div class="avatar-wrap">
+
+                <div class="avatar">
+                    R
+                </div>
+
+                <div class="online-dot"></div>
+
+            </div>
+
+            <div class="chat-user-info">
+
+                <strong>
+                    Rahim
+                </strong>
+
+                <span>
+                    Active now
+                </span>
+
+            </div>
+
+            <div class="chat-user-time">
+                2m
+            </div>
+
+        </div>
+
+
+        <div class="chat-user"
+             onclick="openChat('Sadia','S')">
+
+            <div class="avatar-wrap">
+
+                <div class="avatar">
+                    S
+                </div>
+
+            </div>
+
+            <div class="chat-user-info">
+
+                <strong>
+                    Sadia
+                </strong>
+
+                <span>
+                    Active 10m ago
+                </span>
+
+            </div>
+
+            <div class="chat-user-time">
+                10m
+            </div>
+
+        </div>
+
+
+        <div class="chat-user"
+             onclick="openChat('Arif','A')">
+
+            <div class="avatar-wrap">
+
+                <div class="avatar">
+                    A
+                </div>
+
+            </div>
+
+            <div class="chat-user-info">
+
+                <strong>
+                    Arif
+                </strong>
+
+                <span>
+                    Active 2h ago
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PROFILE ================= -->
+
+<section class="page" id="profilePage">
+
+    <div class="card profile-card">
+
+        <div class="profile-cover"></div>
+
+        <div class="profile-main">
+
+            <div class="profile-avatar">
+                S
+            </div>
+
+            <h2 id="profileName">
+                Shakib
+            </h2>
+
+            <p class="small">
+                @shakibys · ShakibYS Member
+            </p>
+
+
+            <div class="profile-stats">
+
+                <div class="stat">
+                    <strong>128</strong>
+                    <span>Posts</span>
+                </div>
+
+                <div class="stat">
+                    <strong>1.2K</strong>
+                    <span>Followers</span>
+                </div>
+
+                <div class="stat">
+                    <strong>340</strong>
+                    <span>Friends</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="profile-menu">
+
+        <button
+            class="profile-option"
+            onclick="openSettings()">
+
+            <i class="fa-solid fa-gear"></i>
+
+            <span>
+                Settings
+            </span>
+
+            <small>›</small>
+
+        </button>
+
+
+        <button
+            class="profile-option"
+            onclick="changeName()">
+
+            <i class="fa-solid fa-pen"></i>
+
+            <span>
+                Change Name
+            </span>
+
+            <small>›</small>
+
+        </button>
+
+
+        <button
+            class="profile-option"
+            onclick="openToast('Friends & Followers')">
+
+            <i class="fa-solid fa-user-group"></i>
+
+            <span>
+                Friends & Followers
+            </span>
+
+            <small>340</small>
+
+        </button>
+
+
+        <button
+            class="profile-option"
+            onclick="openToast('Privacy settings opened')">
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+            <span>
+                Privacy & Security
+            </span>
+
+            <small>›</small>
+
+        </button>
+
+
+        <button
+            class="profile-option"
+            onclick="openToast('Your orders opened')">
+
+            <i class="fa-solid fa-box"></i>
+
+            <span>
+                My Orders
+            </span>
+
+            <small>›</small>
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SETTINGS ================= -->
+
+<section class="page" id="settingsPage">
+
+    <button
+        class="secondary-btn"
+        onclick="showPage('profilePage')"
+        style="margin-bottom:15px;">
+
+        <i class="fa-solid fa-arrow-left"></i>
+        Profile
+
+    </button>
+
+
+    <div class="section-title">
+        Settings
+    </div>
+
+
+    <div class="settings-section">
+
+        <div class="settings-title">
+            Account
+        </div>
+
+        <div class="card">
+
+            <div class="setting-row"
+                 onclick="changeName()">
+
+                <div class="setting-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Name
+                    </strong>
+
+                    <span>
+                        আপনার নাম পরিবর্তন করুন
+                    </span>
+
+                </div>
+
+                <i class="fa-solid fa-chevron-right"></i>
+
+            </div>
+
+
+            <div class="setting-row"
+                 onclick="openToast('Username settings')">
+
+                <div class="setting-icon">
+                    <i class="fa-solid fa-at"></i>
+                </div>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Username
+                    </strong>
+
+                    <span>
+                        @shakibys
+                    </span>
+
+                </div>
+
+                <i class="fa-solid fa-chevron-right"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="settings-section">
+
+        <div class="settings-title">
+            Appearance
+        </div>
+
+        <div class="card">
+
+            <div class="setting-row">
+
+                <div class="setting-icon">
+                    <i class="fa-solid fa-moon"></i>
+                </div>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Dark Mode
+                    </strong>
+
+                    <span>
+                        Dark theme চালু/বন্ধ করুন
+                    </span>
+
+                </div>
+
+                <button
+                    class="toggle"
+                    id="darkToggle"
+                    onclick="toggleDarkMode()">
+                </button>
+
+            </div>
+
+
+            <div class="setting-row">
+
+                <div class="setting-icon">
+                    <i class="fa-solid fa-volume-high"></i>
+                </div>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Sound Effects
+                    </strong>
+
+                    <span>
+                        Tap এবং notification sound
+                    </span>
+
+                </div>
+
+                <button
+                    class="toggle on"
+                    id="soundToggle"
+                    onclick="toggleSound()">
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="settings-section">
+
+        <div class="settings-title">
+            Privacy & Security
+        </div>
+
+        <div class="card">
+
+            <div class="setting-row"
+                 onclick="openToast('Privacy settings')">
+
+                <div class="setting-icon">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Privacy
+                    </strong>
+
+                    <span>
+                        কে আপনার পোস্ট দেখতে পারবে
+                    </span>
+
+                </div>
+
+                <i class="fa-solid fa-chevron-right"></i>
+
+            </div>
+
+
+            <div class="setting-row"
+                 onclick="openToast('Blocked users')">
+
+                <div class="setting-icon">
+                    <i class="fa-solid fa-ban"></i>
+                </div>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Blocked Users
+                    </strong>
+
+                    <span>
+                        Block করা account
+                    </span>
+
+                </div>
+
+                <i class="fa-solid fa-chevron-right"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="settings-section">
+
+        <div class="settings-title">
+            Policies
+        </div>
+
+        <div class="card">
+
+            <div class="setting-row"
+                 onclick="openPolicy('Community Guidelines')">
+
+                <div class="setting-icon">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+
+                <div class="setting-text">
+                    <strong>Community Guidelines</strong>
+                    <span>Community rules</span>
+                </div>
+
+                <i class="fa-solid fa-chevron-right"></i>
+
+            </div>
+
+
+            <div class="setting-row"
+                 onclick="openPolicy('Privacy Policy')">
+
+                <div class="setting-icon">
+                    <i class="fa-solid fa-shield"></i>
+                </div>
+
+                <div class="setting-text">
+                    <strong>Privacy Policy</strong>
+                    <span>Privacy information</span>
+                </div>
+
+                <i class="fa-solid fa-chevron-right"></i>
+
+            </div>
+
+
+            <div class="setting-row"
+                 onclick="openPolicy('Terms of Service')">
+
+                <div class="setting-icon">
+                    <i class="fa-solid fa-file-contract"></i>
+                </div>
+
+                <div class="setting-text">
+                    <strong>Terms of Service</strong>
+                    <span>Terms & conditions</span>
+                </div>
+
+                <i class="fa-solid fa-chevron-right"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =========================
+     BOTTOM NAV
+========================= -->
+
+<nav class="bottom-nav">
+
+    <div class="nav-inner">
+
+        <button
+            class="nav-item active"
+            onclick="navigate(this,'homePage')">
+
+            <i class="fa-solid fa-house"></i>
+            Home
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            onclick="navigate(this,'marketPage')">
+
+            <i class="fa-solid fa-store"></i>
+            Market
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            onclick="navigate(this,'createPage')">
+
+            <i class="fa-solid fa-circle-plus"
+               style="font-size:28px;">
+            </i>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            onclick="navigate(this,'messengerPage')">
+
+            <i class="fa-brands fa-facebook-messenger"></i>
+            Messenger
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            onclick="navigate(this,'profilePage')">
+
+            <i class="fa-solid fa-user"></i>
+            Profile
+
+        </button>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================
+     FULL SCREEN CHAT
+========================= -->
+
+<div class="chat-screen" id="chatScreen">
+
+    <div class="chat-header">
+
+        <button
+            class="back-btn"
+            onclick="closeChat()">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+        </button>
+
+
+        <div class="avatar">
+            <span id="chatAvatar">
+                R
+            </span>
+        </div>
+
+
+        <div class="chat-title">
+
+            <strong id="chatName">
+                Rahim
+            </strong>
+
+            <span id="chatStatus">
+                Active now
+            </span>
+
+        </div>
+
+
+        <div class="chat-actions">
+
+            <button onclick="startCall('audio')">
+                <i class="fa-solid fa-phone"></i>
+            </button>
+
+            <button onclick="startCall('video')">
+                <i class="fa-solid fa-video"></i>
+            </button>
+
+            <button onclick="openChatMenu()">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="chat-messages"
+        id="chatMessages">
+
+        <div class="message other">
+
+            হ্যালো! কেমন আছেন?
+
+            <div class="message-time">
+                10:32 PM
+            </div>
+
+        </div>
+
+
+        <div class="message me">
+
+            আলহামদুলিল্লাহ ভালো আছি 😊
+
+            <div class="message-time">
+                10:33 PM · ✓✓
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="chat-composer">
+
+        <button onclick="openEmoji()"
+                style="background:var(--surface2);color:var(--text);">
+
+            😊
+
+        </button>
+
+
+        <input
+            id="messageInput"
+            placeholder="Message লিখুন..."
+            onkeypress="messageEnter(event)">
+
+
+        <button
+            onclick="sendMessage()">
+
+            <i class="fa-solid fa-paper-plane"></i>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     CALL SCREEN
+========================= -->
+
+<div class="call-screen" id="callScreen">
+
+    <div class="call-avatar">
+        R
+    </div>
+
+    <div class="call-name" id="callName">
+        Rahim
+    </div>
+
+    <div class="call-status" id="callStatus">
+        Calling...
+    </div>
+
+
+    <div class="call-controls">
+
+        <button>
+            <i class="fa-solid fa-microphone"></i>
+        </button>
+
+        <button>
+            <i class="fa-solid fa-volume-high"></i>
+        </button>
+
+        <button
+            class="end"
+            onclick="endCall()">
+
+            <i class="fa-solid fa-phone-slash"></i>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-head">
+
+            <h3 id="modalTitle">
+                ShakibYS
+            </h3>
+
+            <button
+                class="close-btn"
+                onclick="closeModal()">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+        <div id="modalContent"></div>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div class="toast" id="toast">
+    ShakibYS
+</div>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+/* ==========================================
+   DATA
+========================================== */
+
+const products = [
+
+    {
+        id:1,
+        title:"Premium Smart Watch",
+        price:1299,
+        image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",
+        description:"Stylish premium smart watch. Comfortable design and modern look."
+    },
+
+    {
+        id:2,
+        title:"Premium Headphone",
+        price:1899,
+        image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
+        description:"High quality wireless headphone with premium sound."
+    },
+
+    {
+        id:3,
+        title:"Classic Sunglasses",
+        price:799,
+        image:"https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=80",
+        description:"Premium fashion sunglasses for everyday use."
+    },
+
+    {
+        id:4,
+        title:"Premium Backpack",
+        price:1499,
+        image:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&q=80",
+        description:"Durable premium backpack with modern design."
+    }
+
+];
+
+
+let cart =
+JSON.parse(localStorage.getItem("shakibys_cart") || "[]");
+
+
+let currentProduct = null;
+
+let currentQuantity = 1;
+
+let currentChatUser = "Rahim";
+
+let soundEnabled =
+localStorage.getItem("shakibys_sound") !== "off";
+
+
+/* ==========================================
+   SOUND ENGINE
+========================================== */
+
+let audioContext = null;
+
+
+function audio(){
+
+    if(!soundEnabled) return;
+
+    try{
+
+        if(!audioContext){
+
+            audioContext =
+            new (window.AudioContext ||
+            window.webkitAudioContext)();
+
+        }
+
+        if(audioContext.state === "suspended"){
+            audioContext.resume();
+        }
+
+        return audioContext;
+
+    }catch(e){}
+
+}
+
+
+function tapSound(){
+
+    const ctx = audio();
+
+    if(!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type="sine";
+
+    osc.frequency.setValueAtTime(
+        650,
+        ctx.currentTime
+    );
+
+    gain.gain.setValueAtTime(
+        .05,
+        ctx.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        ctx.currentTime+.08
+    );
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.stop(ctx.currentTime+.08);
+
+}
+
+
+function notificationSound(){
+
+    const ctx = audio();
+
+    if(!ctx) return;
+
+    [520,720].forEach((freq,i)=>{
+
+        const osc=ctx.createOscillator();
+        const gain=ctx.createGain();
+
+        osc.type="sine";
+
+        osc.frequency.value=freq;
+
+        gain.gain.setValueAtTime(
+            .06,
+            ctx.currentTime+i*.12
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            ctx.currentTime+i*.12+.12
+        );
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime+i*.12);
+
+        osc.stop(ctx.currentTime+i*.12+.12);
+
+    });
+
+}
+
+
+/* ==========================================
+   UNIVERSAL TAP SOUND
+========================================== */
+
+document.addEventListener("click",function(e){
+
+    if(
+        e.target.closest("button") ||
+        e.target.closest(".chat-user") ||
+        e.target.closest(".product") ||
+        e.target.closest(".setting-row")
+    ){
+
+        tapSound();
+
+    }
+
+});
+
+
+/* ==========================================
+   NAVIGATION
+========================================== */
+
+function navigate(button,page){
+
+    tapSound();
+
+    document.querySelectorAll(".page")
+        .forEach(p=>p.classList.remove("active"));
+
+    document.getElementById(page)
+        .classList.add("active");
+
+    document.querySelectorAll(".nav-item")
+        .forEach(n=>n.classList.remove("active"));
+
+    button.classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+    if(page==="marketPage"){
+        renderProducts();
+    }
+
+    if(page==="cartPage"){
+        renderCart();
+    }
+
+}
+
+
+function showPage(page){
+
+    document.querySelectorAll(".page")
+        .forEach(p=>p.classList.remove("active"));
+
+    document.getElementById(page)
+        .classList.add("active");
+
+    document.querySelectorAll(".nav-item")
+        .forEach(n=>n.classList.remove("active"));
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+    if(page==="marketPage") renderProducts();
+
+    if(page==="cartPage") renderCart();
+
+}
+
+
+/* ==========================================
+   TOAST
+========================================== */
+
+function openToast(message){
+
+    const toast =
+    document.getElementById("toast");
+
+    toast.innerText=message;
+
+    toast.classList.add("show");
+
+    setTimeout(()=>{
+        toast.classList.remove("show");
+    },2300);
+
+}
+
+
+/* ==========================================
+   NOTIFICATION
+========================================== */
+
+function toggleNotifications(){
+
+    tapSound();
+
+    const panel =
+    document.getElementById("notificationPanel");
+
+    panel.classList.toggle("show");
+
+    if(panel.classList.contains("show")){
+
+        notificationSound();
+
+    }
+
+}
+
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+function openSearch(){
+
+    openModal(
+        "Search ShakibYS",
+        `
+        <div class="search-box">
+            <i class="fa-solid fa-search"></i>
+            <input
+                autofocus
+                placeholder="People, posts, products..."
+                oninput="searchContent(this.value)">
+        </div>
+
+        <div id="searchResult">
+            সার্চ করার জন্য লিখুন...
+        </div>
+        `
+    );
+
+}
+
+
+function searchContent(value){
+
+    const result =
+    document.getElementById("searchResult");
+
+    if(!result) return;
+
+    if(!value.trim()){
+
+        result.innerHTML=
+        "সার্চ করার জন্য লিখুন...";
+
+        return;
+
+    }
+
+    result.innerHTML=`
+
+        <div class="card" style="padding:15px;">
+
+            🔎 <b>${escapeHTML(value)}</b>
+
+            <p class="small" style="margin-top:5px;">
+                ShakibYS search result
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ==========================================
+   CREATE POST
+========================================== */
+
+function openCreate(type){
+
+    showPage("createPage");
+
+    openToast(
+        type==="photo"
+        ?"Photo post selected"
+        :type==="video"
+        ?"Long video selected"
+        :type==="short"
+        ?"Short video selected"
+        :"Create post"
+    );
+
+}
+
+
+function previewMedia(input){
+
+    const file=input.files[0];
+
+    if(!file) return;
+
+    const url=URL.createObjectURL(file);
+
+    const box=
+    document.getElementById("mediaPreview");
+
+    if(file.type.startsWith("image/")){
+
+        box.innerHTML=`
+            <div class="post-media">
+                <img src="${url}">
+            </div>
+        `;
+
+    }else{
+
+        box.innerHTML=`
+            <div class="post-media">
+                <video
+                    src="${url}"
+                    controls>
+                </video>
+            </div>
+        `;
+
+    }
+
+}
+
+
+function publishPost(){
+
+    const text=
+    document.getElementById("postText").value.trim();
+
+    if(!text){
+
+        openToast("আগে কিছু লিখুন");
+
+        return;
+
+    }
+
+    notificationSound();
+
+    openToast("✅ পোস্ট সফল হয়েছে");
+
+    document.getElementById("postText").value="";
+
+}
+
+
+/* ==========================================
+   EMOJI
+========================================== */
+
+function openEmoji(){
+
+    openModal(
+        "Emoji",
+        `
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(8,1fr);
+            gap:8px;
+            font-size:25px;
+        ">
+
+        ${[
+        "😀","😂","😍","🥰",
+        "😎","😭","🔥","❤️",
+        "👍","👏","🎉","🥳",
+        "🤲","😊","😢","😡",
+        "🤣","💯","✨","🚀",
+        "🙏","💖","😇","🤩"
+        ].map(e=>
+        `<button
+            style="border:none;background:none;font-size:25px;"
+            onclick="insertEmoji('${e}')">
+            ${e}
+        </button>`
+        ).join("")}
+
+        </div>
+        `
+    );
+
+}
+
+
+function insertEmoji(emoji){
+
+    const input=
+    document.getElementById("postText");
+
+    if(input){
+
+        input.value+=emoji;
+
+    }
+
+    closeModal();
+
+}
+
+
+/* ==========================================
+   MARKETPLACE
+========================================== */
+
+function renderProducts(list=products){
+
+    const grid=
+    document.getElementById("productGrid");
+
+    if(!grid) return;
+
+    grid.innerHTML="";
+
+    list.forEach(product=>{
+
+        grid.innerHTML+=`
+
+        <div
+            class="product"
+            onclick="openProduct(${product.id})">
+
+            <div class="product-image">
+
+                <img
+                    src="${product.image}"
+                    alt="${escapeHTML(product.title)}">
+
+            </div>
+
+            <div class="product-body">
+
+                <div class="product-title">
+                    ${escapeHTML(product.title)}
+                </div>
+
+                <div class="product-price">
+                    ৳${product.price}
+                </div>
+
+                <button
+                    class="product-buy"
+                    onclick="event.stopPropagation();openProduct(${product.id})">
+
+                    Details
+
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
+function filterProducts(value){
+
+    const filtered=
+    products.filter(p=>
+        p.title.toLowerCase()
+        .includes(value.toLowerCase())
+    );
+
+    renderProducts(filtered);
+
+}
+
+
+function openProduct(id){
+
+    const product=
+    products.find(p=>p.id===id);
+
+    if(!product) return;
+
+    currentProduct=product;
+
+    currentQuantity=1;
+
+    document.getElementById("detailImage").src=
+    product.image;
+
+    document.getElementById("detailTitle").innerText=
+    product.title;
+
+    document.getElementById("detailPrice").innerText=
+    product.price;
+
+    document.getElementById("detailDescription").innerText=
+    product.description;
+
+    document.getElementById("quantity").innerText="1";
+
+    showPage("productPage");
+
+}
+
+
+function changeQty(value){
+
+    currentQuantity+=value;
+
+    if(currentQuantity<1){
+        currentQuantity=1;
+    }
+
+    document.getElementById("quantity")
+        .innerText=currentQuantity;
+
+}
+
+
+function addCurrentToCart(){
+
+    if(!currentProduct) return;
+
+    const existing=
+    cart.find(i=>i.id===currentProduct.id);
+
+    if(existing){
+
+        existing.quantity+=currentQuantity;
+
+    }else{
+
+        cart.push({
+            ...currentProduct,
+            quantity:currentQuantity
+        });
+
+    }
+
+    saveCart();
+
+    updateCartBadge();
+
+    notificationSound();
+
+    openToast(
+        "🛒 Cart-এ যোগ হয়েছে"
+    );
+
+}
+
+
+function buyNow(){
+
+    addCurrentToCart();
+
+    showPage("checkoutPage");
+
+    renderCheckout();
+
+}
+
+
+/* ==========================================
+   CART
+========================================== */
+
+function saveCart(){
+
+    localStorage.setItem(
+        "shakibys_cart",
+        JSON.stringify(cart)
+    );
+
+}
+
+
+function updateCartBadge(){
+
+    const count=
+    cart.reduce(
+        (sum,item)=>sum+item.quantity,
+        0
+    );
+
+    document.getElementById("cartBadge")
+        .innerText=count;
+
+}
+
+
+function renderCart(){
+
+    const box=
+    document.getElementById("cartItems");
+
+    const totalBox=
+    document.getElementById("cartTotal");
+
+    if(!cart.length){
+
+        box.innerHTML=`
+            <div class="card"
+                 style="padding:30px;text-align:center;">
+
+                🛒
+
+                <h3 style="margin-top:10px;">
+                    Cart empty
+                </h3>
+
+                <p class="small">
+                    Marketplace থেকে product যোগ করুন।
+                </p>
+
+            </div>
+        `;
+
+        totalBox.innerHTML="";
+
+        return;
+
+    }
+
+
+    box.innerHTML="";
+
+    cart.forEach(item=>{
+
+        box.innerHTML+=`
+
+        <div class="card cart-item">
+
+            <img
+                class="cart-img"
+                src="${item.image}">
+
+            <div class="cart-info">
+
+                <strong>
+                    ${escapeHTML(item.title)}
+                </strong>
+
+                <p>
+                    ৳${item.price} × ${item.quantity}
+                </p>
+
+                <button
+                    class="secondary-btn"
+                    style="padding:6px 9px;margin-top:6px;"
+                    onclick="removeCart(${item.id})">
+
+                    Remove
+
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+
+    const subtotal=
+    cart.reduce(
+        (sum,item)=>
+        sum+(item.price*item.quantity),
+        0
+    );
+
+
+    totalBox.innerHTML=`
+
+        <div class="total-row">
+            <span>Subtotal</span>
+            <strong>৳${subtotal}</strong>
+        </div>
+
+        <div class="total-row">
+            <span>Delivery</span>
+            <strong>Payment অনুযায়ী</strong>
+        </div>
+
+        <div class="total-row final">
+            <span>Total</span>
+            <strong>৳${subtotal}</strong>
+        </div>
+
+        <button
+            class="primary-btn"
+            onclick="showPage('checkoutPage');renderCheckout()">
+
+            Checkout
+
+        </button>
+
+    `;
+
+}
+
+
+function removeCart(id){
+
+    cart=
+    cart.filter(item=>item.id!==id);
+
+    saveCart();
+
+    updateCartBadge();
+
+    renderCart();
+
+    openToast("Product removed");
+
+}
+
+
+/* ==========================================
+   CHECKOUT
+========================================== */
+
+function renderCheckout(){
+
+    const summary=
+    document.getElementById("checkoutSummary");
+
+    if(!summary) return;
+
+    const subtotal=
+    cart.reduce(
+        (sum,item)=>
+        sum+(item.price*item.quantity),
+        0
+    );
+
+    summary.innerHTML=`
+
+        <div class="card"
+             style="padding:14px;">
+
+            <div class="total-row">
+                <span>Products</span>
+                <strong>৳${subtotal}</strong>
+            </div>
+
+            <div class="total-row">
+                <span>Delivery</span>
+                <strong id="deliveryCharge">
+                    ৳0
+                </strong>
+            </div>
+
+            <div class="total-row final">
+                <span>Total</span>
+                <strong id="finalCheckoutTotal">
+                    ৳${subtotal}
+                </strong>
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+function showCODAlert(){
+
+    document.getElementById("codAlert")
+        .classList.remove("hidden");
+
+    const subtotal=
+    cart.reduce(
+        (sum,item)=>
+        sum+(item.price*item.quantity),
+        0
+    );
+
+    const delivery=150;
+
+    const charge=
+    document.getElementById("deliveryCharge");
+
+    const total=
+    document.getElementById("finalCheckoutTotal");
+
+    if(charge) charge.innerText="৳150";
+
+    if(total)
+        total.innerText=
+        "৳"+(subtotal+delivery);
+
+    notificationSound();
+
+}
+
+
+function confirmOrder(){
+
+    const name=
+    document.getElementById("deliveryName").value.trim();
+
+    const phone=
+    document.getElementById("deliveryPhone").value.trim();
+
+    const address=
+    document.getElementById("deliveryAddress").value.trim();
+
+    const payment=
+    document.querySelector(
+        'input[name="payment"]:checked'
+    );
+
+
+    if(!name || !phone || !address){
+
+        openToast(
+            "⚠️ Delivery information পূরণ করুন"
+        );
+
+        return;
+
+    }
+
+
+    if(!payment){
+
+        openToast(
+            "⚠️ Payment method নির্বাচন করুন"
+        );
+
+        return;
+
+    }
+
+
+    let message=
+    "অর্ডার Confirm হয়েছে ✅";
+
+
+    if(payment.value==="cod"){
+
+        message=
+        "অর্ডার Confirm ✅ COD + ৳150 delivery charge";
+
+    }else{
+
+        message=
+        "Online payment selected: "+
+        payment.value.toUpperCase();
+
+    }
+
+
+    notificationSound();
+
+    openToast(message);
+
+    cart=[];
+
+    saveCart();
+
+    updateCartBadge();
+
+}
+
+
+/* ==========================================
+   MESSENGER
+========================================== */
+
+function openChat(name,initial){
+
+    currentChatUser=name;
+
+    document.getElementById("chatName")
+        .innerText=name;
+
+    document.getElementById("chatAvatar")
+        .innerText=initial;
+
+    document.getElementById("callName")
+        .innerText=name;
+
+    document.getElementById("chatScreen")
+        .classList.add("active");
+
+    tapSound();
+
+}
+
+
+function closeChat(){
+
+    document.getElementById("chatScreen")
+        .classList.remove("active");
+
+}
+
+
+function sendMessage(){
+
+    const input=
+    document.getElementById("messageInput");
+
+    const text=input.value.trim();
+
+    if(!text) return;
+
+    const box=
+    document.getElementById("chatMessages");
+
+
+    const msg=
+    document.createElement("div");
+
+    msg.className="message me";
+
+    msg.innerHTML=`
+
+        ${escapeHTML(text)}
+
+        <div class="message-time">
+            Just now · ✓✓
+        </div>
+
+    `;
+
+    box.appendChild(msg);
+
+    input.value="";
+
+    box.scrollTop=box.scrollHeight;
+
+    tapSound();
+
+}
+
+
+function messageEnter(e){
+
+    if(e.key==="Enter"){
+
+        sendMessage();
+
+    }
+
+}
+
+
+function openChatMenu(){
+
+    openModal(
+        "Chat Settings",
+        `
+
+        <div class="profile-menu">
+
+            <button
+                class="profile-option"
+                onclick="openToast('Mute notifications')">
+
+                <i class="fa-solid fa-bell-slash"></i>
+
+                <span>
+                    Mute notifications
+                </span>
+
+            </button>
+
+
+            <button
+                class="profile-option"
+                onclick="openToast('Search messages')">
+
+                <i class="fa-solid fa-search"></i>
+
+                <span>
+                    Search messages
+                </span>
+
+            </button>
+
+
+            <button
+                class="profile-option"
+                onclick="blockUser()">
+
+                <i class="fa-solid fa-ban"></i>
+
+                <span>
+                    Block ${escapeHTML(currentChatUser)}
+                </span>
+
+            </button>
+
+        </div>
+
+        `
+    );
+
+}
+
+
+function blockUser(){
+
+    closeModal();
+
+    notificationSound();
+
+    openToast(
+        currentChatUser+" blocked"
+    );
+
+}
+
+
+function startCall(type){
+
+    closeModal();
+
+    const screen=
+    document.getElementById("callScreen");
+
+    screen.classList.add("show");
+
+    document.getElementById("callStatus")
+        .innerText=
+        type==="video"
+        ?"Starting video call..."
+        :"Calling...";
+
+    notificationSound();
+
+}
+
+
+function endCall(){
+
+    document.getElementById("callScreen")
+        .classList.remove("show");
+
+    openToast("Call ended");
+
+}
+
+
+/* ==========================================
+   PROFILE
+========================================== */
+
+function changeName(){
+
+    openModal(
+        "Change Name",
+        `
+
+        <input
+            id="newName"
+            class="search-box"
+            placeholder="নতুন নাম লিখুন">
+
+        <button
+            class="primary-btn"
+            onclick="saveName()">
+
+            Save Name
+
+        </button>
+
+        `
+    );
+
+}
+
+
+function saveName(){
+
+    const input=
+    document.getElementById("newName");
+
+    if(!input || !input.value.trim()) return;
+
+    const name=
+    input.value.trim();
+
+    document.getElementById("profileName")
+        .innerText=name;
+
+    localStorage.setItem(
+        "shakibys_name",
+        name
+    );
+
+    closeModal();
+
+    openToast("নাম পরিবর্তন হয়েছে ✅");
+
+}
+
+
+function openSettings(){
+
+    showPage("settingsPage");
+
+}
+
+
+/* ==========================================
+   DARK MODE
+========================================== */
+
+function toggleDarkMode(){
+
+    document.body.classList.toggle("dark");
+
+    const on=
+    document.body.classList.contains("dark");
+
+    const toggle=
+    document.getElementById("darkToggle");
+
+    toggle.classList.toggle("on",on);
+
+    localStorage.setItem(
+        "shakibys_dark",
+        on?"on":"off"
+    );
+
+}
+
+
+function toggleSound(){
+
+    soundEnabled=!soundEnabled;
+
+    const toggle=
+    document.getElementById("soundToggle");
+
+    toggle.classList.toggle(
+        "on",
+        soundEnabled
+    );
+
+    localStorage.setItem(
+        "shakibys_sound",
+        soundEnabled?"on":"off"
+    );
+
+    if(soundEnabled)
+        tapSound();
+
+}
+
+
+/* ==========================================
+   POLICY
+========================================== */
+
+function openPolicy(title){
+
+    openModal(
+        title,
+        `
+
+        <div style="
+            font-size:13px;
+            line-height:1.8;
+            color:var(--muted);
+        ">
+
+            <h3 style="color:var(--text);">
+                ${title}
+            </h3>
+
+            <br>
+
+            ShakibYS ব্যবহার করার সময়
+            সকল ব্যবহারকারীকে সম্মানজনক আচরণ করতে হবে।
+
+            <br><br>
+
+            ব্যক্তিগত তথ্য সুরক্ষা,
+            নিরাপদ যোগাযোগ,
+            community rules এবং
+            platform safety বজায় রাখা
+            গুরুত্বপূর্ণ।
+
+        </div>
+
+        `
+    );
+
+}
+
+
+/* ==========================================
+   SHARE / LIKE
+========================================== */
+
+function likePost(button){
+
+    button.classList.toggle("liked");
+
+    button.innerHTML=
+    button.classList.contains("liked")
+    ?
+    '<i class="fa-solid fa-heart"></i> Liked'
+    :
+    '<i class="fa-regular fa-heart"></i> Like';
+
+}
+
+
+function sharePost(){
+
+    if(navigator.share){
+
+        navigator.share({
+            title:"ShakibYS",
+            text:"Check this post on ShakibYS"
+        });
+
+    }else{
+
+        openToast("Share link copied");
+
+    }
+
+}
+
+
+/* ==========================================
+   MODAL
+========================================== */
+
+function openModal(title,content){
+
+    document.getElementById("modalTitle")
+        .innerText=title;
+
+    document.getElementById("modalContent")
+        .innerHTML=content;
+
+    document.getElementById("modal")
+        .classList.add("show");
+
+}
+
+
+function closeModal(){
+
+    document.getElementById("modal")
+        .classList.remove("show");
+
+}
+
+
+/* ==========================================
+   ESCAPE HTML
+========================================== */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* ==========================================
+   INITIALIZE
+========================================== */
+
+function initialize(){
+
+    renderProducts();
+
+    updateCartBadge();
+
+    const dark=
+    localStorage.getItem("shakibys_dark")==="on";
+
+    if(dark){
+
+        document.body.classList.add("dark");
+
+        document.getElementById("darkToggle")
+            .classList.add("on");
+
+    }
+
+
+    const savedName=
+    localStorage.getItem("shakibys_name");
+
+    if(savedName){
+
+        document.getElementById("profileName")
+            .innerText=savedName;
+
+    }
+
+}
+
+
+document.getElementById("modal")
+    .addEventListener("click",function(e){
+
+        if(e.target===this){
+
+            closeModal();
+
+        }
+
+    });
+
+
+initialize();
+
+</script>
+
+</body>
+                  </html>
