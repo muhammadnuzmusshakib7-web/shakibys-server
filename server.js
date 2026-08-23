@@ -1,16 +1,16 @@
-require("dotenv").config();
+আচ্ছা require("dotenv").config();
 
 const express = require("express");
 const http = require("http");
 const path = require("path");
 const cors = require("cors");
-const mongoose = require("mongoose");
 const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
 
 const PORT = process.env.PORT || 10000;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
 
 app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: "10mb" }));
@@ -18,151 +18,31 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
 /* =========================================================
-   ENVIRONMENT
-========================================================= */
+   MEMORY STORAGE
+   ========================================================= */
 
-const MONGO_URI = process.env.MONGO_URI;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const posts = [];
+const messages = [];
 
-if (!MONGO_URI) {
-  console.error("❌ MONGO_URI পাওয়া যায়নি");
-  console.error("Render → Environment → MONGO_URI যোগ করো");
-  process.exit(1);
-}
-
-/* =========================================================
-   MONGODB
-========================================================= */
-
-const userSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    phone: {
-      type: String,
-      default: "",
-      trim: true
-    },
-    avatar: {
-      type: String,
-      default: ""
-    },
-    online: {
-      type: Boolean,
-      default: false
-    },
-    lastSeen: {
-      type: Date,
-      default: Date.now
-    }
-  },
-  { timestamps: true }
-);
-
-const postSchema = new mongoose.Schema(
-  {
-    author: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    authorId: {
-      type: String,
-      default: ""
-    },
-    content: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 5000
-    },
-    privacy: {
-      type: String,
-      enum: ["public", "friends", "private"],
-      default: "public"
-    },
-    likes: {
-      type: Number,
-      default: 0
-    },
-    comments: {
-      type: Number,
-      default: 0
-    },
-    shares: {
-      type: Number,
-      default: 0
-    }
-  },
-  { timestamps: true }
-);
-
-const messageSchema = new mongoose.Schema(
-  {
-    conversationId: {
-      type: String,
-      required: true,
-      index: true
-    },
-    senderId: {
-      type: String,
-      required: true
-    },
-    senderName: {
-      type: String,
-      required: true
-    },
-    receiverId: {
-      type: String,
-      default: ""
-    },
-    text: {
-      type: String,
-      default: ""
-    },
-    type: {
-      type: String,
-      enum: ["text", "image", "file"],
-      default: "text"
-    }
-  },
-  { timestamps: true }
-);
-
-const User = mongoose.model("User", userSchema);
-const Post = mongoose.model("Post", postSchema);
-const Message = mongoose.model("Message", messageSchema);
-
-/* =========================================================
-   SOCKET.IO
-========================================================= */
-
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
-
-/*
-  socket.id -> userId
-*/
 const onlineUsers = new Map();
-
-/*
-  userId -> socket.id
-*/
 const userSockets = new Map();
 
 /* =========================================================
    HELPERS
-========================================================= */
+   ========================================================= */
 
 function clean(value, fallback = "") {
   return String(value ?? fallback).trim();
+}
+
+function makeId(prefix = "id") {
+  return (
+    prefix +
+    "_" +
+    Date.now().toString(36) +
+    "_" +
+    Math.random().toString(36).slice(2, 9)
+  );
 }
 
 function conversationId(a, b) {
@@ -172,619 +52,1152 @@ function conversationId(a, b) {
 function sendToUser(userId, event, data) {
   const socketId = userSockets.get(String(userId));
 
-  if (socketId) {
-    io.to(socketId).emit(event, data);
-    return true;
-  }
+  if (!socketId) return false;
 
-  return false;
+  io.to(socketId).emit(event, data);
+  return true;
 }
 
 /* =========================================================
-   SOCKET CONNECTION
-========================================================= */
+   SOCKET.IO
+   ========================================================= */
 
-io.on("connection", async (socket) => {
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on("connection", (socket) => {
+
   console.log("🟢 Socket connected:", socket.id);
 
   /* =======================================================
      USER ONLINE
-  ======================================================= */
+     ======================================================= */
 
-  socket.on("user:online", async (data) => {
+  socket.on("user:online", (data) => {
+
     try {
-      const userId = clean(data?.userId);
-      const name = clean(data?.name, "Shakib");
-      const phone = clean(data?.phone);
 
-      if (!userId && !phone) {
-        return;
-      }
+      const userId =
+        clean(data?.userId) ||
+        clean(data?.phone);
 
-      const id = userId || phone;
+      const name =
+        clean(data?.name, "Shakib");
 
-      onlineUsers.set(socket.id, id);
-      userSockets.set(id, socket.id);
+      if (!userId) return;
 
-      await User.findOneAndUpdate(
-        { $or: [{ _id: mongoose.isValidObjectId(id) ? id : null }, { phone: id }] },
-        {
-          name,
-          phone,
-          online: true,
-          lastSeen: new Date()
-        },
-        {
-          upsert: false,
-          new: true
-        }
-      ).catch(() => {});
+      onlineUsers.set(socket.id, {
+        userId,
+        name
+      });
+
+      userSockets.set(userId, socket.id);
 
       io.emit("user:status", {
-        userId: id,
+        userId,
+        name,
         online: true
       });
 
-      console.log("🟢 User online:", id);
+      console.log("🟢 User online:", name, userId);
 
     } catch (error) {
-      console.error("user:online error:", error.message);
+
+      console.error(
+        "user:online error:",
+        error.message
+      );
+
     }
+
   });
 
   /* =======================================================
-     NEWS FEED INITIAL
-  ======================================================= */
+     INITIAL NEWS FEED
+     ======================================================= */
 
-  try {
-    const posts = await Post.find({
-      privacy: "public"
-    })
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .lean();
-
-    socket.emit("posts:init", posts);
-  } catch (error) {
-    console.error("posts:init error:", error.message);
-  }
+  socket.emit(
+    "posts:init",
+    posts.slice(0, 50)
+  );
 
   /* =======================================================
      CREATE POST
-  ======================================================= */
+     ======================================================= */
 
-  socket.on("post:create", async (data) => {
+  socket.on("post:create", (data) => {
+
     try {
-      const author = clean(data?.author, "Shakib");
-      const authorId = clean(data?.authorId);
-      const content = clean(data?.content);
-      const privacy = clean(data?.privacy, "public");
+
+      const author =
+        clean(data?.author, "Shakib");
+
+      const authorId =
+        clean(data?.authorId);
+
+      const content =
+        clean(data?.content);
+
+      const privacy =
+        clean(data?.privacy, "public");
 
       if (!content) {
+
         socket.emit("post:error", {
           message: "Post লিখুন"
         });
+
         return;
       }
 
-      const post = await Post.create({
-        author,
-        authorId,
-        content,
-        privacy
-      });
+      if (
+        !["public", "friends", "private"]
+          .includes(privacy)
+      ) {
 
-      const result = post.toObject();
+        socket.emit("post:error", {
+          message: "Privacy ভুল"
+        });
 
-      if (privacy === "public") {
-        io.emit("post:created", result);
-      } else {
-        socket.emit("post:created", result);
+        return;
       }
 
-      console.log("📝 Post created:", author);
+      const post = {
+
+        id: makeId("post"),
+
+        author,
+
+        authorId,
+
+        content,
+
+        privacy,
+
+        likes: 0,
+
+        comments: 0,
+
+        shares: 0,
+
+        createdAt: new Date().toISOString()
+
+      };
+
+      posts.unshift(post);
+
+      /*
+        Memory limit
+      */
+
+      if (posts.length > 500) {
+        posts.length = 500;
+      }
+
+      if (privacy === "public") {
+
+        io.emit(
+          "post:created",
+          post
+        );
+
+      } else {
+
+        socket.emit(
+          "post:created",
+          post
+        );
+
+      }
+
+      console.log(
+        "📝 Post created:",
+        author
+      );
 
     } catch (error) {
-      console.error("post:create error:", error.message);
+
+      console.error(
+        "post:create error:",
+        error.message
+      );
 
       socket.emit("post:error", {
         message: "Post তৈরি করা যায়নি"
       });
+
     }
+
   });
 
   /* =======================================================
      LIKE POST
-  ======================================================= */
+     ======================================================= */
 
-  socket.on("post:like", async (postId) => {
-    try {
-      if (!mongoose.isValidObjectId(postId)) return;
+  socket.on("post:like", (postId) => {
 
-      const post = await Post.findByIdAndUpdate(
-        postId,
-        { $inc: { likes: 1 } },
-        { new: true }
-      ).lean();
+    const post =
+      posts.find(
+        p => p.id === postId
+      );
 
-      if (post) {
-        io.emit("post:updated", post);
-      }
+    if (!post) return;
 
-    } catch (error) {
-      console.error("post:like error:", error.message);
-    }
+    post.likes++;
+
+    io.emit(
+      "post:updated",
+      post
+    );
+
   });
 
   /* =======================================================
      SEND MESSAGE
-  ======================================================= */
+     ======================================================= */
 
-  socket.on("message:send", async (data) => {
+  socket.on("message:send", (data) => {
+
     try {
-      const senderId = clean(data?.senderId);
-      const senderName = clean(data?.senderName, "Shakib");
-      const receiverId = clean(data?.receiverId);
-      const text = clean(data?.text);
-      const type = clean(data?.type, "text");
 
-      if (!senderId || !receiverId || !text) {
-        socket.emit("message:error", {
-          message: "Message data অসম্পূর্ণ"
-        });
+      const senderId =
+        clean(data?.senderId);
+
+      const senderName =
+        clean(
+          data?.senderName,
+          "Shakib"
+        );
+
+      const receiverId =
+        clean(data?.receiverId);
+
+      const text =
+        clean(data?.text);
+
+      const type =
+        clean(
+          data?.type,
+          "text"
+        );
+
+      if (
+        !senderId ||
+        !receiverId ||
+        !text
+      ) {
+
+        socket.emit(
+          "message:error",
+          {
+            message:
+              "Message data অসম্পূর্ণ"
+          }
+        );
+
         return;
       }
 
-      const cid = conversationId(senderId, receiverId);
+      const message = {
 
-      const message = await Message.create({
-        conversationId: cid,
+        id: makeId("msg"),
+
+        conversationId:
+          conversationId(
+            senderId,
+            receiverId
+          ),
+
         senderId,
-        senderName,
-        receiverId,
-        text,
-        type
-      });
 
-      const result = message.toObject();
+        senderName,
+
+        receiverId,
+
+        text,
+
+        type,
+
+        createdAt:
+          new Date().toISOString()
+
+      };
+
+      messages.push(message);
+
+      if (messages.length > 2000) {
+        messages.splice(
+          0,
+          messages.length - 2000
+        );
+      }
 
       /*
         Sender
       */
-      socket.emit("message:new", result);
+
+      socket.emit(
+        "message:new",
+        message
+      );
 
       /*
         Receiver
       */
-      sendToUser(receiverId, "message:new", result);
+
+      sendToUser(
+        receiverId,
+        "message:new",
+        message
+      );
 
       console.log(
         `💬 ${senderName} → ${receiverId}: ${text}`
       );
 
     } catch (error) {
-      console.error("message:send error:", error.message);
 
-      socket.emit("message:error", {
-        message: "Message পাঠানো যায়নি"
-      });
+      console.error(
+        "message:send error:",
+        error.message
+      );
+
+      socket.emit(
+        "message:error",
+        {
+          message:
+            "Message পাঠানো যায়নি"
+        }
+      );
+
     }
+
   });
 
   /* =======================================================
-     LOAD CHAT
-  ======================================================= */
+     MESSAGE HISTORY
+     ======================================================= */
 
-  socket.on("message:history", async (data) => {
-    try {
-      const userA = clean(data?.userA);
-      const userB = clean(data?.userB);
+  socket.on(
+    "message:history",
+    (data) => {
+
+      const userA =
+        clean(data?.userA);
+
+      const userB =
+        clean(data?.userB);
 
       if (!userA || !userB) return;
 
-      const cid = conversationId(userA, userB);
+      const cid =
+        conversationId(
+          userA,
+          userB
+        );
 
-      const messages = await Message.find({
-        conversationId: cid
-      })
-        .sort({ createdAt: 1 })
-        .limit(200)
-        .lean();
+      const history =
+        messages
+          .filter(
+            m =>
+              m.conversationId === cid
+          )
+          .slice(-200);
 
-      socket.emit("message:history", messages);
+      socket.emit(
+        "message:history",
+        history
+      );
 
-    } catch (error) {
-      console.error("message:history error:", error.message);
     }
-  });
+  );
 
   /* =======================================================
      TYPING
-  ======================================================= */
+     ======================================================= */
 
-  socket.on("typing:start", (data) => {
-    const receiverId = clean(data?.receiverId);
-    const senderName = clean(data?.senderName, "Someone");
+  socket.on(
+    "typing:start",
+    (data) => {
 
-    sendToUser(receiverId, "typing:start", {
-      senderName
-    });
-  });
+      const receiverId =
+        clean(data?.receiverId);
 
-  socket.on("typing:stop", (data) => {
-    const receiverId = clean(data?.receiverId);
+      const senderName =
+        clean(
+          data?.senderName,
+          "Someone"
+        );
 
-    sendToUser(receiverId, "typing:stop", {});
-  });
+      sendToUser(
+        receiverId,
+        "typing:start",
+        {
+          senderName
+        }
+      );
+
+    }
+  );
+
+  socket.on(
+    "typing:stop",
+    (data) => {
+
+      const receiverId =
+        clean(data?.receiverId);
+
+      sendToUser(
+        receiverId,
+        "typing:stop",
+        {}
+      );
+
+    }
+  );
 
   /* =======================================================
-     VOICE / VIDEO CALL
-     WebRTC SIGNALING
-  ======================================================= */
+     AUDIO / VIDEO CALL
+     WEBRTC SIGNALING
+     ======================================================= */
 
   /*
-    Caller → Receiver
+     CALL OFFER
   */
 
-  socket.on("call:offer", (data) => {
-    const receiverId = clean(data?.receiverId);
+  socket.on(
+    "call:offer",
+    (data) => {
 
-    sendToUser(receiverId, "call:offer", {
-      callerId: clean(data?.callerId),
-      callerName: clean(data?.callerName, "Shakib"),
-      callType: clean(data?.callType, "voice"),
-      offer: data?.offer
-    });
+      const receiverId =
+        clean(data?.receiverId);
 
-    console.log(
-      `📞 Call offer → ${receiverId}`
-    );
-  });
+      if (!receiverId) return;
+
+      sendToUser(
+        receiverId,
+        "call:offer",
+        {
+
+          callerId:
+            clean(data?.callerId),
+
+          callerName:
+            clean(
+              data?.callerName,
+              "Shakib"
+            ),
+
+          callType:
+            clean(
+              data?.callType,
+              "voice"
+            ),
+
+          offer:
+            data?.offer
+
+        }
+      );
+
+      console.log(
+        "📞 Call offer →",
+        receiverId
+      );
+
+    }
+  );
 
   /*
-    Receiver accepts
+     CALL ANSWER
   */
 
-  socket.on("call:answer", (data) => {
-    const callerId = clean(data?.callerId);
+  socket.on(
+    "call:answer",
+    (data) => {
 
-    sendToUser(callerId, "call:answer", {
-      receiverId: clean(data?.receiverId),
-      answer: data?.answer
-    });
+      const callerId =
+        clean(data?.callerId);
 
-    console.log(
-      `📞 Call answer → ${callerId}`
-    );
-  });
+      if (!callerId) return;
+
+      sendToUser(
+        callerId,
+        "call:answer",
+        {
+
+          receiverId:
+            clean(data?.receiverId),
+
+          answer:
+            data?.answer
+
+        }
+      );
+
+      console.log(
+        "📞 Call answer →",
+        callerId
+      );
+
+    }
+  );
 
   /*
-    ICE candidate
+     ICE CANDIDATE
   */
 
-  socket.on("call:ice", (data) => {
-    const targetUserId = clean(data?.targetUserId);
+  socket.on(
+    "call:ice",
+    (data) => {
 
-    sendToUser(targetUserId, "call:ice", {
-      candidate: data?.candidate
-    });
-  });
+      const targetUserId =
+        clean(
+          data?.targetUserId
+        );
+
+      if (!targetUserId) return;
+
+      sendToUser(
+        targetUserId,
+        "call:ice",
+        {
+
+          candidate:
+            data?.candidate
+
+        }
+      );
+
+    }
+  );
 
   /*
-    Reject call
+     REJECT CALL
   */
 
-  socket.on("call:reject", (data) => {
-    const callerId = clean(data?.callerId);
+  socket.on(
+    "call:reject",
+    (data) => {
 
-    sendToUser(callerId, "call:rejected", {
-      receiverId: clean(data?.receiverId)
-    });
-  });
+      const callerId =
+        clean(data?.callerId);
+
+      if (!callerId) return;
+
+      sendToUser(
+        callerId,
+        "call:rejected",
+        {
+
+          receiverId:
+            clean(
+              data?.receiverId
+            )
+
+        }
+      );
+
+    }
+  );
 
   /*
-    End call
+     END CALL
   */
 
-  socket.on("call:end", (data) => {
-    const targetUserId = clean(data?.targetUserId);
+  socket.on(
+    "call:end",
+    (data) => {
 
-    sendToUser(targetUserId, "call:ended", {
-      from: clean(data?.from)
-    });
-  });
+      const targetUserId =
+        clean(
+          data?.targetUserId
+        );
+
+      if (!targetUserId) return;
+
+      sendToUser(
+        targetUserId,
+        "call:ended",
+        {
+
+          from:
+            clean(data?.from)
+
+        }
+      );
+
+    }
+  );
 
   /* =======================================================
      DISCONNECT
-  ======================================================= */
+     ======================================================= */
 
-  socket.on("disconnect", async () => {
-    const userId = onlineUsers.get(socket.id);
+  socket.on(
+    "disconnect",
+    () => {
 
-    onlineUsers.delete(socket.id);
+      const user =
+        onlineUsers.get(
+          socket.id
+        );
 
-    if (userId) {
-      userSockets.delete(userId);
+      onlineUsers.delete(
+        socket.id
+      );
 
-      io.emit("user:status", {
-        userId,
-        online: false
-      });
+      if (user) {
 
-      try {
-        await User.findOneAndUpdate(
+        /*
+          Only delete if this socket
+          is still the current socket
+        */
+
+        if (
+          userSockets.get(
+            user.userId
+          ) === socket.id
+        ) {
+
+          userSockets.delete(
+            user.userId
+          );
+
+        }
+
+        io.emit(
+          "user:status",
           {
-            $or: [
-              { phone: userId },
-              ...(mongoose.isValidObjectId(userId)
-                ? [{ _id: userId }]
-                : [])
-            ]
-          },
-          {
-            online: false,
-            lastSeen: new Date()
+
+            userId:
+              user.userId,
+
+            name:
+              user.name,
+
+            online:
+              false
+
           }
         );
-      } catch (error) {}
 
-      console.log("🔴 User offline:", userId);
+        console.log(
+          "🔴 User offline:",
+          user.name
+        );
+
+      }
+
+      console.log(
+        "🔴 Socket disconnected:",
+        socket.id
+      );
+
     }
+  );
 
-    console.log("🔴 Socket disconnected:", socket.id);
-  });
 });
+
+/* =========================================================
+   REST API — HEALTH
+   ========================================================= */
+
+app.get(
+  "/api/health",
+  (req, res) => {
+
+    res.json({
+
+      success: true,
+
+      app: "ShakibYS",
+
+      server: "online",
+
+      database:
+        "not configured",
+
+      socket:
+        "enabled",
+
+      messenger:
+        "enabled",
+
+      voiceCall:
+        "enabled",
+
+      videoCall:
+        "enabled",
+
+      newsFeed:
+        "enabled",
+
+      ai:
+        OPENAI_API_KEY
+          ? "enabled"
+          : "not configured",
+
+      onlineUsers:
+        userSockets.size,
+
+      posts:
+        posts.length,
+
+      messages:
+        messages.length,
+
+      time:
+        new Date().toISOString()
+
+    });
+
+  }
+);
 
 /* =========================================================
    REST API — NEWS FEED
-========================================================= */
+   ========================================================= */
 
-app.get("/api/posts", async (req, res) => {
-  try {
-    const posts = await Post.find({
-      privacy: "public"
-    })
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .lean();
+app.get(
+  "/api/posts",
+  (req, res) => {
 
     res.json({
+
       success: true,
-      posts
+
+      posts:
+        posts
+          .filter(
+            p =>
+              p.privacy === "public"
+          )
+          .slice(0, 50)
+
     });
 
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "News Feed পাওয়া যায়নি"
-    });
   }
-});
+);
 
 /* =========================================================
    REST API — CREATE POST
-========================================================= */
+   ========================================================= */
 
-app.post("/api/posts", async (req, res) => {
-  try {
-    const author = clean(req.body?.author, "Shakib");
-    const content = clean(req.body?.content);
+app.post(
+  "/api/posts",
+  (req, res) => {
 
-    if (!content) {
-      return res.status(400).json({
-        success: false,
-        message: "Post লিখুন"
+    try {
+
+      const author =
+        clean(
+          req.body?.author,
+          "Shakib"
+        );
+
+      const content =
+        clean(
+          req.body?.content
+        );
+
+      if (!content) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message:
+            "Post লিখুন"
+
+        });
+
+      }
+
+      const post = {
+
+        id:
+          makeId("post"),
+
+        author,
+
+        authorId:
+          clean(
+            req.body?.authorId
+          ),
+
+        content,
+
+        privacy:
+          "public",
+
+        likes: 0,
+
+        comments: 0,
+
+        shares: 0,
+
+        createdAt:
+          new Date().toISOString()
+
+      };
+
+      posts.unshift(post);
+
+      if (posts.length > 500) {
+        posts.length = 500;
+      }
+
+      io.emit(
+        "post:created",
+        post
+      );
+
+      res.status(201).json({
+
+        success: true,
+
+        post
+
       });
+
+    } catch (error) {
+
+      console.error(
+        "REST post error:",
+        error.message
+      );
+
+      res.status(500).json({
+
+        success: false,
+
+        message:
+          "Post তৈরি করা যায়নি"
+
+      });
+
     }
 
-    const post = await Post.create({
-      author,
-      content,
-      privacy: "public"
-    });
-
-    const result = post.toObject();
-
-    io.emit("post:created", result);
-
-    res.status(201).json({
-      success: true,
-      post: result
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Post তৈরি করা যায়নি"
-    });
   }
-});
+);
 
 /* =========================================================
-   REST API — CHAT HISTORY
-========================================================= */
+   REST API — MESSAGE HISTORY
+   ========================================================= */
 
-app.get("/api/messages/:userA/:userB", async (req, res) => {
-  try {
-    const cid = conversationId(
-      req.params.userA,
-      req.params.userB
-    );
+app.get(
+  "/api/messages/:userA/:userB",
+  (req, res) => {
 
-    const messages = await Message.find({
-      conversationId: cid
-    })
-      .sort({ createdAt: 1 })
-      .limit(200)
-      .lean();
+    try {
 
-    res.json({
-      success: true,
-      messages
-    });
+      const cid =
+        conversationId(
+          req.params.userA,
+          req.params.userB
+        );
 
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Messages পাওয়া যায়নি"
-    });
+      const result =
+        messages
+          .filter(
+            m =>
+              m.conversationId === cid
+          )
+          .slice(-200);
+
+      res.json({
+
+        success: true,
+
+        messages: result
+
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+
+        success: false,
+
+        message:
+          "Messages পাওয়া যায়নি"
+
+      });
+
+    }
+
   }
-});
+);
 
 /* =========================================================
    AI API
-========================================================= */
+   ========================================================= */
 
-app.post("/api/ai", async (req, res) => {
-  try {
-    const question = clean(req.body?.message);
+app.post(
+  "/api/ai",
+  async (req, res) => {
 
-    if (!question) {
-      return res.status(400).json({
-        success: false,
-        message: "প্রশ্ন লিখুন"
-      });
-    }
+    try {
 
-    if (!OPENAI_API_KEY) {
-      return res.status(500).json({
-        success: false,
-        message: "OPENAI_API_KEY সেট করা হয়নি"
-      });
-    }
+      const question =
+        clean(
+          req.body?.message
+        );
 
-    const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
+      if (!question) {
 
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${OPENAI_API_KEY}`
-        },
+        return res.status(400).json({
 
-        body: JSON.stringify({
-          model: process.env.AI_MODEL || "gpt-4o-mini",
+          success: false,
 
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are ShakibYS AI. Answer naturally and helpfully. If the user writes Bengali, respond in Bengali."
-            },
-            {
-              role: "user",
-              content: question
-            }
-          ],
+          message:
+            "প্রশ্ন লিখুন"
 
-          temperature: 0.7,
-          max_tokens: 700
-        })
+        });
+
       }
-    );
 
-    const data = await response.json();
+      if (!OPENAI_API_KEY) {
 
-    if (!response.ok) {
-      console.error("AI API error:", data);
+        return res.status(503).json({
 
-      return res.status(response.status).json({
-        success: false,
-        message:
-          data?.error?.message ||
-          "AI response পাওয়া যায়নি"
+          success: false,
+
+          message:
+            "OPENAI_API_KEY সেট করা হয়নি"
+
+        });
+
+      }
+
+      const response =
+        await fetch(
+          "https://api.openai.com/v1/chat/completions",
+          {
+
+            method: "POST",
+
+            headers: {
+
+              "Content-Type":
+                "application/json",
+
+              Authorization:
+                `Bearer ${OPENAI_API_KEY}`
+
+            },
+
+            body:
+              JSON.stringify({
+
+                model:
+                  process.env.AI_MODEL ||
+                  "gpt-4o-mini",
+
+                messages: [
+
+                  {
+
+                    role:
+                      "system",
+
+                    content:
+                      "You are ShakibYS AI. Answer naturally and helpfully. If the user writes Bengali, respond in Bengali."
+
+                  },
+
+                  {
+
+                    role:
+                      "user",
+
+                    content:
+                      question
+
+                  }
+
+                ],
+
+                temperature:
+                  0.7,
+
+                max_tokens:
+                  700
+
+              })
+
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        console.error(
+          "AI API error:",
+          data
+        );
+
+        return res.status(
+          response.status
+        ).json({
+
+          success: false,
+
+          message:
+            data?.error?.message ||
+            "AI response পাওয়া যায়নি"
+
+        });
+
+      }
+
+      const answer =
+        data
+          ?.choices?.[0]
+          ?.message?.content ||
+        "AI কোনো উত্তর দেয়নি।";
+
+      res.json({
+
+        success: true,
+
+        answer
+
       });
+
+    } catch (error) {
+
+      console.error(
+        "AI error:",
+        error.message
+      );
+
+      res.status(500).json({
+
+        success: false,
+
+        message:
+          "AI server error"
+
+      });
+
     }
 
-    const answer =
-      data?.choices?.[0]?.message?.content ||
-      "AI কোনো উত্তর দেয়নি।";
-
-    res.json({
-      success: true,
-      answer
-    });
-
-  } catch (error) {
-    console.error("AI error:", error.message);
-
-    res.status(500).json({
-      success: false,
-      message: "AI server error"
-    });
   }
-});
-
-/* =========================================================
-   HEALTH CHECK
-========================================================= */
-
-app.get("/api/health", (req, res) => {
-  res.json({
-    success: true,
-    app: "ShakibYS",
-    server: "online",
-    database:
-      mongoose.connection.readyState === 1
-        ? "connected"
-        : "disconnected",
-    socket: "enabled",
-    messenger: "enabled",
-    voiceCall: "enabled",
-    videoCall: "enabled",
-    newsFeed: "enabled",
-    ai: OPENAI_API_KEY ? "enabled" : "not configured",
-    time: new Date().toISOString()
-  });
-});
+);
 
 /* =========================================================
    FRONTEND
-========================================================= */
+   ========================================================= */
 
-app.get("*", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "index.html")
-  );
-});
+app.get(
+  "/",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "index.html"
+      )
+    );
+
+  }
+);
+
+/*
+   Any normal frontend route
+*/
+
+app.get(
+  "/*",
+  (req, res, next) => {
+
+    if (
+      req.path.startsWith("/api/")
+    ) {
+
+      return next();
+
+    }
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "index.html"
+      )
+    );
+
+  }
+);
 
 /* =========================================================
-   START
-========================================================= */
+   START SERVER
+   ========================================================= */
 
-async function start() {
-  try {
-    console.log("🔄 Connecting MongoDB...");
+server.listen(
+  PORT,
+  "0.0.0.0",
+  () => {
 
-    await mongoose.connect(MONGO_URI);
+    console.log("");
+    console.log(
+      "================================="
+    );
+    console.log(
+      "🚀 SHAKIBYS SERVER ONLINE"
+    );
+    console.log(
+      "================================="
+    );
 
-    console.log("✅ MongoDB connected");
+    console.log(
+      "💾 Database     : MEMORY"
+    );
 
-    server.listen(PORT, "0.0.0.0", () => {
-      console.log("");
-      console.log("=================================");
-      console.log("🚀 ShakibYS SERVER ONLINE");
-      console.log("=================================");
-      console.log("💾 MongoDB       : ON");
-      console.log("📰 News Feed     : ON");
-      console.log("💬 Messenger     : ON");
-      console.log("📞 Voice Call    : ON");
-      console.log("🎥 Video Call    : ON");
-      console.log("🤖 AI API        :", OPENAI_API_KEY ? "ON" : "OFF");
-      console.log("🔌 Socket.IO     : ON");
-      console.log("🌐 PORT          :", PORT);
-      console.log("=================================");
-      console.log("");
-    });
+    console.log(
+      "📰 News Feed    : ON"
+    );
 
-  } catch (error) {
-    console.error("");
-    console.error("❌ MongoDB connection failed");
-    console.error(error.message);
-    console.error("");
-    process.exit(1);
+    console.log(
+      "💬 Messenger    : ON"
+    );
+
+    console.log(
+      "📞 Voice Call   : ON"
+    );
+
+    console.log(
+      "🎥 Video Call   : ON"
+    );
+
+    console.log(
+      "🤖 AI API       :",
+      OPENAI_API_KEY
+        ? "ON"
+        : "OFF"
+    );
+
+    console.log(
+      "🔌 Socket.IO    : ON"
+    );
+
+    console.log(
+      "🌐 PORT         :",
+      PORT
+    );
+
+    console.log(
+      "================================="
+    );
+
+    console.log("");
+
   }
-}
-
-start();
+);
