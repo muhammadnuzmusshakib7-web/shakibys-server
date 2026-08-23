@@ -3,286 +3,334 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="theme-color" content="#7c3aed">
+<meta name="theme-color" content="#ec4899">
 <title>ShakibYS</title>
 
 <style>
 :root{
- --p:#7c3aed;--p2:#ec4899;--bg:#f5f6fa;--card:#fff;
- --text:#181824;--muted:#777987;--line:#e7e7ee;
- --soft:#f0ebff;--shadow:0 4px 18px #0000000d
+ --pink:#ec4899;
+ --pink2:#f472b6;
+ --purple:#a855f7;
+ --bg:#f7f7fa;
+ --card:#fff;
+ --text:#191923;
+ --muted:#777987;
+ --line:#ececf1;
+ --soft:#fff0f7;
+ --shadow:0 3px 14px #0000000a
 }
 *{box-sizing:border-box}
 body{
  margin:0;background:var(--bg);color:var(--text);
  font-family:"Hind Siliguri","Inter",Arial,sans-serif;
- font-size:13px
+ font-size:12px
 }
 body.dark{
- --bg:#080a10;--card:#11131b;--text:#f5f5fa;
- --muted:#a2a4b0;--line:#282b37;--soft:#211a35
+ --bg:#09090d;--card:#13131a;--text:#f7f7fa;
+ --muted:#a3a3ad;--line:#292931;--soft:#291722
 }
 button,input,textarea,select{font:inherit}
 button{border:0;cursor:pointer}
-.app{max-width:900px;margin:auto;padding-bottom:70px}
+.app{max-width:760px;margin:auto;padding-bottom:64px}
 .topbar{
  position:sticky;top:0;z-index:50;
- background:#ffffffeF;backdrop-filter:blur(15px);
+ background:#ffffffee;backdrop-filter:blur(14px);
  border-bottom:1px solid var(--line)
 }
-.dark .topbar{background:#11131bee}
+.dark .topbar{background:#13131aee}
 .header{
- height:58px;padding:8px 12px;display:flex;
- align-items:center;gap:8px
+ height:52px;padding:6px 9px;display:flex;
+ align-items:center;gap:6px
 }
 .brand{display:flex;align-items:center}
 .logo{
- width:34px;height:34px;border-radius:10px;
+ width:31px;height:31px;border-radius:9px;
  display:grid;place-items:center;color:#fff;
- font-weight:900;background:linear-gradient(135deg,var(--p),var(--p2))
+ font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple))
 }
-.brand-name{font-size:17px;font-weight:800;margin-left:7px}
-.brand-name span{color:var(--p2)}
+.brand-name{font-size:15px;font-weight:800;margin-left:5px}
+.brand-name span{color:var(--pink)}
 .search{flex:1;position:relative}
 .search input{
- width:100%;height:36px;border:0;border-radius:11px;
- background:var(--bg);padding:0 32px 0 11px;
- color:var(--text);outline:0
+ width:100%;height:32px;border:0;border-radius:10px;
+ background:var(--bg);padding:0 28px 0 9px;
+ color:var(--text);outline:0;font-size:11px
 }
-.search-icon{position:absolute;right:10px;top:8px;color:var(--muted)}
+.search-icon{
+ position:absolute;right:9px;top:7px;color:var(--pink)
+}
 .head-btn{
- width:35px;height:35px;border-radius:11px;
- background:var(--bg);color:var(--text)
+ width:32px;height:32px;border-radius:10px;
+ background:var(--soft);color:var(--pink);font-size:14px
 }
-main{padding:11px}
+main{padding:8px}
 .page{display:none}
 .page.active{display:block}
 
 .welcome{
- padding:17px;border-radius:17px;color:#fff;
- background:linear-gradient(135deg,#5b21b6,var(--p),var(--p2));
- margin-bottom:10px
+ padding:14px;border-radius:15px;color:#fff;
+ background:linear-gradient(135deg,#db2777,var(--pink),var(--purple));
+ margin-bottom:8px
 }
-.welcome h1{font-size:20px;margin:0 0 3px}
-.welcome p{margin:0;font-size:11px;opacity:.85}
+.welcome h1{font-size:18px;margin:0 0 2px}
+.welcome p{margin:0;font-size:10px;opacity:.88}
 .ai-mini{
- margin-top:11px;padding:9px 10px;border-radius:12px;
- background:#ffffff1c;display:flex;justify-content:space-between;
- align-items:center
+ margin-top:9px;padding:8px;border-radius:11px;
+ background:#ffffff20;display:flex;
+ justify-content:space-between;align-items:center
 }
 .ai-mini button{
- background:#fff;color:#5b21b6;padding:7px 10px;
- border-radius:9px;font-weight:700;font-size:11px
+ background:#fff;color:var(--pink);
+ padding:6px 9px;border-radius:8px;
+ font-weight:700;font-size:10px
 }
 
 .card{
  background:var(--card);border:1px solid var(--line);
- border-radius:15px;padding:12px;margin-bottom:10px;
+ border-radius:13px;padding:10px;margin-bottom:8px;
  box-shadow:var(--shadow)
 }
-.section{
- display:flex;justify-content:space-between;align-items:center;
- margin:13px 1px 8px
+.section,.section-head{
+ display:flex;justify-content:space-between;
+ align-items:center;margin:11px 1px 7px
 }
-.section h2{font-size:16px;margin:0}
-.section button{background:none;color:var(--p);font-weight:700;font-size:12px}
+.section h2,.section-head h2{
+ font-size:14px;margin:0
+}
+.section button,.section-head button{
+ background:none;color:var(--pink);
+ font-weight:700;font-size:10px
+}
 
-.create-row{display:flex;gap:8px;align-items:center}
+.create-row{display:flex;gap:7px;align-items:center}
 .avatar{
- width:36px;height:36px;flex:none;border-radius:50%;
+ width:34px;height:34px;flex:none;border-radius:50%;
  display:grid;place-items:center;color:#fff;font-weight:800;
- background:linear-gradient(135deg,var(--p),var(--p2))
+ background:linear-gradient(135deg,var(--pink),var(--purple))
 }
 .create-input{
- flex:1;height:36px;border-radius:11px;
+ flex:1;height:34px;border-radius:10px;
  background:var(--bg);display:flex;align-items:center;
- padding:0 11px;color:var(--muted);font-size:12px
+ padding:0 10px;color:var(--muted);font-size:11px
 }
 .create-actions{
  display:grid;grid-template-columns:repeat(4,1fr);
- gap:5px;margin-top:8px
+ gap:5px;margin-top:7px
 }
 .create-actions button{
- background:var(--bg);color:var(--muted);
- padding:7px 2px;border-radius:9px;font-size:10px
+ background:var(--soft);color:var(--pink);
+ padding:6px 2px;border-radius:8px;font-size:9px
 }
 
 .scroll{
- display:flex;gap:7px;overflow-x:auto;scrollbar-width:none
+ display:flex;gap:6px;overflow-x:auto;scrollbar-width:none
 }
 .scroll::-webkit-scrollbar{display:none}
 .story{
- min-width:70px;width:70px;height:105px;border-radius:13px;
- padding:6px;display:flex;align-items:flex-end;
+ min-width:67px;width:67px;height:100px;border-radius:12px;
+ padding:5px;display:flex;align-items:flex-end;
  color:#fff;position:relative;overflow:hidden;
- background:linear-gradient(160deg,#111827,var(--p),var(--p2))
+ background:linear-gradient(160deg,#111827,var(--pink),var(--purple))
 }
 .story:before{
  content:"";position:absolute;inset:0;
- background:linear-gradient(transparent 30%,#000b)
+ background:linear-gradient(transparent 25%,#000b)
 }
-.story b,.story span{position:relative;z-index:2;font-size:9px}
+.story b,.story span{position:relative;z-index:2;font-size:8px}
 .story .savatar{
- position:absolute;top:6px;left:6px;width:25px;height:25px;
+ position:absolute;top:5px;left:5px;width:24px;height:24px;
  border:2px solid #fff;border-radius:50%;display:grid;
- place-items:center;background:var(--p);font-size:9px;z-index:2
+ place-items:center;background:var(--pink);font-size:8px;z-index:2
 }
 .story.add{
- background:var(--soft);color:var(--p);
+ background:var(--soft);color:var(--pink);
  align-items:center;justify-content:center;text-align:center
 }
 .story.add:before{display:none}
 .plus{
- width:30px;height:30px;border-radius:50%;background:var(--p);
- color:#fff;display:grid;place-items:center;font-size:19px;margin:auto
+ width:27px;height:27px;border-radius:50%;
+ background:var(--pink);color:#fff;
+ display:grid;place-items:center;font-size:17px;margin:auto
 }
 
-.filters{margin:8px 0}
+.filters{margin:7px 0}
 .filter{
- white-space:nowrap;padding:7px 10px;border-radius:9px;
+ white-space:nowrap;padding:6px 9px;border-radius:8px;
  background:var(--card);border:1px solid var(--line);
- color:var(--muted);font-size:10px
+ color:var(--muted);font-size:9px
 }
-.filter.active{background:var(--p);color:#fff;border-color:var(--p)}
+.filter.active{
+ background:var(--pink);color:#fff;border-color:var(--pink)
+}
 
-.post-head{display:flex;align-items:center;gap:8px}
+.post-head{display:flex;align-items:center;gap:7px}
 .post-user{flex:1}
-.post-user strong{font-size:12px}
-.post-user small{display:block;color:var(--muted);font-size:9px}
+.post-user strong{font-size:11px}
+.post-user small{
+ display:block;color:var(--muted);font-size:8px
+}
 .verified{
- display:inline-grid;place-items:center;width:15px;height:15px;
- border-radius:50%;background:#2563eb;color:#fff;font-size:8px
+ display:inline-grid;place-items:center;
+ width:14px;height:14px;border-radius:50%;
+ background:var(--pink);color:#fff;font-size:7px
 }
-.post-text{font-size:12px;line-height:1.55;margin:10px 0}
+.post-text{
+ font-size:11px;line-height:1.55;margin:8px 0
+}
 .post-image{
- height:210px;border-radius:12px;display:grid;place-items:center;
- color:#fff;font-size:42px;
- background:linear-gradient(135deg,#312e81,var(--p),#db2777)
+ height:170px;border-radius:11px;
+ display:grid;place-items:center;color:#fff;font-size:35px;
+ background:linear-gradient(135deg,#831843,var(--pink),#9333ea)
 }
-.stats{
+.stats,.post-stats{
  display:flex;justify-content:space-between;
- color:var(--muted);font-size:9px;
- padding:8px 2px;border-bottom:1px solid var(--line)
+ color:var(--muted);font-size:8px;
+ padding:7px 2px;border-bottom:1px solid var(--line)
 }
-.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding-top:5px}
-.actions button{
- background:none;color:var(--muted);padding:7px 2px;
- border-radius:8px;font-size:10px
+.actions,.post-actions{
+ display:grid;grid-template-columns:repeat(4,1fr);
+ gap:2px;padding-top:4px
+}
+.actions button,.post-actions button{
+ background:var(--soft);color:var(--pink);
+ padding:6px 2px;border-radius:7px;font-size:9px
+}
+
+.feed-container{display:grid;gap:8px}
+.public-post{animation:fade .2s ease}
+@keyframes fade{
+ from{opacity:0;transform:translateY(-5px)}
+ to{opacity:1;transform:translateY(0)}
+}
+.more{
+ background:none;color:var(--pink);
+ font-size:17px
 }
 
 .reel{
- position:relative;background:#111;border-radius:16px;
- overflow:hidden;color:#fff
+ position:relative;background:#111;
+ border-radius:14px;overflow:hidden;color:#fff
 }
 .reel-screen{
- height:480px;display:grid;place-items:center;font-size:55px;
- background:linear-gradient(145deg,#020617,#312e81,#be185d)
+ height:430px;display:grid;place-items:center;
+ font-size:45px;
+ background:linear-gradient(145deg,#020617,#831843,#9333ea)
 }
-.reel-info{position:absolute;bottom:10px;left:11px;right:60px}
-.reel-info strong{font-size:12px}
-.reel-info p{font-size:10px;margin:4px 0}
-.reel-side{position:absolute;right:8px;bottom:55px;display:grid;gap:6px}
+.reel-info{
+ position:absolute;bottom:9px;left:10px;right:55px
+}
+.reel-info strong{font-size:11px}
+.reel-info p{font-size:9px;margin:3px 0}
+.reel-side{
+ position:absolute;right:7px;bottom:50px;
+ display:grid;gap:5px
+}
 .reel-side button{
- width:36px;height:36px;border-radius:11px;
- background:#0007;color:#fff;font-size:15px
+ width:33px;height:33px;border-radius:10px;
+ background:#0008;color:var(--pink);font-size:14px
 }
-.reel-side small{display:block;font-size:7px}
+.reel-side small{display:block;font-size:6px}
 
-.chat-list{display:grid;gap:6px}
+.chat-list{display:grid;gap:5px}
 .chat-item{
- display:flex;align-items:center;gap:8px;padding:10px;
- background:var(--card);border:1px solid var(--line);
- border-radius:12px
+ display:flex;align-items:center;gap:7px;
+ padding:9px;background:var(--card);
+ border:1px solid var(--line);border-radius:11px
 }
 .chat-info{flex:1}
-.chat-info strong{font-size:12px}
-.chat-info small{display:block;color:var(--muted);font-size:9px}
-.online{
- width:8px;height:8px;border-radius:50%;
- background:#22c55e;margin-left:-15px;margin-top:23px;
- border:2px solid var(--card)
+.chat-info strong{font-size:11px}
+.chat-info small{
+ display:block;color:var(--muted);font-size:8px
 }
 
 .market{
- padding:15px;border-radius:15px;color:#fff;
- background:linear-gradient(135deg,#0f766e,#0891b2,#2563eb)
+ padding:13px;border-radius:14px;color:#fff;
+ background:linear-gradient(135deg,#be185d,var(--pink),#9333ea)
 }
-.market h2{margin:0;font-size:17px}
-.market p{margin:2px 0;font-size:10px}
-.market-search{display:flex;gap:5px;margin-top:9px}
+.market h2{margin:0;font-size:15px}
+.market p{margin:2px 0;font-size:9px}
+.market-search{display:flex;gap:4px;margin-top:8px}
 .market-search input{
- flex:1;border:0;border-radius:10px;padding:9px;outline:0
+ flex:1;border:0;border-radius:9px;
+ padding:8px;outline:0;font-size:10px
 }
-.market-search button{width:36px;border-radius:10px;background:#fff}
+.market-search button{
+ width:33px;border-radius:9px;
+ background:#fff;color:var(--pink)
+}
 .products{
- display:grid;grid-template-columns:repeat(2,1fr);gap:8px
+ display:grid;grid-template-columns:repeat(2,1fr);gap:6px
 }
 .product{
  background:var(--card);border:1px solid var(--line);
- border-radius:13px;overflow:hidden
+ border-radius:11px;overflow:hidden
 }
 .product-photo{
- height:110px;display:grid;place-items:center;font-size:38px;
- background:linear-gradient(135deg,#e0e7ff,#fce7f3)
+ height:90px;display:grid;place-items:center;font-size:30px;
+ background:linear-gradient(135deg,#fce7f3,#f3e8ff)
 }
-.product-body{padding:8px}
-.product-title{font-size:11px;font-weight:700}
-.rating{font-size:8px;color:#f59e0b;margin:3px 0}
-.price{font-size:15px;font-weight:800;color:var(--p)}
+.product-body{padding:7px}
+.product-title{font-size:10px;font-weight:700}
+.rating{font-size:7px;color:#f59e0b;margin:2px 0}
+.price{font-size:13px;font-weight:800;color:var(--pink)}
 .buy{
- width:100%;padding:7px;border-radius:8px;color:#fff;
- background:linear-gradient(135deg,var(--p),var(--p2));
- font-size:10px;font-weight:700
+ width:100%;padding:6px;border-radius:7px;color:#fff;
+ background:linear-gradient(135deg,var(--pink),var(--purple));
+ font-size:9px;font-weight:700
 }
 
 .profile-cover{
- height:130px;border-radius:15px 15px 0 0;
- background:linear-gradient(135deg,#312e81,var(--p),#db2777)
+ height:115px;border-radius:13px 13px 0 0;
+ background:linear-gradient(135deg,#831843,var(--pink),#9333ea)
 }
-.profile{text-align:center;margin-top:-35px}
+.profile{text-align:center;margin-top:-32px}
 .profile-avatar{
- width:70px;height:70px;border:4px solid var(--card);
- margin:auto;border-radius:50%;display:grid;place-items:center;
- color:#fff;font-size:25px;font-weight:800;
- background:linear-gradient(135deg,var(--p),var(--p2))
+ width:64px;height:64px;border:4px solid var(--card);
+ margin:auto;border-radius:50%;display:grid;
+ place-items:center;color:#fff;font-size:22px;font-weight:800;
+ background:linear-gradient(135deg,var(--pink),var(--purple))
 }
-.profile-name{font-size:17px;font-weight:800;margin-top:6px}
-.bio{font-size:10px;color:var(--muted);margin:4px 0 9px}
+.profile-name{font-size:15px;font-weight:800;margin-top:5px}
+.bio{font-size:9px;color:var(--muted);margin:3px 0 7px}
 .secondary{
- padding:8px 12px;border-radius:9px;
- background:var(--soft);color:var(--p);font-weight:700;font-size:10px
+ padding:7px 11px;border-radius:8px;
+ background:var(--soft);color:var(--pink);
+ font-weight:700;font-size:9px
 }
 .profile-stats{
  display:grid;grid-template-columns:repeat(4,1fr);
- border-top:1px solid var(--line);padding:10px 0;margin-top:10px
+ border-top:1px solid var(--line);padding:8px 0;margin-top:8px
 }
-.profile-stats strong{display:block;font-size:12px}
-.profile-stats small{color:var(--muted);font-size:8px}
+.profile-stats strong{display:block;font-size:11px}
+.profile-stats small{color:var(--muted);font-size:7px}
 .menu{
- display:grid;grid-template-columns:repeat(3,1fr);gap:6px
+ display:grid;grid-template-columns:repeat(3,1fr);gap:5px
 }
 .menu button{
- padding:11px 4px;border-radius:11px;
- background:var(--card);border:1px solid var(--line);
- color:var(--text);font-size:9px
+ padding:9px 3px;border-radius:9px;
+ background:var(--soft);border:1px solid #f9d5e7;
+ color:var(--pink);font-size:8px
 }
-.menu i{display:block;font-style:normal;font-size:18px;margin-bottom:3px}
+.menu i{
+ display:block;font-style:normal;font-size:16px;margin-bottom:2px
+}
 
 .bottom{
- position:fixed;bottom:0;left:50%;transform:translateX(-50%);
- width:100%;max-width:900px;height:62px;
- background:#fffffff2;backdrop-filter:blur(15px);
+ position:fixed;bottom:0;left:50%;
+ transform:translateX(-50%);
+ width:100%;max-width:760px;height:57px;
+ background:#fffffff2;backdrop-filter:blur(14px);
  border-top:1px solid var(--line);
  display:grid;grid-template-columns:repeat(5,1fr);z-index:100
 }
-.dark .bottom{background:#11131bf2}
+.dark .bottom{background:#13131af2}
 .nav{
- background:none;color:var(--muted);font-size:9px;
+ background:none;color:var(--muted);font-size:8px;
  display:flex;flex-direction:column;align-items:center;
- justify-content:center;gap:2px
+ justify-content:center;gap:1px
 }
-.nav-icon{font-size:19px}
-.nav.active{color:var(--p);font-weight:700}
+.nav-icon{font-size:17px;color:var(--pink)}
+.nav.active{color:var(--pink);font-weight:700}
 
 .modal{
  position:fixed;inset:0;z-index:300;background:#0009;
@@ -290,66 +338,72 @@ main{padding:11px}
 }
 .modal.show{display:flex}
 .sheet{
- width:100%;max-width:600px;margin:auto auto 0;
- max-height:88vh;overflow:auto;padding:16px;
- background:var(--card);border-radius:20px 20px 0 0
+ width:100%;max-width:560px;margin:auto auto 0;
+ max-height:86vh;overflow:auto;padding:14px;
+ background:var(--card);border-radius:18px 18px 0 0
 }
 .close{
- float:right;width:30px;height:30px;border-radius:50%;
- background:var(--bg);color:var(--text);font-size:19px
+ float:right;width:28px;height:28px;border-radius:50%;
+ background:var(--soft);color:var(--pink);font-size:18px
 }
-.form{display:grid;gap:8px;clear:both}
+.form{
+ display:grid;gap:7px;clear:both
+}
 .form input,.form textarea,.form select{
- width:100%;padding:10px;border:1px solid var(--line);
- border-radius:10px;background:var(--bg);color:var(--text);outline:0
+ width:100%;padding:9px;border:1px solid var(--line);
+ border-radius:9px;background:var(--bg);
+ color:var(--text);outline:0;font-size:10px
 }
 .primary{
- padding:10px 14px;border-radius:10px;color:#fff;
- background:linear-gradient(135deg,var(--p),var(--p2));
- font-weight:700
+ padding:9px 12px;border-radius:9px;color:#fff;
+ background:linear-gradient(135deg,var(--pink),var(--purple));
+ font-weight:700;font-size:10px
 }
 .login{
  position:fixed;inset:0;z-index:500;
  display:flex;align-items:center;justify-content:center;
- padding:15px;background:var(--bg)
+ padding:12px;background:var(--bg)
 }
 .login-card{
- width:100%;max-width:350px;padding:22px;
- border-radius:20px;background:var(--card);
- border:1px solid var(--line);text-align:center;
- box-shadow:0 15px 50px #00000012
+ width:100%;max-width:330px;padding:20px;
+ border-radius:18px;background:var(--card);
+ border:1px solid var(--line);text-align:center
 }
 .login-logo{
- width:58px;height:58px;margin:auto;border-radius:17px;
- display:grid;place-items:center;color:#fff;font-size:25px;font-weight:900;
- background:linear-gradient(135deg,var(--p),var(--p2))
+ width:55px;height:55px;margin:auto;border-radius:16px;
+ display:grid;place-items:center;color:#fff;
+ font-size:23px;font-weight:900;
+ background:linear-gradient(135deg,var(--pink),var(--purple))
 }
-.login-title{font-size:24px;font-weight:900;margin:10px 0 2px}
-.login-sub{font-size:10px;color:var(--muted);margin-bottom:15px}
+.login-title{font-size:22px;font-weight:900;margin:8px 0 2px}
+.login-sub{font-size:9px;color:var(--muted);margin-bottom:13px}
 .login-input{
- width:100%;padding:11px;border:1px solid var(--line);
- border-radius:11px;background:var(--bg);color:var(--text);
- outline:0;margin-bottom:7px
+ width:100%;padding:10px;border:1px solid var(--line);
+ border-radius:10px;background:var(--bg);
+ color:var(--text);outline:0;margin-bottom:6px;font-size:10px
 }
 .login-button{
- width:100%;padding:11px;border-radius:11px;color:#fff;
- background:linear-gradient(135deg,var(--p),var(--p2));
- font-weight:800
+ width:100%;padding:10px;border-radius:10px;color:#fff;
+ background:linear-gradient(135deg,var(--pink),var(--purple));
+ font-weight:800;font-size:10px
 }
 .toast{
- position:fixed;left:50%;bottom:75px;transform:translate(-50%,15px);
- z-index:1000;background:#171725;color:#fff;padding:8px 13px;
- border-radius:10px;font-size:11px;opacity:0;pointer-events:none;
- transition:.2s
+ position:fixed;left:50%;bottom:70px;
+ transform:translate(-50%,15px);z-index:1000;
+ background:#171725;color:#fff;padding:7px 12px;
+ border-radius:9px;font-size:10px;opacity:0;
+ pointer-events:none;transition:.2s
 }
-.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.show{
+ opacity:1;transform:translate(-50%,0)
+}
 
 @media(max-width:500px){
  .brand-name{display:none}
- main{padding:9px}
- .header{padding:7px 9px}
- .reel-screen{height:450px}
- .post-image{height:190px}
+ main{padding:7px}
+ .header{padding:6px 7px}
+ .reel-screen{height:410px}
+ .post-image{height:155px}
 }
 </style>
 </head>
@@ -361,19 +415,24 @@ main{padding:11px}
  <div class="login-card">
   <div class="login-logo">S</div>
   <div class="login-title">ShakibYS</div>
-  <div class="login-sub">Social • Messenger • Reels • Marketplace • AI</div>
+  <div class="login-sub">
+   Social • Messenger • Reels • Marketplace • AI
+  </div>
 
-  <input id="loginName" class="login-input" placeholder="আপনার নাম লিখুন">
+  <input id="loginName"
+         class="login-input"
+         placeholder="আপনার নাম লিখুন">
 
   <button class="login-button" onclick="login()">
    🚀 ShakibYS-এ প্রবেশ করুন
   </button>
 
-  <p style="font-size:9px;color:var(--muted)">Premium Social Super App</p>
+  <p style="font-size:8px;color:var(--muted)">
+   Premium Social Super App
+  </p>
  </div>
 </div>
 
-<!-- APP -->
 <div id="app" class="app" style="display:none">
 
 <header class="topbar">
@@ -406,9 +465,11 @@ main{padding:11px}
   <p>Welcome to your ShakibYS Premium world</p>
 
   <div class="ai-mini">
-   <div>🤖 <b>ShakibYS AI</b><br>
+   <div>
+    🤖 <b>ShakibYS AI</b><br>
     <small>আপনার জন্য সবসময় প্রস্তুত</small>
    </div>
+
    <button onclick="openAI()">Ask AI</button>
   </div>
  </div>
@@ -416,6 +477,7 @@ main{padding:11px}
  <div class="card">
   <div class="create-row">
    <div class="avatar" id="userAvatar">S</div>
+
    <div class="create-input" onclick="createPost()">
     সবার সাথে কিছু শেয়ার করুন...
    </div>
@@ -437,30 +499,38 @@ main{padding:11px}
  <div class="scroll">
 
   <div class="story add" onclick="createStory()">
-   <div><div class="plus">+</div><b>Add Story</b></div>
+   <div>
+    <div class="plus">+</div>
+    <b>Add Story</b>
+   </div>
   </div>
 
   <div class="story">
-   <div class="savatar">S</div><span>Your Story</span>
+   <div class="savatar">S</div>
+   <span>Your Story</span>
   </div>
 
   <div class="story">
-   <div class="savatar">A</div><span>Alex</span>
+   <div class="savatar">A</div>
+   <span>Alex</span>
   </div>
 
   <div class="story">
-   <div class="savatar">R</div><span>Reels</span>
+   <div class="savatar">R</div>
+   <span>Reels</span>
   </div>
 
   <div class="story">
-   <div class="savatar">M</div><span>Market</span>
+   <div class="savatar">M</div>
+   <span>Market</span>
   </div>
 
  </div>
 
- <div class="section">
-  <h2>🔥 Feed</h2>
-  <button onclick="toast('Feed refreshed')">Refresh</button>
+ <!-- NEWS FEED -->
+ <div class="section-head">
+  <h2>🔥 News Feed</h2>
+  <button onclick="loadPosts()">Refresh</button>
  </div>
 
  <div class="scroll filters">
@@ -471,41 +541,50 @@ main{padding:11px}
   <button class="filter">📊 Polls</button>
  </div>
 
- <article class="card">
+ <div id="publicFeed" class="feed-container">
 
-  <div class="post-head">
-   <div class="avatar" id="postAvatar">S</div>
+  <article class="card">
 
-   <div class="post-user">
-    <strong id="postAuthor">Shakib <span class="verified">✓</span></strong>
-    <small>Just now • 🌐 Public</small>
+   <div class="post-head">
+    <div class="avatar" id="postAvatar">S</div>
+
+    <div class="post-user">
+     <strong id="postAuthor">
+      Shakib <span class="verified">✓</span>
+     </strong>
+     <small>Just now • 🌐 Public</small>
+    </div>
+
+    <button class="more">⋯</button>
    </div>
 
-   <button>⋯</button>
-  </div>
+   <div class="post-text">
+    স্বাগতম ShakibYS Premium Social Super App-এ! ❤️
+    <br>
+    এখানে Social, Messenger, Reels,
+    Marketplace এবং AI—সব এক জায়গায়।
+   </div>
 
-  <div class="post-text">
-   স্বাগতম ShakibYS Premium Social Super App-এ! ❤️
-   <br>এখানে Social, Messenger, Reels, Marketplace এবং AI—সব এক জায়গায়।
-  </div>
+   <div class="post-image">✨</div>
 
-  <div class="post-image">✨</div>
+   <div class="stats">
+    <span>❤️ 1.2K Likes</span>
+    <span>💬 86 • 🔄 42</span>
+   </div>
 
-  <div class="stats">
-   <span>❤️ 1.2K Likes</span>
-   <span>💬 86 • 🔄 42</span>
-  </div>
+   <div class="actions">
+    <button onclick="like(this)">❤️ Like</button>
+    <button onclick="comment()">💬 Comment</button>
+    <button onclick="sharePost()">🔄 Share</button>
+    <button onclick="savePost(this)">🔖 Save</button>
+   </div>
 
-  <div class="actions">
-   <button onclick="like(this)">❤️ Like</button>
-   <button onclick="comment()">💬 Comment</button>
-   <button onclick="sharePost()">🔄 Share</button>
-   <button onclick="savePost(this)">🔖 Save</button>
-  </div>
+  </article>
 
- </article>
+ </div>
 
 </section>
+
 
 <!-- REELS -->
 <section id="reels" class="page">
@@ -527,10 +606,21 @@ main{padding:11px}
   <div class="reel-screen">▶</div>
 
   <div class="reel-side">
-   <button onclick="like(this)">❤️<small>1.8K</small></button>
-   <button onclick="comment()">💬<small>120</small></button>
-   <button onclick="sharePost()">🔄<small>Share</small></button>
-   <button>🔖<small>Save</small></button>
+   <button onclick="like(this)">
+    ❤️<small>1.8K</small>
+   </button>
+
+   <button onclick="comment()">
+    💬<small>120</small>
+   </button>
+
+   <button onclick="sharePost()">
+    🔄<small>Share</small>
+   </button>
+
+   <button>
+    🔖<small>Save</small>
+   </button>
   </div>
 
   <div class="reel-info">
@@ -540,7 +630,9 @@ main{padding:11px}
   </div>
 
  </div>
+
 </section>
+
 
 <!-- MESSENGER -->
 <section id="messenger" class="page">
@@ -589,6 +681,7 @@ main{padding:11px}
 
 </section>
 
+
 <!-- MARKET -->
 <section id="market" class="page">
 
@@ -597,7 +690,8 @@ main{padding:11px}
   <p>Buy • Sell • Chat • Order • Track</p>
 
   <div class="market-search">
-   <input id="marketSearch" placeholder="পণ্য খুঁজুন..."
+   <input id="marketSearch"
+          placeholder="পণ্য খুঁজুন..."
           oninput="filterProducts(this.value)">
    <button>🔎</button>
   </div>
@@ -628,7 +722,10 @@ main{padding:11px}
     <div class="product-title">Premium Smartphone</div>
     <div class="rating">⭐ 4.8 • 245 reviews</div>
     <div class="price">৳25,000</div>
-    <button class="buy" onclick="openProduct('Premium Smartphone','৳25,000')">View & Buy</button>
+    <button class="buy"
+     onclick="openProduct('Premium Smartphone','৳25,000')">
+     View & Buy
+    </button>
    </div>
   </div>
 
@@ -638,7 +735,10 @@ main{padding:11px}
     <div class="product-title">Premium Smart Watch</div>
     <div class="rating">⭐ 4.7 • 120 reviews</div>
     <div class="price">৳3,500</div>
-    <button class="buy" onclick="openProduct('Premium Smart Watch','৳3,500')">View & Buy</button>
+    <button class="buy"
+     onclick="openProduct('Premium Smart Watch','৳3,500')">
+     View & Buy
+    </button>
    </div>
   </div>
 
@@ -648,7 +748,10 @@ main{padding:11px}
     <div class="product-title">Wireless Headphone</div>
     <div class="rating">⭐ 4.6 • 89 reviews</div>
     <div class="price">৳2,000</div>
-    <button class="buy" onclick="openProduct('Wireless Headphone','৳2,000')">View & Buy</button>
+    <button class="buy"
+     onclick="openProduct('Wireless Headphone','৳2,000')">
+     View & Buy
+    </button>
    </div>
   </div>
 
@@ -658,22 +761,30 @@ main{padding:11px}
     <div class="product-title">Premium Sneakers</div>
     <div class="rating">⭐ 4.9 • 310 reviews</div>
     <div class="price">৳2,800</div>
-    <button class="buy" onclick="openProduct('Premium Sneakers','৳2,800')">View & Buy</button>
+    <button class="buy"
+     onclick="openProduct('Premium Sneakers','৳2,800')">
+     View & Buy
+    </button>
    </div>
   </div>
 
  </div>
 
- <div class="card" style="margin-top:10px">
+ <div class="card" style="margin-top:8px">
   🤖 <b>ShakibYS AI Shopping</b>
-  <div style="display:flex;gap:5px;margin-top:7px">
-   <input id="aiMarketInput" class="login-input"
-          style="margin:0" placeholder="৫০০০ টাকায় ফোন...">
+
+  <div style="display:flex;gap:4px;margin-top:6px">
+   <input id="aiMarketInput"
+          class="login-input"
+          style="margin:0"
+          placeholder="৫০০০ টাকায় ফোন...">
+
    <button class="primary" onclick="askMarketAI()">➤</button>
   </div>
  </div>
 
 </section>
+
 
 <!-- PROFILE -->
 <section id="profile" class="page">
@@ -695,7 +806,9 @@ main{padding:11px}
     Founder of ShakibYS • Creator • Digital Marketplace
    </div>
 
-   <button class="secondary" onclick="editProfile()">✏️ Edit Profile</button>
+   <button class="secondary" onclick="editProfile()">
+    ✏️ Edit Profile
+   </button>
 
    <div class="profile-stats">
     <div><strong>1.2K</strong><small>Friends</small></div>
@@ -707,7 +820,9 @@ main{padding:11px}
   </div>
  </div>
 
- <div class="section"><h2>Profile Menu</h2></div>
+ <div class="section">
+  <h2>Profile Menu</h2>
+ </div>
 
  <div class="menu">
   <button onclick="toast('Posts')"><i>📝</i>Posts</button>
@@ -723,44 +838,61 @@ main{padding:11px}
 
 </section>
 
+
 <!-- SEARCH -->
 <section id="search" class="page">
- <div class="section"><h2>🔎 Search</h2></div>
+
+ <div class="section">
+  <h2>🔎 Search</h2>
+ </div>
+
  <div class="card">
-  <input id="searchInput" class="login-input" style="margin:0"
+  <input id="searchInput"
+         class="login-input"
+         style="margin:0"
          placeholder="People, Posts, Reels..."
          oninput="globalSearch(this.value)">
  </div>
+
  <div id="searchResults"></div>
+
 </section>
 
 </main>
 
+
+<!-- BOTTOM NAV -->
 <nav class="bottom">
 
  <button class="nav active" onclick="nav(this,'home')">
-  <span class="nav-icon">⌂</span>Home
+  <span class="nav-icon">⌂</span>
+  Home
  </button>
 
  <button class="nav" onclick="nav(this,'reels')">
-  <span class="nav-icon">▶</span>Reels
+  <span class="nav-icon">▶</span>
+  Reels
  </button>
 
  <button class="nav" onclick="nav(this,'messenger')">
-  <span class="nav-icon">☵</span>Messenger
+  <span class="nav-icon">☵</span>
+  Messenger
  </button>
 
  <button class="nav" onclick="nav(this,'market')">
-  <span class="nav-icon">🛍</span>Market
+  <span class="nav-icon">🛍</span>
+  Market
  </button>
 
  <button class="nav" onclick="nav(this,'profile')">
-  <span class="nav-icon">◉</span>Profile
+  <span class="nav-icon">◉</span>
+  Profile
  </button>
 
 </nav>
 
 </div>
+
 
 <!-- MODAL -->
 <div id="modal" class="modal">
@@ -772,10 +904,46 @@ main{padding:11px}
 
 <div id="toast" class="toast"></div>
 
+
 <script>
 
 /* =========================
-   USER FIX
+   SOCKET
+========================= */
+
+let socket = null;
+
+function connectSocket(){
+
+ if(typeof io === "undefined"){
+  console.log("Socket.IO not loaded");
+  return;
+ }
+
+ try{
+
+  socket = io();
+
+  socket.on("connect",()=>{
+   console.log("Connected:",socket.id);
+  });
+
+  socket.on("post:created",(post)=>{
+   renderPublicPost(post);
+  });
+
+  socket.on("disconnect",()=>{
+   console.log("Socket disconnected");
+  });
+
+ }catch(e){
+  console.log(e);
+ }
+}
+
+
+/* =========================
+   USER
 ========================= */
 
 function getUser(){
@@ -800,7 +968,7 @@ function getUser(){
  }catch(e){}
 
  return {
-  name:raw,
+  name:String(raw),
   phone:""
  };
 }
@@ -841,34 +1009,79 @@ function showApp(){
 
  const user=getUser() || {name:"Shakib"};
 
- setUser(user.name);
+ setUser(user);
 
+ connectSocket();
 }
 
 
-/* USER */
+/* USER FIX */
 
-function setUser(name){
+function setUser(userData){
 
- name=name || "Shakib";
+ let name="Shakib";
+
+ try{
+
+  if(typeof userData==="string"){
+
+   try{
+    const parsed=JSON.parse(userData);
+    name=parsed?.name || userData;
+   }catch(e){
+    name=userData;
+   }
+
+  }else if(userData && typeof userData==="object"){
+
+   name=userData.name || "Shakib";
+
+  }
+
+ }catch(e){
+  name="Shakib";
+ }
+
+ name=String(name).trim() || "Shakib";
 
  const first=name.charAt(0).toUpperCase();
 
- document.getElementById("userAvatar").textContent=first;
- document.getElementById("postAvatar").textContent=first;
- document.getElementById("profileAvatar").textContent=first;
+ const ids=[
+  "userAvatar",
+  "postAvatar",
+  "profileAvatar"
+ ];
 
- document.getElementById("profileName").textContent=name;
+ ids.forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.textContent=first;
+ });
 
- document.getElementById("postAuthor").innerHTML=
-  escapeHTML(name)+' <span class="verified">✓</span>';
+ const profileName=document.getElementById("profileName");
 
- document.getElementById("welcomeText").textContent=
-  "স্বাগতম, "+name+" 👋";
+ if(profileName)
+  profileName.textContent=name;
+
+ const postAuthor=document.getElementById("postAuthor");
+
+ if(postAuthor){
+
+  postAuthor.innerHTML=
+   escapeHTML(name)+
+   ' <span class="verified">✓</span>';
+
+ }
+
+ const welcome=document.getElementById("welcomeText");
+
+ if(welcome)
+  welcome.textContent="স্বাগতম, "+name+" 👋";
 }
 
 
-/* NAV */
+/* =========================
+   NAV
+========================= */
 
 function nav(btn,page){
 
@@ -888,13 +1101,19 @@ function openPage(page){
 
  const target=document.getElementById(page);
 
- if(target)target.classList.add("active");
+ if(target)
+  target.classList.add("active");
 
- window.scrollTo({top:0,behavior:"smooth"});
+ window.scrollTo({
+  top:0,
+  behavior:"smooth"
+ });
 }
 
 
-/* TOAST */
+/* =========================
+   TOAST
+========================= */
 
 function toast(text){
 
@@ -911,137 +1130,401 @@ function toast(text){
 }
 
 
-/* MODAL */
+/* =========================
+   MODAL
+========================= */
 
 function openModal(html){
 
  document.getElementById("modalContent").innerHTML=html;
- document.getElementById("modal").classList.add("show");
+
+ document.getElementById("modal")
+  .classList.add("show");
 }
 
 
 function closeModal(){
 
- document.getElementById("modal").classList.remove("show");
+ document.getElementById("modal")
+  .classList.remove("show");
 }
 
 
-/* POST */
+/* =========================
+   CREATE POST
+========================= */
 
 function createPost(){
 
  openModal(`
+
   <h2>📝 Create Post</h2>
 
   <div class="form">
-   <textarea rows="4" placeholder="আপনার মনের কথা লিখুন..."></textarea>
-   <input type="file" accept="image/*,video/*">
-   <input placeholder="#Hashtag">
-   <input placeholder="📍 Location">
 
-   <select>
-    <option>🌐 Public</option>
-    <option>👥 Friends</option>
-    <option>🔒 Only me</option>
+   <textarea
+    id="newPostText"
+    rows="4"
+    placeholder="আপনার মনের কথা লিখুন..."
+   ></textarea>
+
+   <input
+    type="file"
+    id="postMedia"
+    accept="image/*,video/*"
+   >
+
+   <select id="postPrivacy">
+
+    <option value="public">
+     🌐 Public — সবাই দেখতে পারবে
+    </option>
+
+    <option value="friends">
+     👥 Friends
+    </option>
+
+    <option value="private">
+     🔒 Only Me
+    </option>
+
    </select>
 
-   <button class="primary"
-    onclick="toast('Post published');closeModal()">
-    Publish Post
+   <button
+    class="primary"
+    onclick="publishPost()">
+    🚀 Publish Post
    </button>
+
   </div>
+
  `);
+
 }
 
 
-/* STORY */
+/* PUBLISH POST */
+
+function publishPost(){
+
+ const input=
+  document.getElementById("newPostText");
+
+ const privacy=
+  document.getElementById("postPrivacy");
+
+ const content=
+  input.value.trim();
+
+ if(!content){
+
+  toast("পোস্ট লিখুন");
+
+  return;
+ }
+
+ if(privacy.value!=="public"){
+
+  toast("এই ভার্সনে শুধু Public Post সক্রিয় আছে");
+
+  return;
+ }
+
+ const rawUser=
+  localStorage.getItem("shakibys_user");
+
+ let author="Shakib";
+
+ try{
+
+  if(rawUser){
+
+   if(rawUser.startsWith("{")){
+
+    const user=JSON.parse(rawUser);
+
+    author=user.name || "Shakib";
+
+   }else{
+
+    author=rawUser;
+
+   }
+
+  }
+
+ }catch(e){
+
+  author="Shakib";
+
+ }
+
+ const post={
+  author:author,
+  content:content
+ };
+
+ /* SERVER */
+ if(socket && socket.connected){
+
+  socket.emit("post:create",post);
+
+  toast("Post published successfully ✅");
+
+  closeModal();
+
+ }else{
+
+  /* Offline fallback */
+  renderPublicPost({
+   author:author,
+   content:content,
+   createdAt:Date.now()
+  });
+
+  toast("Post added locally ⚠️");
+
+  closeModal();
+ }
+}
+
+
+/* =========================
+   RENDER PUBLIC POST
+========================= */
+
+function renderPublicPost(post){
+
+ const feed=
+  document.getElementById("publicFeed");
+
+ if(!feed)return;
+
+ const author=
+  escapeHTML(post.author || "Shakib");
+
+ const content=
+  escapeHTML(post.content || "");
+
+ const time=
+  new Date(
+   post.createdAt || Date.now()
+  ).toLocaleString(
+   "bn-BD",
+   {
+    dateStyle:"short",
+    timeStyle:"short"
+   }
+  );
+
+ const first=
+  author.charAt(0).toUpperCase();
+
+ const article=
+  document.createElement("article");
+
+ article.className=
+  "card public-post";
+
+ article.innerHTML=`
+
+  <div class="post-head">
+
+   <div class="avatar">
+    ${first}
+   </div>
+
+   <div class="post-user">
+
+    <strong>
+     ${author}
+     <span class="verified">✓</span>
+    </strong>
+
+    <small>
+     ${time} • 🌐 Public
+    </small>
+
+   </div>
+
+   <button class="more">⋯</button>
+
+  </div>
+
+  <div class="post-text">
+   ${content.replace(/\n/g,"<br>")}
+  </div>
+
+  <div class="post-stats">
+   <span>❤️ 0 Likes</span>
+   <span>💬 0 Comments</span>
+  </div>
+
+  <div class="post-actions">
+
+   <button onclick="like(this)">
+    ❤️ Like
+   </button>
+
+   <button onclick="comment()">
+    💬 Comment
+   </button>
+
+   <button onclick="sharePost()">
+    🔄 Share
+   </button>
+
+   <button onclick="savePost(this)">
+    🔖 Save
+   </button>
+
+  </div>
+
+ `;
+
+ feed.prepend(article);
+}
+
+
+/* LOAD POSTS */
+
+function loadPosts(){
+
+ toast("News Feed refreshed 🔄");
+
+ if(socket && socket.connected){
+  socket.emit("posts:list");
+ }
+}
+
+
+/* =========================
+   STORY
+========================= */
 
 function createStory(){
 
  openModal(`
+
   <h2>📖 Create Story</h2>
 
   <div class="form">
-   <textarea rows="3" placeholder="Story লিখুন..."></textarea>
-   <input type="file" accept="image/*,video/*">
+
+   <textarea
+    rows="3"
+    placeholder="Story লিখুন..."
+   ></textarea>
+
+   <input
+    type="file"
+    accept="image/*,video/*"
+   >
+
    <input placeholder="🎵 Music">
 
-   <button class="primary"
+   <button
+    class="primary"
     onclick="toast('Story published');closeModal()">
     Publish Story
    </button>
+
   </div>
+
  `);
 }
 
 
-/* POLL */
+/* =========================
+   POLL
+========================= */
 
 function createPoll(){
 
  openModal(`
+
   <h2>📊 Create Poll</h2>
 
   <div class="form">
+
    <input placeholder="Question">
    <input placeholder="Option 1">
    <input placeholder="Option 2">
    <input placeholder="Option 3">
 
-   <button class="primary"
+   <button
+    class="primary"
     onclick="toast('Poll published');closeModal()">
     Create Poll
    </button>
+
   </div>
+
  `);
 }
 
 
-/* MUSIC */
+/* =========================
+   MUSIC
+========================= */
 
 function createMusic(){
 
  openModal(`
+
   <h2>🎵 Music Post</h2>
 
   <div class="form">
+
    <input type="file" accept="audio/*">
 
-   <button class="primary"
+   <button
+    class="primary"
     onclick="toast('Music post published');closeModal()">
     Publish
    </button>
+
   </div>
+
  `);
 }
 
 
-/* REEL */
+/* =========================
+   REEL
+========================= */
 
 function createReel(){
 
  openModal(`
+
   <h2>🎬 Create Reel</h2>
 
   <div class="form">
+
    <input type="file" accept="video/*">
    <input placeholder="Caption">
    <input placeholder="#Hashtags">
 
-   <button class="primary"
+   <button
+    class="primary"
     onclick="toast('Reel published');closeModal()">
     Publish Reel
    </button>
+
   </div>
+
  `);
 }
 
 
-/* LIKE */
+/* =========================
+   LIKE
+========================= */
 
 function like(btn){
 
  btn.textContent="❤️ Liked";
+
  toast("Liked ❤️");
 }
 
@@ -1051,6 +1534,7 @@ function like(btn){
 function comment(){
 
  openModal(`
+
   <h2>💬 Comments</h2>
 
   <div class="card">
@@ -1059,12 +1543,17 @@ function comment(){
   </div>
 
   <div class="form">
+
    <input placeholder="Write a comment...">
-   <button class="primary"
+
+   <button
+    class="primary"
     onclick="toast('Comment added');closeModal()">
     Comment
    </button>
+
   </div>
+
  `);
 }
 
@@ -1082,6 +1571,10 @@ function sharePost(){
 
  }else{
 
+  navigator.clipboard?.writeText(
+   location.href
+  );
+
   toast("Share link copied");
 
  }
@@ -1093,19 +1586,24 @@ function sharePost(){
 function savePost(btn){
 
  btn.textContent="🔖 Saved";
+
  toast("Saved");
 }
 
 
-/* CHAT */
+/* =========================
+   CHAT
+========================= */
 
 function openChat(room){
 
  openModal(`
+
   <h2>💬 ${escapeHTML(room)}</h2>
 
-  <div id="chatMessages" class="card"
-       style="height:250px;overflow:auto">
+  <div id="chatMessages"
+       class="card"
+       style="height:230px;overflow:auto">
 
    <div style="margin:5px 0">
     <b>Alex:</b> Hello 👋
@@ -1113,144 +1611,216 @@ function openChat(room){
 
   </div>
 
-  <div style="display:flex;gap:5px">
+  <div style="display:flex;gap:4px">
 
-   <input id="chatInput"
-          class="login-input"
-          style="margin:0"
-          placeholder="Message..."
-          onkeydown="if(event.key==='Enter')sendChat()">
+   <input
+    id="chatInput"
+    class="login-input"
+    style="margin:0"
+    placeholder="Message..."
+    onkeydown="if(event.key==='Enter')sendChat()">
 
-   <button class="primary" onclick="sendChat()">➤</button>
+   <button
+    class="primary"
+    onclick="sendChat()">
+    ➤
+   </button>
 
   </div>
+
  `);
 }
 
 
 function sendChat(){
 
- const input=document.getElementById("chatInput");
+ const input=
+  document.getElementById("chatInput");
 
  if(!input)return;
 
- const text=input.value.trim();
+ const text=
+  input.value.trim();
 
  if(!text)return;
 
- const box=document.getElementById("chatMessages");
+ const box=
+  document.getElementById("chatMessages");
 
- const div=document.createElement("div");
+ const div=
+  document.createElement("div");
 
  div.style.textAlign="right";
  div.style.margin="6px 0";
- div.textContent="You: "+text;
+
+ div.textContent=
+  "You: "+text;
 
  box.appendChild(div);
 
  input.value="";
- box.scrollTop=box.scrollHeight;
+
+ box.scrollTop=
+  box.scrollHeight;
 }
 
 
-/* MARKET */
+/* =========================
+   MARKET
+========================= */
 
 function openProduct(name,price){
 
  openModal(`
+
   <h2>🛒 ${escapeHTML(name)}</h2>
 
   <div class="card">
+
    <div class="product-photo">🛍️</div>
+
    <h3>${escapeHTML(name)}</h3>
+
    <div class="price">${price}</div>
+
    ⭐ 4.8 • Verified Seller
+
   </div>
 
   <div class="form">
-   <input type="number" value="1" min="1">
-   <textarea rows="2" placeholder="Delivery Address"></textarea>
 
-   <button class="secondary"
+   <input type="number" value="1" min="1">
+
+   <textarea
+    rows="2"
+    placeholder="Delivery Address"></textarea>
+
+   <button
+    class="secondary"
     onclick="toast('Added to Cart 🛒')">
     🛒 Add to Cart
    </button>
 
-   <button class="primary"
+   <button
+    class="primary"
     onclick="toast('Order created');closeModal()">
     💳 Buy Now
    </button>
+
   </div>
+
  `);
 }
 
 
 function filterProducts(q){
 
- document.querySelectorAll(".product").forEach(card=>{
+ document.querySelectorAll(".product")
+ .forEach(card=>{
 
   card.style.display=
-   card.innerText.toLowerCase().includes(q.toLowerCase())
-   ?"block":"none";
+   card.innerText
+    .toLowerCase()
+    .includes(q.toLowerCase())
+    ?"block":"none";
 
  });
 }
 
 
-/* AI */
+/* =========================
+   AI
+========================= */
 
 function openAI(){
 
  openModal(`
+
   <h2>🤖 ShakibYS AI</h2>
 
   <div class="card">
    আপনার intelligent assistant
   </div>
 
-  <div style="display:flex;gap:5px">
-   <input id="aiInput"
-          class="login-input"
-          style="margin:0"
-          placeholder="কী জানতে চান?">
+  <div style="display:flex;gap:4px">
 
-   <button class="primary" onclick="askAI()">➤</button>
+   <input
+    id="aiInput"
+    class="login-input"
+    style="margin:0"
+    placeholder="কী জানতে চান?">
+
+   <button
+    class="primary"
+    onclick="askAI()">
+    ➤
+   </button>
+
   </div>
 
-  <div id="aiAnswer" style="margin-top:10px"></div>
+  <div id="aiAnswer"
+       style="margin-top:8px"></div>
+
  `);
 }
 
 
 function askAI(){
 
- const input=document.getElementById("aiInput");
+ const input=
+  document.getElementById("aiInput");
 
  if(!input.value.trim()){
+
   toast("প্রশ্ন লিখুন");
+
   return;
  }
 
- document.getElementById("aiAnswer").innerHTML=
-  "<b>🤖 ShakibYS AI</b><br><br>"+
-  "আপনার প্রশ্নটি পেয়েছি। Real AI-এর জন্য AI API/backend যুক্ত করতে হবে।";
+ document.getElementById(
+  "aiAnswer"
+ ).innerHTML=`
+
+  <div class="card">
+
+   <b>🤖 ShakibYS AI</b>
+
+   <br><br>
+
+   আপনার প্রশ্নটি পেয়েছি। ❤️
+
+   <br><br>
+
+   Real AI চালাতে এখন
+   backend/API সংযোগ করতে হবে।
+
+  </div>
+
+ `;
 }
 
 
 function askMarketAI(){
 
- const input=document.getElementById("aiMarketInput");
+ const input=
+  document.getElementById("aiMarketInput");
 
  if(!input.value.trim()){
+
   toast("আপনার প্রয়োজন লিখুন");
+
   return;
  }
 
- toast("AI Shopping: "+input.value);
+ toast(
+  "AI Shopping: "+input.value
+ );
 }
 
 
-/* SEARCH */
+/* =========================
+   SEARCH
+========================= */
 
 function globalSearch(q){
 
@@ -1258,154 +1828,253 @@ function globalSearch(q){
 
  openPage("search");
 
- document.getElementById("searchResults").innerHTML=`
+ const result=
+  document.getElementById("searchResults");
+
+ result.innerHTML=`
+
   <div class="card">
    🔎 Results for:
    <b>${escapeHTML(q)}</b>
   </div>
 
-  <div class="card">👤 People — Matching users</div>
-  <div class="card">📝 Posts — Matching posts</div>
-  <div class="card">🎬 Reels — Matching reels</div>
-  <div class="card">👥 Groups — Matching groups</div>
-  <div class="card">🛒 Marketplace — Matching products</div>
+  <div class="card">
+   👤 People — Matching users
+  </div>
+
+  <div class="card">
+   📝 Posts — Matching posts
+  </div>
+
+  <div class="card">
+   🎬 Reels — Matching reels
+  </div>
+
+  <div class="card">
+   👥 Groups — Matching groups
+  </div>
+
+  <div class="card">
+   🛒 Marketplace — Matching products
+  </div>
+
  `;
 }
 
 
-/* SETTINGS */
+/* =========================
+   SETTINGS
+========================= */
 
 function openSettings(){
 
  openModal(`
+
   <h2>⚙️ Settings</h2>
 
   <div class="menu">
 
-   <button onclick="toast('Account Settings')"><i>👤</i>Account</button>
-   <button onclick="toast('Privacy Settings')"><i>🔐</i>Privacy</button>
-   <button onclick="toast('Security Settings')"><i>🛡️</i>Security</button>
-   <button onclick="toggleDark()"><i>🌙</i>Dark Mode</button>
-   <button onclick="toast('Notifications')"><i>🔔</i>Notifications</button>
-   <button onclick="openAbout()"><i>ℹ️</i>About</button>
+   <button onclick="toast('Account Settings')">
+    <i>👤</i>Account
+   </button>
+
+   <button onclick="toast('Privacy Settings')">
+    <i>🔐</i>Privacy
+   </button>
+
+   <button onclick="toast('Security Settings')">
+    <i>🛡️</i>Security
+   </button>
+
+   <button onclick="toggleDark()">
+    <i>🌙</i>Dark Mode
+   </button>
+
+   <button onclick="toast('Notifications')">
+    <i>🔔</i>Notifications
+   </button>
+
+   <button onclick="openAbout()">
+    <i>ℹ️</i>About
+   </button>
 
   </div>
 
-  <button class="primary"
-   style="width:100%;margin-top:10px"
+  <button
+   class="primary"
+   style="width:100%;margin-top:8px"
    onclick="logout()">
    🚪 Logout
   </button>
+
  `);
 }
 
 
-/* NOTIFICATION */
+/* =========================
+   NOTIFICATIONS
+========================= */
 
 function openNotifications(){
 
  openModal(`
+
   <h2>🔔 Notifications</h2>
 
   <div class="card">❤️ Someone liked your post</div>
   <div class="card">💬 New Messenger message</div>
   <div class="card">👥 New friend request</div>
   <div class="card">🛒 Marketplace update</div>
+
  `);
 }
 
 
-/* SELLER */
+/* =========================
+   SELLER
+========================= */
 
 function openSeller(){
 
  openModal(`
+
   <h2>🏪 Seller Dashboard</h2>
 
   <div class="menu">
-   <button onclick="toast('Add Product')"><i>➕</i>Add Product</button>
-   <button onclick="toast('Products')"><i>📦</i>Products</button>
-   <button onclick="toast('Orders')"><i>🧾</i>Orders</button>
-   <button onclick="toast('Sales')"><i>💰</i>Sales</button>
-   <button onclick="toast('Stock')"><i>📊</i>Stock</button>
-   <button onclick="toast('Reviews')"><i>⭐</i>Reviews</button>
+
+   <button onclick="toast('Add Product')">
+    <i>➕</i>Add Product
+   </button>
+
+   <button onclick="toast('Products')">
+    <i>📦</i>Products
+   </button>
+
+   <button onclick="toast('Orders')">
+    <i>🧾</i>Orders
+   </button>
+
+   <button onclick="toast('Sales')">
+    <i>💰</i>Sales
+   </button>
+
+   <button onclick="toast('Stock')">
+    <i>📊</i>Stock
+   </button>
+
+   <button onclick="toast('Reviews')">
+    <i>⭐</i>Reviews
+   </button>
+
   </div>
+
  `);
 }
 
 
-/* GROUP */
+/* =========================
+   GROUP
+========================= */
 
 function createGroup(){
 
  openModal(`
+
   <h2>👥 Create Group</h2>
 
   <div class="form">
-   <input id="groupName" placeholder="Group Name">
+
+   <input
+    id="groupName"
+    placeholder="Group Name">
+
    <input placeholder="Add members">
 
-   <button class="primary" onclick="submitGroup()">
+   <button
+    class="primary"
+    onclick="submitGroup()">
     Create Group
    </button>
+
   </div>
+
  `);
 }
 
 
 function submitGroup(){
 
- const name=document.getElementById("groupName").value.trim();
+ const name=
+  document.getElementById(
+   "groupName"
+  ).value.trim();
 
  if(!name){
+
   toast("Group name দিন");
+
   return;
  }
 
  toast("Group created: "+name);
+
  closeModal();
 }
 
 
-/* PROFILE */
+/* =========================
+   PROFILE
+========================= */
 
 function editProfile(){
 
- const user=getUser() || {name:"Shakib"};
+ const user=
+  getUser() || {name:"Shakib"};
 
  openModal(`
+
   <h2>✏️ Edit Profile</h2>
 
   <div class="form">
 
-   <input id="editName"
-          value="${escapeHTML(user.name)}"
-          placeholder="Name">
+   <input
+    id="editName"
+    value="${escapeHTML(user.name)}"
+    placeholder="Name">
 
-   <textarea rows="3"
+   <textarea
+    rows="3"
     placeholder="Bio">Founder of ShakibYS</textarea>
 
-   <button class="primary" onclick="saveProfile()">
+   <button
+    class="primary"
+    onclick="saveProfile()">
     Save Changes
    </button>
 
   </div>
+
  `);
 }
 
 
 function saveProfile(){
 
- const input=document.getElementById("editName");
+ const input=
+  document.getElementById("editName");
 
- const name=input.value.trim();
+ const name=
+  input.value.trim();
 
  if(!name){
+
   toast("নাম দিন");
+
   return;
  }
 
- const user=getUser() || {};
+ const user=
+  getUser() || {};
 
  user.name=name;
 
@@ -1414,7 +2083,7 @@ function saveProfile(){
   JSON.stringify(user)
  );
 
- setUser(name);
+ setUser(user);
 
  toast("Profile updated");
 
@@ -1422,11 +2091,14 @@ function saveProfile(){
 }
 
 
-/* ABOUT */
+/* =========================
+   ABOUT
+========================= */
 
 function openAbout(){
 
  openModal(`
+
   <h2>ℹ️ ShakibYS সম্পর্কে</h2>
 
   <div class="card">
@@ -1439,7 +2111,10 @@ function openAbout(){
     Reels, Marketplace এবং AI একসাথে রয়েছে।
    </p>
 
-   <p><b>Founder:</b> মোহাম্মদ নাজমুজ সাকিব</p>
+   <p>
+    <b>Founder:</b>
+    মোহাম্মদ নাজমুজ সাকিব
+   </p>
 
    <hr>
 
@@ -1452,11 +2127,14 @@ function openAbout(){
    <p>©️ Copyright</p>
 
   </div>
+
  `);
 }
 
 
-/* DARK */
+/* =========================
+   DARK MODE
+========================= */
 
 function toggleDark(){
 
@@ -1469,21 +2147,27 @@ function toggleDark(){
 
  toast(
   document.body.classList.contains("dark")
-  ?"Dark Mode ON":"Light Mode ON"
+  ?"Dark Mode ON"
+  :"Light Mode ON"
  );
 }
 
 
-/* LOGOUT */
+/* =========================
+   LOGOUT
+========================= */
 
 function logout(){
 
  localStorage.removeItem("shakibys_user");
+
  location.reload();
 }
 
 
-/* ESCAPE */
+/* =========================
+   ESCAPE
+========================= */
 
 function escapeHTML(text){
 
@@ -1496,7 +2180,9 @@ function escapeHTML(text){
 }
 
 
-/* START */
+/* =========================
+   START
+========================= */
 
 if(localStorage.getItem("shakibys_dark")==="true"){
  document.body.classList.add("dark");
@@ -1510,11 +2196,59 @@ if(existingUser){
 
 }else{
 
- document.getElementById("loginScreen").style.display="flex";
+ document.getElementById(
+  "loginScreen"
+ ).style.display="flex";
 
 }
 
+
+/* =========================
+   CLOSE MODAL OUTSIDE
+========================= */
+
+document.getElementById("modal")
+ .addEventListener("click",function(e){
+
+  if(e.target===this){
+   closeModal();
+  }
+
+ });
+
+</script>
+
+<!-- Socket.IO -->
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+/*
+  Socket.IO script লোড হওয়ার পরে আবার connection নিশ্চিত করা।
+*/
+if(typeof io !== "undefined"){
+
+ if(!socket){
+
+  try{
+
+   socket=io();
+
+   socket.on("connect",()=>{
+    console.log("ShakibYS server connected");
+   });
+
+   socket.on("post:created",(post)=>{
+    renderPublicPost(post);
+   });
+
+  }catch(e){
+   console.log("Socket error:",e);
+  }
+
+ }
+
+}
 </script>
 
 </body>
-</html>
+ </html>
