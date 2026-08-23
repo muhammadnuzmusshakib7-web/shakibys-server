@@ -6,6 +6,12 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
 const PORT = process.env.PORT || 10000;
 
@@ -14,38 +20,74 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
-
-/* =========================
-   MEMORY DATABASE
-========================= */
+/* =========================================================
+   IN-MEMORY DATABASE
+========================================================= */
 
 const users = [];
 const posts = [];
 const messages = [];
+const friendRequests = [];
+const follows = [];
+const notifications = [];
 
-const socketsByUser = new Map();
-const userBySocket = new Map();
+let nextUserId = 1;
+let nextPostId = 1;
+let nextMessageId = 1;
+let nextRequestId = 1;
+let nextNotificationId = 1;
 
-/* =========================
+/* =========================================================
+   ONLINE USERS
+========================================================= */
+
+const socketUsers = new Map(); // socket.id -> userId
+const userSockets = new Map(); // userId -> socket.id
+
+/* =========================================================
    HELPERS
-========================= */
+========================================================= */
 
-function clean(v, fallback = "") {
-  return String(v ?? fallback).trim();
+function clean(value, fallback = "") {
+  return String(value ?? fallback).trim();
 }
 
-function conversationId(a, b) {
-  return [String(a), String(b)].sort().join("_");
+function now() {
+  return new Date().toISOString();
 }
 
-function sendUser(userId, event, data) {
-  const socketId = socketsByUser.get(String(userId));
+function makeId(prefix, number) {
+  return `${prefix}_${number}`;
+}
+
+function getUser(id) {
+  return users.find(u => String(u.id) === String(id));
+}
+
+function getUserByPhone(phone) {
+  return users.find(u => u.phone === clean(phone));
+}
+
+function publicUser(user) {
+  if (!user) return null;
+
+  return {
+    id: user.id,
+    name: user.name,
+    phone: user.phone,
+    avatar: user.avatar || "",
+    bio: user.bio || "",
+    online: !!user.online,
+    lastSeen: user.lastSeen || null,
+    followers: user.followers || 0,
+    following: user.following || 0,
+    friends: user.friends || 0,
+    createdAt: user.createdAt
+  };
+}
+
+function sendToUser(userId, event, data) {
+  const socketId = userSockets.get(String(userId));
 
   if (!socketId) return false;
 
@@ -53,73 +95,128 @@ function sendUser(userId, event, data) {
   return true;
 }
 
-function publicUser(user) {
-  return {
-    id: user.id,
-    phone: user.phone,
-    name: user.name,
-    avatar: user.avatar || "",
-    online: !!user.online,
-    lastSeen: user.lastSeen
-  };
+function conversationId(a, b) {
+  return [String(a), String(b)].sort().join("_");
 }
 
-/* =========================
-   HEALTH
-========================= */
+function addNotification(userId, type, fromUser, extra = {}) {
+  const notification = {
+    id: makeId("notification", nextNotificationId++),
+    userId: String(userId),
+    type,
+    fromUserId: String(fromUser.id),
+    fromUserName: fromUser.name,
+    ...extra,
+    read: false,
+    createdAt: now()
+  };
 
-app.get("/api/health", (req, res) => {
-  res.json({
+  notifications.push(notification);
+
+  sendToUser(
+    userId,
+    "notification:new",
+    notification
+  );
+
+  return notification;
+}
+
+/* =========================================================
+   DEMO USER
+   ========================================================= */
+
+if (users.length === 0) {
+  users.push({
+    id: String(nextUserId++),
+    name: "Shakib",
+    phone: "01339828709",
+    avatar: "",
+    bio: "Welcome to ShakibYS",
+    online: false,
+    lastSeen: now(),
+    followers: 0,
+    following: 0,
+    friends: 0,
+    createdAt: now()
+  });
+}
+
+/* =========================================================
+   AUTH — REGISTER
+========================================================= */
+
+app.post("/api/auth/register", (req, res) => {
+  const name = clean(req.body?.name);
+  const phone = clean(req.body?.phone);
+
+  if (!name || !phone) {
+    return res.status(400).json({
+      success: false,
+      message: "নাম ও মোবাইল নাম্বার দিন"
+    });
+  }
+
+  if (!/^\d{5,15}$/.test(phone)) {
+    return res.status(400).json({
+      success: false,
+      message: "সঠিক মোবাইল নাম্বার দিন"
+    });
+  }
+
+  const existing = getUserByPhone(phone);
+
+  if (existing) {
+    return res.json({
+      success: true,
+      user: publicUser(existing),
+      message: "এই নাম্বারে আগে থেকেই অ্যাকাউন্ট আছে"
+    });
+  }
+
+  const user = {
+    id: String(nextUserId++),
+    name,
+    phone,
+    avatar: "",
+    bio: "",
+    online: false,
+    lastSeen: now(),
+    followers: 0,
+    following: 0,
+    friends: 0,
+    createdAt: now()
+  };
+
+  users.push(user);
+
+  res.status(201).json({
     success: true,
-    app: "ShakibYS",
-    server: "online",
-    messenger: "enabled",
-    voiceCall: "enabled",
-    videoCall: "enabled",
-    newsFeed: "enabled",
-    ai: process.env.OPENAI_API_KEY ? "enabled" : "not configured",
-    users: users.length,
-    posts: posts.length
+    user: publicUser(user)
   });
 });
 
-/* =========================
-   REGISTER / LOGIN
-========================= */
+/* =========================================================
+   AUTH — LOGIN
+========================================================= */
 
-app.post("/api/auth", (req, res) => {
-  const phone = clean(req.body.phone);
-  const name = clean(req.body.name, "Shakib");
+app.post("/api/auth/login", (req, res) => {
+  const phone = clean(req.body?.phone);
 
   if (!phone) {
     return res.status(400).json({
       success: false,
-      message: "মোবাইল নম্বর দিন"
+      message: "মোবাইল নাম্বার দিন"
     });
   }
 
-  if (phone.length < 5) {
-    return res.status(400).json({
-      success: false,
-      message: "সঠিক মোবাইল নম্বর দিন"
-    });
-  }
-
-  let user = users.find(u => u.phone === phone);
+  const user = getUserByPhone(phone);
 
   if (!user) {
-    user = {
-      id: "u_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
-      phone,
-      name,
-      avatar: "",
-      online: false,
-      lastSeen: new Date().toISOString()
-    };
-
-    users.push(user);
-  } else if (name) {
-    user.name = name;
+    return res.status(404).json({
+      success: false,
+      message: "এই নাম্বারে কোনো অ্যাকাউন্ট পাওয়া যায়নি"
+    });
   }
 
   res.json({
@@ -128,68 +225,108 @@ app.post("/api/auth", (req, res) => {
   });
 });
 
-/* =========================
-   USER SEARCH
-========================= */
+/* =========================================================
+   USERS — SEARCH
+========================================================= */
 
 app.get("/api/users", (req, res) => {
   const q = clean(req.query.q).toLowerCase();
-  const current = clean(req.query.current);
 
-  let result = users.filter(u => u.phone !== current);
+  if (!q) {
+    return res.json({
+      success: true,
+      users: users.slice(0, 50).map(publicUser)
+    });
+  }
 
-  if (q) {
-    result = result.filter(u =>
-      u.name.toLowerCase().includes(q) ||
-      u.phone.toLowerCase().includes(q)
-    );
+  const result = users
+    .filter(user => {
+      return (
+        user.name.toLowerCase().includes(q) ||
+        user.phone.includes(q)
+      );
+    })
+    .slice(0, 50)
+    .map(publicUser);
+
+  res.json({
+    success: true,
+    users: result
+  });
+});
+
+/* =========================================================
+   USER PROFILE
+========================================================= */
+
+app.get("/api/users/:id", (req, res) => {
+  const user = getUser(req.params.id);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User পাওয়া যায়নি"
+    });
   }
 
   res.json({
     success: true,
-    users: result.slice(0, 50).map(publicUser)
+    user: publicUser(user)
   });
 });
 
-/* =========================
-   GET POSTS
-========================= */
+/* =========================================================
+   POSTS — GET
+========================================================= */
 
 app.get("/api/posts", (req, res) => {
+  const result = posts
+    .filter(post => post.privacy === "public")
+    .sort((a, b) =>
+      new Date(b.createdAt) - new Date(a.createdAt)
+    )
+    .slice(0, 100);
+
   res.json({
     success: true,
-    posts: posts.slice(-50).reverse()
+    posts: result
   });
 });
 
-/* =========================
-   CREATE POST
-========================= */
+/* =========================================================
+   POSTS — CREATE
+========================================================= */
 
 app.post("/api/posts", (req, res) => {
-  const author = clean(req.body.author, "Shakib");
-  const authorId = clean(req.body.authorId);
-  const content = clean(req.body.content);
+  const authorId = clean(req.body?.authorId);
+  const author = clean(req.body?.author, "Shakib");
+  const content = clean(req.body?.content);
+  const type = clean(req.body?.type, "text");
+  const media = clean(req.body?.media);
+  const privacy = clean(req.body?.privacy, "public");
 
-  if (!content) {
+  if (!content && !media) {
     return res.status(400).json({
       success: false,
-      message: "Post লিখুন"
+      message: "Post লিখুন বা ছবি/ভিডিও দিন"
     });
   }
 
   const post = {
-    id: "p_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
-    author,
+    id: String(nextPostId++),
     authorId,
+    author,
+    type,
     content,
-    likes: 0,
-    comments: 0,
+    media,
+    privacy,
+    likes: [],
+    comments: [],
     shares: 0,
-    createdAt: new Date().toISOString()
+    createdAt: now()
   };
 
-  posts.push(post);
+  posts.unshift(post);
 
   io.emit("post:created", post);
 
@@ -199,14 +336,218 @@ app.post("/api/posts", (req, res) => {
   });
 });
 
-/* =========================
-   CHAT HISTORY
-========================= */
+/* =========================================================
+   POSTS — DELETE
+========================================================= */
 
-app.get("/api/messages/:a/:b", (req, res) => {
+app.delete("/api/posts/:id", (req, res) => {
+  const index = posts.findIndex(
+    p => String(p.id) === String(req.params.id)
+  );
+
+  if (index === -1) {
+    return res.status(404).json({
+      success: false,
+      message: "Post পাওয়া যায়নি"
+    });
+  }
+
+  const removed = posts.splice(index, 1)[0];
+
+  io.emit("post:deleted", {
+    id: removed.id
+  });
+
+  res.json({
+    success: true
+  });
+});
+
+/* =========================================================
+   FRIEND REQUEST
+========================================================= */
+
+app.post("/api/friends/request", (req, res) => {
+  const fromId = clean(req.body?.fromId);
+  const toId = clean(req.body?.toId);
+
+  const from = getUser(fromId);
+  const to = getUser(toId);
+
+  if (!from || !to) {
+    return res.status(404).json({
+      success: false,
+      message: "User পাওয়া যায়নি"
+    });
+  }
+
+  if (from.id === to.id) {
+    return res.status(400).json({
+      success: false,
+      message: "নিজেকে friend request দেওয়া যাবে না"
+    });
+  }
+
+  const existing = friendRequests.find(r =>
+    r.fromId === fromId &&
+    r.toId === toId &&
+    r.status === "pending"
+  );
+
+  if (existing) {
+    return res.json({
+      success: true,
+      request: existing
+    });
+  }
+
+  const request = {
+    id: String(nextRequestId++),
+    fromId,
+    toId,
+    status: "pending",
+    createdAt: now()
+  };
+
+  friendRequests.push(request);
+
+  addNotification(
+    toId,
+    "friend_request",
+    from,
+    {
+      requestId: request.id
+    }
+  );
+
+  sendToUser(
+    toId,
+    "friend:request",
+    request
+  );
+
+  res.json({
+    success: true,
+    request
+  });
+});
+
+/* =========================================================
+   FRIEND REQUEST — ACCEPT
+========================================================= */
+
+app.post("/api/friends/accept", (req, res) => {
+  const requestId = clean(req.body?.requestId);
+
+  const request = friendRequests.find(
+    r => String(r.id) === requestId
+  );
+
+  if (!request) {
+    return res.status(404).json({
+      success: false,
+      message: "Request পাওয়া যায়নি"
+    });
+  }
+
+  request.status = "accepted";
+
+  const a = getUser(request.fromId);
+  const b = getUser(request.toId);
+
+  if (a && b) {
+    a.friends = (a.friends || 0) + 1;
+    b.friends = (b.friends || 0) + 1;
+
+    addNotification(
+      a.id,
+      "friend_accepted",
+      b
+    );
+  }
+
+  sendToUser(
+    request.fromId,
+    "friend:accepted",
+    request
+  );
+
+  sendToUser(
+    request.toId,
+    "friend:accepted",
+    request
+  );
+
+  res.json({
+    success: true,
+    request
+  });
+});
+
+/* =========================================================
+   FOLLOW
+========================================================= */
+
+app.post("/api/follow", (req, res) => {
+  const followerId = clean(req.body?.followerId);
+  const followingId = clean(req.body?.followingId);
+
+  const follower = getUser(followerId);
+  const following = getUser(followingId);
+
+  if (!follower || !following) {
+    return res.status(404).json({
+      success: false,
+      message: "User পাওয়া যায়নি"
+    });
+  }
+
+  if (followerId === followingId) {
+    return res.status(400).json({
+      success: false,
+      message: "নিজেকে follow করা যাবে না"
+    });
+  }
+
+  const exists = follows.some(
+    f =>
+      f.followerId === followerId &&
+      f.followingId === followingId
+  );
+
+  if (!exists) {
+    follows.push({
+      followerId,
+      followingId,
+      createdAt: now()
+    });
+
+    follower.following =
+      (follower.following || 0) + 1;
+
+    following.followers =
+      (following.followers || 0) + 1;
+
+    addNotification(
+      followingId,
+      "follow",
+      follower
+    );
+  }
+
+  res.json({
+    success: true
+  });
+});
+
+/* =========================================================
+   MESSAGES — HISTORY
+========================================================= */
+
+app.get("/api/messages/:userA/:userB", (req, res) => {
   const cid = conversationId(
-    req.params.a,
-    req.params.b
+    req.params.userA,
+    req.params.userB
   );
 
   const result = messages.filter(
@@ -219,196 +560,133 @@ app.get("/api/messages/:a/:b", (req, res) => {
   });
 });
 
-/* =========================
-   AI
-========================= */
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
 
-app.post("/api/ai", async (req, res) => {
-  const question = clean(req.body.message);
+app.get("/api/notifications/:userId", (req, res) => {
+  const result = notifications
+    .filter(
+      n => n.userId === String(req.params.userId)
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt) -
+        new Date(a.createdAt)
+    )
+    .slice(0, 100);
 
-  if (!question) {
-    return res.status(400).json({
-      success: false,
-      message: "প্রশ্ন লিখুন"
-    });
-  }
-
-  if (!process.env.OPENAI_API_KEY) {
-    return res.json({
-      success: true,
-      answer:
-        "AI চালু করতে Render Environment Variables-এ OPENAI_API_KEY যোগ করতে হবে।"
-    });
-  }
-
-  try {
-    const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization":
-            "Bearer " + process.env.OPENAI_API_KEY
-        },
-        body: JSON.stringify({
-          model: process.env.AI_MODEL || "gpt-4o-mini",
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are ShakibYS AI. Reply naturally. If user writes Bengali, reply in Bengali."
-            },
-            {
-              role: "user",
-              content: question
-            }
-          ],
-          max_tokens: 700
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return res.status(500).json({
-        success: false,
-        message: data?.error?.message || "AI error"
-      });
-    }
-
-    res.json({
-      success: true,
-      answer:
-        data?.choices?.[0]?.message?.content ||
-        "AI উত্তর দিতে পারেনি।"
-    });
-
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "AI server error"
-    });
-  }
+  res.json({
+    success: true,
+    notifications: result
+  });
 });
 
-/* =========================
+/* =========================================================
    SOCKET.IO
-========================= */
+========================================================= */
 
 io.on("connection", socket => {
-
-  console.log("Socket connected:", socket.id);
+  console.log("🟢 Connected:", socket.id);
 
   /* USER ONLINE */
 
   socket.on("user:online", data => {
     const userId = clean(data?.userId);
-    const phone = clean(data?.phone);
     const name = clean(data?.name, "Shakib");
+    const phone = clean(data?.phone);
 
-    const id = userId || phone;
+    if (!userId) return;
 
-    if (!id) return;
+    socketUsers.set(socket.id, userId);
+    userSockets.set(userId, socket.id);
 
-    socketsByUser.set(String(id), socket.id);
-    userBySocket.set(socket.id, String(id));
-
-    const user = users.find(
-      u => u.id === id || u.phone === phone || u.phone === id
-    );
+    const user = getUser(userId);
 
     if (user) {
       user.online = true;
-      user.lastSeen = new Date().toISOString();
+      user.lastSeen = now();
+
       if (name) user.name = name;
+      if (phone) user.phone = phone;
     }
 
     io.emit("user:status", {
-      userId: id,
+      userId,
       online: true
     });
-
-    socket.emit(
-      "posts:init",
-      posts.slice(-50).reverse()
-    );
   });
 
-  /* POST */
+  /* INITIAL FEED */
 
-  socket.on("post:create", data => {
-    const author = clean(data?.author, "Shakib");
-    const authorId = clean(data?.authorId);
-    const content = clean(data?.content);
+  socket.emit(
+    "posts:init",
+    posts
+      .filter(p => p.privacy === "public")
+      .slice(0, 100)
+  );
 
-    if (!content) {
-      socket.emit("post:error", {
-        message: "Post লিখুন"
+  /* SEND MESSAGE */
+
+  socket.on("message:send", data => {
+    const senderId = clean(data?.senderId);
+    const receiverId = clean(data?.receiverId);
+    const senderName = clean(
+      data?.senderName,
+      "Shakib"
+    );
+    const text = clean(data?.text);
+    const type = clean(data?.type, "text");
+
+    if (
+      !senderId ||
+      !receiverId ||
+      !text
+    ) {
+      socket.emit("message:error", {
+        message: "Message data অসম্পূর্ণ"
       });
       return;
     }
 
-    const post = {
-      id: "p_" + Date.now(),
-      author,
-      authorId,
-      content,
-      likes: 0,
-      comments: 0,
-      shares: 0,
-      createdAt: new Date().toISOString()
-    };
-
-    posts.push(post);
-
-    io.emit("post:created", post);
-  });
-
-  /* MESSAGE */
-
-  socket.on("message:send", data => {
-    const senderId = clean(data?.senderId);
-    const senderName = clean(data?.senderName, "Shakib");
-    const receiverId = clean(data?.receiverId);
-    const text = clean(data?.text);
-
-    if (!senderId || !receiverId || !text) return;
-
     const message = {
-      id: "m_" + Date.now() + "_" +
-        Math.random().toString(36).slice(2, 7),
+      id: String(nextMessageId++),
       conversationId:
         conversationId(senderId, receiverId),
       senderId,
       senderName,
       receiverId,
       text,
-      type: clean(data?.type, "text"),
-      createdAt: new Date().toISOString()
+      type,
+      createdAt: now()
     };
 
     messages.push(message);
 
-    socket.emit("message:new", message);
+    socket.emit(
+      "message:new",
+      message
+    );
 
-    sendUser(
+    sendToUser(
       receiverId,
       "message:new",
       message
     );
   });
 
-  /* MESSAGE HISTORY */
+  /* CHAT HISTORY */
 
   socket.on("message:history", data => {
-    const a = clean(data?.userA);
-    const b = clean(data?.userB);
+    const userA = clean(data?.userA);
+    const userB = clean(data?.userB);
 
-    if (!a || !b) return;
+    if (!userA || !userB) return;
 
-    const cid = conversationId(a, b);
+    const cid = conversationId(
+      userA,
+      userB
+    );
 
     socket.emit(
       "message:history",
@@ -421,57 +699,62 @@ io.on("connection", socket => {
   /* TYPING */
 
   socket.on("typing:start", data => {
-    sendUser(
+    sendToUser(
       clean(data?.receiverId),
       "typing:start",
       {
-        senderName:
-          clean(data?.senderName, "Someone")
+        senderName: clean(
+          data?.senderName,
+          "Someone"
+        )
       }
     );
   });
 
   socket.on("typing:stop", data => {
-    sendUser(
+    sendToUser(
       clean(data?.receiverId),
       "typing:stop",
       {}
     );
   });
 
-  /* =========================
-     WEBRTC AUDIO / VIDEO CALL
-  ========================= */
+  /* VOICE / VIDEO CALL */
 
   socket.on("call:offer", data => {
-    sendUser(
+    sendToUser(
       clean(data?.receiverId),
       "call:offer",
       {
         callerId: clean(data?.callerId),
-        callerName:
-          clean(data?.callerName, "Someone"),
-        callType:
-          clean(data?.callType, "voice"),
+        callerName: clean(
+          data?.callerName,
+          "Shakib"
+        ),
+        callType: clean(
+          data?.callType,
+          "voice"
+        ),
         offer: data?.offer
       }
     );
   });
 
   socket.on("call:answer", data => {
-    sendUser(
+    sendToUser(
       clean(data?.callerId),
       "call:answer",
       {
-        receiverId:
-          clean(data?.receiverId),
+        receiverId: clean(
+          data?.receiverId
+        ),
         answer: data?.answer
       }
     );
   });
 
   socket.on("call:ice", data => {
-    sendUser(
+    sendToUser(
       clean(data?.targetUserId),
       "call:ice",
       {
@@ -481,18 +764,19 @@ io.on("connection", socket => {
   });
 
   socket.on("call:reject", data => {
-    sendUser(
+    sendToUser(
       clean(data?.callerId),
       "call:rejected",
       {
-        receiverId:
-          clean(data?.receiverId)
+        receiverId: clean(
+          data?.receiverId
+        )
       }
     );
   });
 
   socket.on("call:end", data => {
-    sendUser(
+    sendToUser(
       clean(data?.targetUserId),
       "call:ended",
       {
@@ -505,21 +789,18 @@ io.on("connection", socket => {
 
   socket.on("disconnect", () => {
     const userId =
-      userBySocket.get(socket.id);
+      socketUsers.get(socket.id);
+
+    socketUsers.delete(socket.id);
 
     if (userId) {
-      socketsByUser.delete(userId);
-      userBySocket.delete(socket.id);
+      userSockets.delete(userId);
 
-      const user = users.find(
-        u => u.id === userId ||
-             u.phone === userId
-      );
+      const user = getUser(userId);
 
       if (user) {
         user.online = false;
-        user.lastSeen =
-          new Date().toISOString();
+        user.lastSeen = now();
       }
 
       io.emit("user:status", {
@@ -529,74 +810,107 @@ io.on("connection", socket => {
     }
 
     console.log(
-      "Socket disconnected:",
+      "🔴 Disconnected:",
       socket.id
     );
   });
 });
 
-/* =========================
-   FRONTEND
-========================= */
+/* =========================================================
+   HEALTH
+========================================================= */
 
-app.get("/", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "index.html")
-  );
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    app: "ShakibYS",
+    server: "online",
+    newsFeed: true,
+    messenger: true,
+    voiceCall: true,
+    videoCall: true,
+    friendRequest: true,
+    follow: true,
+    notifications: true,
+    users: users.length,
+    posts: posts.length,
+    messages: messages.length,
+    time: now()
+  });
 });
 
-/* Express 5 compatible fallback */
+/* =========================================================
+   FRONTEND
+   Express 5 এ app.get("*") ব্যবহার করা যাবে না।
+========================================================= */
 
-app.use((req, res) => {
-  if (req.method === "GET") {
-    res.sendFile(
+app.use((req, res, next) => {
+  if (
+    req.method === "GET" &&
+    !req.path.startsWith("/api/")
+  ) {
+    return res.sendFile(
       path.join(__dirname, "index.html")
     );
-  } else {
-    res.status(404).json({
-      success: false,
-      message: "Not found"
-    });
   }
+
+  next();
 });
 
-/* =========================
+/* =========================================================
    START
-========================= */
+========================================================= */
 
 server.listen(
   PORT,
   "0.0.0.0",
   () => {
+    console.log("");
     console.log(
-      "================================"
+      "================================="
     );
     console.log(
-      "🚀 ShakibYS SERVER ONLINE"
+      "🚀 SHAKIBYS SERVER ONLINE"
     );
     console.log(
-      "💬 Messenger: ON"
+      "================================="
     );
     console.log(
-      "📞 Audio Call: ON"
+      "👤 Login/Register : ON"
     );
     console.log(
-      "🎥 Video Call: ON"
+      "🔎 User Search    : ON"
     );
     console.log(
-      "📰 News Feed: ON"
+      "📰 News Feed      : ON"
     );
     console.log(
-      "🤖 AI: " +
-      (process.env.OPENAI_API_KEY
-        ? "ON"
-        : "OFF")
+      "💬 Messenger      : ON"
     );
     console.log(
-      "🌐 PORT: " + PORT
+      "📞 Voice Call     : ON"
     );
     console.log(
-      "================================"
+      "🎥 Video Call     : ON"
+    );
+    console.log(
+      "👥 Friend Request : ON"
+    );
+    console.log(
+      "➕ Follow         : ON"
+    );
+    console.log(
+      "🔔 Notifications  : ON"
+    );
+    console.log(
+      "🔌 Socket.IO      : ON"
+    );
+    console.log(
+      "🌐 PORT           :",
+      PORT
+    );
+    console.log(
+      "================================="
     );
   }
 );
