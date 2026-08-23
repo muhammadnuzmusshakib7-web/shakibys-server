@@ -2,552 +2,870 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ShakibYS Messenger</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>ShakibYS Premium</title>
 
-<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,"Noto Sans Bengali",sans-serif;
-}
-
 :root{
-    --primary:#ff2a5f;
-    --bg:#f3f4f6;
-    --card:#fff;
-    --text:#111827;
-    --muted:#6b7280;
-    --border:#e5e7eb;
+ --primary:#ff285c;
+ --primary2:#ff5278;
+ --bg:#f5f7fb;
+ --card:#fff;
+ --text:#101828;
+ --muted:#667085;
+ --border:#e4e7ec;
+ --green:#12b76a;
+ --shadow:0 5px 25px rgba(16,24,40,.08);
 }
 
-body.dark{
-    --bg:#0f172a;
-    --card:#1e293b;
-    --text:#f8fafc;
-    --muted:#94a3b8;
-    --border:#334155;
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-    background:var(--bg);
-    color:var(--text);
-    min-height:100vh;
+ font-family:Arial,system-ui,sans-serif;
+ background:var(--bg);
+ color:var(--text);
+ min-height:100vh;
 }
+button,input,textarea{font:inherit}
+button{cursor:pointer}
 
-/* LOGIN */
+.hidden{display:none!important}
 
-#login{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+/* AUTH */
+.auth{
+ min-height:100vh;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ padding:20px;
+ background:linear-gradient(135deg,#ff285c,#7f2cff);
 }
-
-.login-card{
-    width:100%;
-    max-width:400px;
-    background:var(--card);
-    padding:30px;
-    border-radius:25px;
-    text-align:center;
-    box-shadow:0 15px 40px #0002;
+.auth-card{
+ width:100%;
+ max-width:410px;
+ background:#fff;
+ border-radius:28px;
+ padding:30px 22px;
+ box-shadow:0 20px 60px rgba(0,0,0,.2);
 }
-
 .logo{
-    font-size:35px;
-    font-weight:900;
-    color:var(--primary);
-    margin-bottom:8px;
+ text-align:center;
+ font-size:35px;
+ font-weight:900;
+ color:var(--primary);
+ margin-bottom:8px;
 }
-
-.subtitle{
-    color:var(--muted);
-    margin-bottom:25px;
+.auth-sub{
+ text-align:center;
+ color:#667085;
+ font-size:14px;
+ margin-bottom:25px;
 }
-
-input{
-    border:1px solid var(--border);
-    background:var(--bg);
-    color:var(--text);
-    outline:none;
+.input{
+ width:100%;
+ padding:14px;
+ border:1px solid var(--border);
+ border-radius:13px;
+ margin-bottom:12px;
+ outline:none;
 }
-
-.login-input{
-    width:100%;
-    padding:15px;
-    border-radius:14px;
-    margin-bottom:12px;
-}
-
+.input:focus{border-color:var(--primary)}
 .btn{
-    width:100%;
-    border:0;
-    padding:14px;
-    border-radius:14px;
-    background:var(--primary);
-    color:white;
-    font-weight:bold;
-    font-size:15px;
+ width:100%;
+ border:0;
+ padding:13px;
+ border-radius:13px;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:#fff;
+ font-weight:800;
+ margin-top:5px;
+}
+.auth-links{
+ display:flex;
+ justify-content:space-between;
+ margin-top:16px;
+ font-size:13px;
+ color:var(--primary);
+}
+.auth-box-title{
+ font-size:20px;
+ font-weight:800;
+ margin-bottom:15px;
 }
 
 /* APP */
+.app{max-width:700px;margin:auto;padding-bottom:85px}
 
-#app{
-    display:none;
-    height:100vh;
+.header{
+ position:sticky;
+ top:0;
+ z-index:50;
+ background:rgba(255,255,255,.94);
+ backdrop-filter:blur(15px);
+ border-bottom:1px solid var(--border);
 }
-
 .top{
-    height:62px;
-    background:var(--card);
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 16px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:13px 16px;
 }
-
 .brand{
-    color:var(--primary);
-    font-size:23px;
-    font-weight:900;
+ font-size:23px;
+ font-weight:900;
+ color:var(--primary);
+}
+.header-actions{display:flex;gap:8px}
+.icon{
+ width:39px;
+ height:39px;
+ border:0;
+ border-radius:50%;
+ background:#fff0f3;
+ color:var(--primary);
 }
 
-.top-buttons{
-    display:flex;
-    gap:8px;
+.section{
+ display:none;
+ padding:15px;
+}
+.section.active{display:block}
+
+/* STORIES */
+.stories{
+ display:flex;
+ gap:10px;
+ overflow-x:auto;
+ padding-bottom:12px;
+}
+.story{
+ min-width:76px;
+ height:110px;
+ border-radius:16px;
+ overflow:hidden;
+ position:relative;
+ background:linear-gradient(135deg,#ff285c,#8d38ff);
+ color:#fff;
+ border:2px solid var(--primary);
+}
+.story img,.story video{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+}
+.story-name{
+ position:absolute;
+ bottom:5px;
+ left:5px;
+ right:5px;
+ font-size:10px;
+ font-weight:bold;
+ text-shadow:0 1px 4px #000;
+}
+.add-story{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ flex-direction:column;
+ font-size:12px;
+ gap:5px;
 }
 
-.icon-btn{
-    border:0;
-    background:var(--bg);
-    color:var(--text);
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    font-size:18px;
+/* CARDS */
+.card{
+ background:var(--card);
+ border:1px solid var(--border);
+ border-radius:18px;
+ padding:15px;
+ margin-bottom:14px;
+ box-shadow:var(--shadow);
 }
-
-/* LAYOUT */
-
-.layout{
-    display:flex;
-    height:calc(100vh - 62px);
+.section-title{
+ font-size:19px;
+ font-weight:900;
+ margin:4px 0 14px;
 }
-
-/* SIDEBAR */
-
-.sidebar{
-    width:310px;
-    background:var(--card);
-    border-right:1px solid var(--border);
-    display:flex;
-    flex-direction:column;
+.create{
+ display:flex;
+ gap:10px;
+ align-items:center;
 }
-
-.sidebar-title{
-    padding:18px;
-    font-size:20px;
-    font-weight:bold;
-}
-
-.search{
-    margin:0 15px 12px;
-    padding:12px 15px;
-    border-radius:20px;
-    width:calc(100% - 30px);
-}
-
-.user-list{
-    overflow:auto;
-    flex:1;
-}
-
-.user{
-    padding:13px 16px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    cursor:pointer;
-}
-
-.user:hover,
-.user.selected{
-    background:var(--bg);
-}
-
 .avatar{
-    width:45px;
-    height:45px;
-    border-radius:50%;
-    background:var(--primary);
-    color:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-weight:bold;
-    flex-shrink:0;
+ width:42px;
+ height:42px;
+ border-radius:50%;
+ background:linear-gradient(135deg,var(--primary),#823cff);
+ color:#fff;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-weight:900;
+ flex-shrink:0;
 }
-
-.user-info{
-    min-width:0;
-    flex:1;
+.post-input{
+ flex:1;
+ border:0;
+ background:var(--bg);
+ border-radius:22px;
+ padding:12px 15px;
+ outline:none;
 }
-
-.user-name{
-    font-weight:bold;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+.post-head{
+ display:flex;
+ gap:10px;
+ align-items:center;
+ margin-bottom:12px;
 }
-
-.online{
-    color:#22c55e;
-    font-size:11px;
+.post-author{font-weight:800}
+.post-time{font-size:11px;color:var(--muted)}
+.post-content{
+ font-size:15px;
+ line-height:1.55;
+ margin-bottom:12px;
+ white-space:pre-wrap;
 }
-
-.unread{
-    background:var(--primary);
-    color:white;
-    min-width:20px;
-    height:20px;
-    border-radius:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:11px;
+.post-actions{
+ display:flex;
+ border-top:1px solid var(--border);
+ padding-top:9px;
+ gap:5px;
+}
+.post-actions button{
+ flex:1;
+ border:0;
+ background:transparent;
+ padding:8px;
+ color:var(--muted);
+ border-radius:9px;
+}
+.post-actions button:hover{background:#f2f4f7}
+.comments{
+ margin-top:10px;
+ padding-top:10px;
+ border-top:1px solid var(--border);
+}
+.comment{
+ background:var(--bg);
+ padding:8px 10px;
+ border-radius:10px;
+ margin-top:6px;
+ font-size:12px;
 }
 
 /* CHAT */
-
 .chat{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    min-width:0;
+ height:65vh;
+ min-height:450px;
+ background:var(--card);
+ border:1px solid var(--border);
+ border-radius:18px;
+ overflow:hidden;
+ display:flex;
+ flex-direction:column;
 }
-
-.chat-header{
-    height:65px;
-    background:var(--card);
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    padding:10px 15px;
-    gap:10px;
-}
-
-.chat-title{
-    font-weight:bold;
-}
-
-.chat-status{
-    font-size:11px;
-    color:#22c55e;
-}
-
 .messages{
-    flex:1;
-    overflow-y:auto;
-    padding:18px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+ flex:1;
+ overflow-y:auto;
+ padding:14px;
+ display:flex;
+ flex-direction:column;
+ gap:8px;
 }
-
-.message{
-    max-width:75%;
-    padding:10px 13px;
-    border-radius:16px;
-    font-size:14px;
-    word-wrap:break-word;
+.bubble{
+ max-width:78%;
+ padding:10px 13px;
+ border-radius:15px;
+ font-size:13px;
+ line-height:1.4;
 }
-
-.message.me{
-    align-self:flex-end;
-    background:var(--primary);
-    color:white;
-    border-bottom-right-radius:4px;
+.mine{
+ align-self:flex-end;
+ background:var(--primary);
+ color:#fff;
+ border-bottom-right-radius:4px;
 }
-
-.message.other{
-    align-self:flex-start;
-    background:var(--card);
-    border:1px solid var(--border);
-    border-bottom-left-radius:4px;
+.theirs{
+ align-self:flex-start;
+ background:var(--bg);
+ border:1px solid var(--border);
+ border-bottom-left-radius:4px;
 }
-
-.sender{
-    font-size:10px;
-    opacity:.7;
-    margin-bottom:3px;
+.msg-meta{
+ font-size:9px;
+ opacity:.7;
+ margin-top:3px;
 }
-
-.time{
-    font-size:9px;
-    opacity:.65;
-    margin-top:4px;
-    text-align:right;
+.typing{
+ padding:5px 14px;
+ font-size:11px;
+ color:var(--muted);
 }
-
 .chat-input{
-    padding:10px;
-    background:var(--card);
-    border-top:1px solid var(--border);
-    display:flex;
-    gap:8px;
+ display:flex;
+ gap:7px;
+ padding:10px;
+ border-top:1px solid var(--border);
 }
-
 .chat-input input{
-    flex:1;
-    padding:12px 15px;
-    border-radius:25px;
+ flex:1;
+ border:1px solid var(--border);
+ border-radius:22px;
+ padding:11px 14px;
+ outline:none;
 }
-
 .send{
-    width:48px;
-    height:48px;
-    border-radius:50%;
-    border:0;
-    background:var(--primary);
-    color:white;
-    font-size:18px;
+ width:44px;
+ border:0;
+ border-radius:50%;
+ background:var(--primary);
+ color:#fff;
 }
 
-/* EMPTY */
-
-.empty{
-    flex:1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    color:var(--muted);
-    padding:30px;
+/* USERS */
+.user-row{
+ display:flex;
+ align-items:center;
+ gap:11px;
+ padding:11px 0;
+ border-bottom:1px solid var(--border);
+}
+.user-info{flex:1}
+.online{
+ width:9px;
+ height:9px;
+ background:var(--green);
+ border-radius:50%;
+ display:inline-block;
+}
+.user-btn{
+ border:0;
+ background:#fff0f3;
+ color:var(--primary);
+ padding:8px 11px;
+ border-radius:10px;
+ font-size:11px;
+ font-weight:bold;
 }
 
-.empty-icon{
-    font-size:55px;
-    margin-bottom:10px;
+/* MARKET */
+.market-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+}
+.product{
+ border:1px solid var(--border);
+ border-radius:15px;
+ overflow:hidden;
+ background:var(--card);
+}
+.product img{
+ width:100%;
+ height:130px;
+ object-fit:cover;
+ background:#eee;
+}
+.product-body{padding:10px}
+.price{
+ color:var(--primary);
+ font-size:18px;
+ font-weight:900;
 }
 
-/* MOBILE */
-
-@media(max-width:700px){
-
-    .sidebar{
-        width:100%;
-    }
-
-    .chat{
-        display:none;
-    }
-
-    .layout.chat-open .sidebar{
-        display:none;
-    }
-
-    .layout.chat-open .chat{
-        display:flex;
-    }
-
-    .mobile-back{
-        display:block!important;
-    }
+/* AI */
+.ai{
+ background:linear-gradient(135deg,#17122b,#452064);
+ color:#fff;
+ border:0;
+}
+.ai textarea{
+ width:100%;
+ min-height:100px;
+ margin-top:10px;
+ border:0;
+ border-radius:12px;
+ padding:12px;
+ resize:none;
+ outline:none;
 }
 
-.mobile-back{
-    display:none;
-    border:0;
-    background:none;
-    color:var(--text);
-    font-size:20px;
+/* PROFILE */
+.profile-cover{
+ height:130px;
+ border-radius:18px 18px 0 0;
+ background:linear-gradient(135deg,#ff285c,#743cff);
 }
+.profile-main{
+ text-align:center;
+ margin-top:-35px;
+}
+.big-avatar{
+ margin:auto;
+ width:80px;
+ height:80px;
+ border-radius:50%;
+ border:4px solid #fff;
+ background:linear-gradient(135deg,var(--primary),#733cff);
+ color:#fff;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ font-size:28px;
+ font-weight:900;
+}
+
+/* NAV */
+.bottom-nav{
+ position:fixed;
+ bottom:0;
+ left:50%;
+ transform:translateX(-50%);
+ width:100%;
+ max-width:700px;
+ height:67px;
+ background:rgba(255,255,255,.96);
+ backdrop-filter:blur(15px);
+ border-top:1px solid var(--border);
+ display:flex;
+ z-index:100;
+}
+.nav{
+ flex:1;
+ border:0;
+ background:transparent;
+ color:var(--muted);
+ font-size:10px;
+ font-weight:bold;
+}
+.nav span{
+ display:block;
+ font-size:21px;
+ margin-bottom:3px;
+}
+.nav.active{color:var(--primary)}
+
+/* MODAL */
+.modal{
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.6);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:15px;
+ z-index:200;
+}
+.modal-card{
+ width:100%;
+ max-width:430px;
+ background:#fff;
+ border-radius:22px;
+ padding:20px;
+ max-height:90vh;
+ overflow:auto;
+}
+.modal-head{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:15px;
+}
+.close{
+ border:0;
+ background:#f2f4f7;
+ width:35px;
+ height:35px;
+ border-radius:50%;
+}
+
+/* DARK */
+body.dark{
+ --bg:#0b1220;
+ --card:#111a2a;
+ --text:#f8fafc;
+ --muted:#98a2b3;
+ --border:#253247;
+}
+body.dark .header,
+body.dark .bottom-nav{
+ background:rgba(17,26,42,.96);
+}
+body.dark .icon,
+body.dark .post-input,
+body.dark .bg-btn{
+ background:#1b2638;
+ color:#fff;
+}
+body.dark .modal-card{background:#111a2a}
+body.dark .input{background:#111a2a;color:#fff}
+body.dark .chat-input input{background:#111a2a;color:#fff}
 
 /* TOAST */
-
 #toast{
-    position:fixed;
-    left:50%;
-    bottom:25px;
-    transform:translateX(-50%) translateY(80px);
-    background:#111827;
-    color:white;
-    padding:12px 20px;
-    border-radius:30px;
-    opacity:0;
-    transition:.3s;
-    z-index:999;
+ position:fixed;
+ left:50%;
+ bottom:82px;
+ transform:translate(-50%,100px);
+ background:#101828;
+ color:#fff;
+ padding:11px 18px;
+ border-radius:30px;
+ font-size:12px;
+ z-index:500;
+ transition:.3s;
 }
+#toast.show{transform:translate(-50%,0)}
 
-#toast.show{
-    transform:translateX(-50%) translateY(0);
-    opacity:1;
+@media(max-width:480px){
+ .section{padding:11px}
+ .market-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<!-- ================= AUTH ================= -->
 
-<div id="login">
+<div id="auth" class="auth">
 
-    <div class="login-card">
+ <div class="auth-card">
 
-        <div class="logo">ShakibYS</div>
+  <div class="logo">ShakibYS</div>
+  <div class="auth-sub">Connect • Chat • Share • Buy</div>
 
-        <div class="subtitle">
-            Connect with everyone 💬
-        </div>
+  <!-- LOGIN -->
+  <div id="loginBox">
 
-        <input
-            id="nameInput"
-            class="login-input"
-            type="text"
-            maxlength="30"
-            placeholder="আপনার নাম লিখুন">
+   <div class="auth-box-title">Login</div>
 
-        <button class="btn" onclick="login()">
-            ShakibYS-এ প্রবেশ করুন 🚀
-        </button>
+   <input id="loginPhone" class="input"
+          placeholder="📱 Phone Number">
 
-    </div>
+   <input id="loginPassword" class="input"
+          type="password"
+          placeholder="🔐 Password">
+
+   <button class="btn" onclick="login()">Login</button>
+
+   <div class="auth-links">
+    <span onclick="showAuth('register')">Create Account</span>
+    <span onclick="showAuth('forgot')">Forgot Password?</span>
+   </div>
+
+  </div>
+
+  <!-- REGISTER -->
+  <div id="registerBox" class="hidden">
+
+   <div class="auth-box-title">Create Account</div>
+
+   <input id="regName" class="input"
+          placeholder="আপনার নাম">
+
+   <input id="regPhone" class="input"
+          placeholder="📱 Phone Number">
+
+   <input id="regPassword" class="input"
+          type="password"
+          placeholder="🔐 Password">
+
+   <button class="btn" onclick="register()">Create Account</button>
+
+   <div class="auth-links">
+    <span onclick="showAuth('login')">← Login</span>
+   </div>
+
+  </div>
+
+  <!-- FORGOT -->
+  <div id="forgotBox" class="hidden">
+
+   <div class="auth-box-title">Forgot Password</div>
+
+   <input id="forgotPhone" class="input"
+          placeholder="📱 Phone Number">
+
+   <button class="btn" onclick="requestOTP()">Send OTP</button>
+
+   <div id="otpArea" class="hidden">
+
+    <input id="otp" class="input"
+           placeholder="6 digit OTP"
+           style="margin-top:12px">
+
+    <button class="btn" onclick="verifyOTP()">Verify OTP</button>
+
+   </div>
+
+   <div id="newPasswordArea" class="hidden">
+
+    <input id="newPassword" class="input"
+           type="password"
+           placeholder="New Password">
+
+    <button class="btn" onclick="resetPassword()">Set New Password</button>
+
+   </div>
+
+   <div class="auth-links">
+    <span onclick="showAuth('login')">← Login</span>
+   </div>
+
+  </div>
+
+ </div>
+</div>
+
+
+<!-- ================= APP ================= -->
+
+<div id="app" class="app hidden">
+
+ <header class="header">
+
+  <div class="top">
+
+   <div class="brand">ShakibYS</div>
+
+   <div class="header-actions">
+
+    <button class="icon" onclick="openSearch()">🔎</button>
+    <button class="icon" onclick="openNotifications()">🔔</button>
+
+   </div>
+
+  </div>
+
+ </header>
+
+
+ <!-- HOME -->
+
+ <section id="home" class="section active">
+
+  <div class="stories" id="stories"></div>
+
+  <div class="card create">
+
+   <div class="avatar" id="smallAvatar">S</div>
+
+   <input class="post-input"
+          id="postInput"
+          placeholder="What's on your mind?">
+
+   <button class="user-btn"
+           onclick="createPost()">Post</button>
+
+  </div>
+
+  <div id="feed"></div>
+
+ </section>
+
+
+ <!-- MESSENGER -->
+
+ <section id="messenger" class="section">
+
+  <div class="section-title">💬 Messenger</div>
+
+  <div class="chat">
+
+   <div id="messages" class="messages"></div>
+
+   <div id="typing" class="typing"></div>
+
+   <div class="chat-input">
+
+    <input id="chatInput"
+           placeholder="Message everyone..."
+           oninput="typing()"
+           onkeydown="chatKey(event)">
+
+    <button class="send"
+            onclick="sendMessage()">➤</button>
+
+   </div>
+
+  </div>
+
+ </section>
+
+
+ <!-- FRIENDS -->
+
+ <section id="friends" class="section">
+
+  <div class="section-title">👥 Friends & Users</div>
+
+  <div class="card">
+
+   <input class="input"
+          id="userSearch"
+          placeholder="Search users..."
+          oninput="filterUsers()">
+
+   <div id="users"></div>
+
+  </div>
+
+ </section>
+
+
+ <!-- MARKET -->
+
+ <section id="market" class="section">
+
+  <div class="section-title">🛒 Marketplace</div>
+
+  <button class="btn"
+          onclick="openMarketModal()">
+   + Sell Something
+  </button>
+
+  <div style="height:12px"></div>
+
+  <div id="marketGrid" class="market-grid"></div>
+
+ </section>
+
+
+ <!-- AI -->
+
+ <section id="ai" class="section">
+
+  <div class="card ai">
+
+   <div class="section-title">
+    🤖 AI Marketplace Assistant
+   </div>
+
+   <p style="font-size:13px;opacity:.8">
+    Product description, price idea অথবা buyer reply তৈরি করুন।
+   </p>
+
+   <textarea id="aiInput"
+             placeholder="যেমন: আমার একটি পুরোনো ফোন বিক্রি করব..."></textarea>
+
+   <button class="btn"
+           onclick="askAI()">
+    ✨ Generate
+   </button>
+
+   <div id="aiResult"
+        style="margin-top:15px;line-height:1.6;font-size:13px">
+   </div>
+
+  </div>
+
+ </section>
+
+
+ <!-- NOTIFICATIONS -->
+
+ <section id="notifications" class="section">
+
+  <div class="section-title">🔔 Notifications</div>
+
+  <div id="notificationList"></div>
+
+ </section>
+
+
+ <!-- PROFILE -->
+
+ <section id="profile" class="section">
+
+  <div class="card" style="padding:0;overflow:hidden">
+
+   <div class="profile-cover"></div>
+
+   <div class="profile-main" style="padding:15px">
+
+    <div class="big-avatar" id="bigAvatar">S</div>
+
+    <h2 id="profileName" style="margin-top:8px">
+     ShakibYS User
+    </h2>
+
+    <p id="profilePhone"
+       style="font-size:12px;color:var(--muted);margin-top:4px">
+    </p>
+
+    <div style="height:15px"></div>
+
+    <button class="btn"
+            onclick="openSettings()">
+     ⚙️ Settings
+    </button>
+
+    <button class="btn"
+            style="background:#ef4444;margin-top:8px"
+            onclick="logout()">
+     Logout
+    </button>
+
+   </div>
+
+  </div>
+
+ </section>
+
+
+ <!-- BOTTOM NAV -->
+
+ <nav class="bottom-nav">
+
+  <button class="nav active"
+          onclick="go('home',this)">
+   <span>🏠</span>Home
+  </button>
+
+  <button class="nav"
+          onclick="go('messenger',this)">
+   <span>💬</span>Messenger
+  </button>
+
+  <button class="nav"
+          onclick="go('friends',this)">
+   <span>👥</span>Friends
+  </button>
+
+  <button class="nav"
+          onclick="go('market',this)">
+   <span>🛒</span>Market
+  </button>
+
+  <button class="nav"
+          onclick="go('profile',this)">
+   <span>👤</span>Profile
+  </button>
+
+ </nav>
 
 </div>
 
 
-<!-- APP -->
+<!-- ================= MODALS ================= -->
 
-<div id="app">
+<div id="modal" class="modal hidden">
 
-    <div class="top">
+ <div class="modal-card">
 
-        <div class="brand">
-            ShakibYS
-        </div>
+  <div class="modal-head">
 
-        <div class="top-buttons">
+   <h3 id="modalTitle">ShakibYS</h3>
 
-            <button class="icon-btn" onclick="toggleDark()">
-                🌙
-            </button>
+   <button class="close"
+           onclick="closeModal()">✕</button>
 
-            <button class="icon-btn" onclick="logout()">
-                🚪
-            </button>
+  </div>
 
-        </div>
+  <div id="modalBody"></div>
 
-    </div>
-
-
-    <div class="layout" id="layout">
-
-        <!-- USERS -->
-
-        <aside class="sidebar">
-
-            <div class="sidebar-title">
-                Messenger
-            </div>
-
-            <input
-                id="search"
-                class="search"
-                placeholder="🔎 ইউজার খুঁজুন..."
-                oninput="searchUsers()">
-
-            <div id="userList" class="user-list">
-
-                <div class="empty">
-                    <div>
-                        <div class="empty-icon">👥</div>
-                        অপেক্ষা করুন...
-                    </div>
-                </div>
-
-            </div>
-
-        </aside>
-
-
-        <!-- CHAT -->
-
-        <main class="chat">
-
-            <div class="chat-header">
-
-                <button
-                    class="mobile-back"
-                    onclick="closeChat()">
-                    ←
-                </button>
-
-                <div id="chatAvatar" class="avatar">
-                    💬
-                </div>
-
-                <div>
-                    <div id="chatTitle" class="chat-title">
-                        ShakibYS Messenger
-                    </div>
-
-                    <div id="chatStatus" class="chat-status">
-                        একটি ইউজার নির্বাচন করুন
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div id="messages" class="messages">
-
-                <div class="empty">
-
-                    <div>
-
-                        <div class="empty-icon">
-                            💬
-                        </div>
-
-                        <b>ShakibYS Messenger</b>
-
-                        <p>
-                            বাম পাশ থেকে একজন ইউজার নির্বাচন করুন
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="chat-input">
-
-                <input
-                    id="messageInput"
-                    placeholder="মেসেজ লিখুন..."
-                    maxlength="1000"
-                    onkeydown="handleEnter(event)">
-
-                <button
-                    class="send"
-                    onclick="sendMessage()">
-                    ➤
-                </button>
-
-            </div>
-
-        </main>
-
-    </div>
+ </div>
 
 </div>
 
@@ -557,625 +875,1153 @@ input{
 
 <script>
 
-let socket = null;
+/* =========================================
+   SOCKET
+========================================= */
 
-let myName = "";
+const socket = io();
 
-let myId = "";
+let currentUser =
+ JSON.parse(localStorage.getItem("shakibys_user") || "null");
 
-let selectedUser = null;
-
+let posts = [];
+let marketItems = [];
 let users = [];
+let notifications = [];
 
-let conversations = {};
+let typingTimer;
 
 
-// LOGIN
+/* =========================================
+   HELPERS
+========================================= */
 
-function login(){
+function $(id){
+ return document.getElementById(id);
+}
 
-    const input =
-        document.getElementById("nameInput");
+function toast(message){
 
-    const name =
-        input.value.trim();
+ $("toast").textContent = message;
 
-    if(!name){
+ $("toast").classList.add("show");
 
-        showToast("আপনার নাম লিখুন");
+ setTimeout(()=>{
+  $("toast").classList.remove("show");
+ },2500);
+}
 
-        return;
-    }
+function escapeHTML(text){
 
-    myName = name;
-
-    localStorage.setItem(
-        "shakibys_name",
-        name
-    );
-
-    startApp();
+ const div=document.createElement("div");
+ div.textContent=text || "";
+ return div.innerHTML;
 }
 
 
-// START APP
+/* =========================================
+   AUTH
+========================================= */
 
-function startApp(){
+function showAuth(type){
 
-    document.getElementById("login")
-        .style.display = "none";
+ $("loginBox").classList.add("hidden");
+ $("registerBox").classList.add("hidden");
+ $("forgotBox").classList.add("hidden");
 
-    document.getElementById("app")
-        .style.display = "block";
+ if(type==="login")
+  $("loginBox").classList.remove("hidden");
 
-    connectSocket();
+ if(type==="register")
+  $("registerBox").classList.remove("hidden");
+
+ if(type==="forgot")
+  $("forgotBox").classList.remove("hidden");
 }
 
 
-// SOCKET CONNECTION
+async function register(){
 
-function connectSocket(){
+ const name=$("regName").value.trim();
+ const phone=$("regPhone").value.trim();
+ const password=$("regPassword").value;
 
-    socket = io();
+ if(!name||!phone||!password){
+  toast("সব তথ্য পূরণ করুন");
+  return;
+ }
 
-    socket.on("connect", () => {
+ try{
 
-        myId = socket.id;
+  const r=await fetch("/api/register",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({name,phone,password})
+  });
 
-        socket.emit(
-            "join",
-            myName
-        );
+  const data=await r.json();
 
-        showToast("ShakibYS সার্ভারে যুক্ত হয়েছে");
+  if(!data.success){
+   toast(data.message);
+   return;
+  }
 
-    });
+  toast("Account তৈরি হয়েছে");
+  showAuth("login");
 
-
-    socket.on("joined", data => {
-
-        myId = data.id;
-
-    });
-
-
-    socket.on("users", list => {
-
-        users = list;
-
-        renderUsers();
-
-    });
-
-
-    socket.on("public_message", message => {
-
-        addMessage(
-            message,
-            false
-        );
-
-        notifyMessage(message);
-
-    });
-
-
-    socket.on("private_message", message => {
-
-        const otherId =
-            message.senderId === myId
-            ? message.receiverId
-            : message.senderId;
-
-        if(!conversations[otherId]){
-            conversations[otherId] = [];
-        }
-
-        conversations[otherId].push(message);
-
-        if(
-            selectedUser &&
-            (
-                selectedUser.id === message.senderId ||
-                selectedUser.id === message.receiverId
-            )
-        ){
-
-            renderConversation();
-
-        }else if(message.senderId !== myId){
-
-            showToast(
-                "💬 " +
-                message.sender +
-                ": নতুন মেসেজ"
-            );
-
-        }
-
-    });
-
-
-    socket.on("system_message", data => {
-
-        showToast(data.text);
-
-    });
-
-
-    socket.on("disconnect", () => {
-
-        showToast(
-            "সার্ভার থেকে সংযোগ বিচ্ছিন্ন"
-        );
-
-    });
-
+ }catch(e){
+  toast("Server error");
+ }
 }
 
 
-// RENDER USERS
+async function login(){
 
-function renderUsers(){
+ const phone=$("loginPhone").value.trim();
+ const password=$("loginPassword").value;
 
-    const list =
-        document.getElementById("userList");
+ if(!phone||!password){
+  toast("Phone ও Password দিন");
+  return;
+ }
 
-    const search =
-        document.getElementById("search")
-        .value
-        .toLowerCase();
+ try{
 
-    const filtered =
-        users.filter(user =>
-            user.name
-            .toLowerCase()
-            .includes(search)
-        );
+  const r=await fetch("/api/login",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({phone,password})
+  });
 
-    list.innerHTML = "";
+  const data=await r.json();
 
-    if(!filtered.length){
+  if(!data.success){
+   toast(data.message);
+   return;
+  }
 
-        list.innerHTML = `
-        <div class="empty">
-            <div>
-                <div class="empty-icon">👤</div>
-                কোনো ইউজার নেই
-            </div>
-        </div>`;
+  currentUser=data.user;
 
-        return;
-    }
+  localStorage.setItem(
+   "shakibys_user",
+   JSON.stringify(currentUser)
+  );
 
-    filtered.forEach(user => {
+  startApp();
 
-        if(user.id === myId) return;
-
-        const div =
-            document.createElement("div");
-
-        div.className =
-            "user" +
-            (
-                selectedUser &&
-                selectedUser.id === user.id
-                ? " selected"
-                : ""
-            );
-
-        div.onclick = () =>
-            openChat(user);
-
-        div.innerHTML = `
-
-            <div class="avatar">
-                ${getInitial(user.name)}
-            </div>
-
-            <div class="user-info">
-
-                <div class="user-name">
-                    ${escapeHtml(user.name)}
-                </div>
-
-                <div class="online">
-                    ● Online
-                </div>
-
-            </div>
-
-        `;
-
-        list.appendChild(div);
-
-    });
-
+ }catch(e){
+  toast("Login failed");
+ }
 }
 
 
-// OPEN CHAT
+async function requestOTP(){
 
-function openChat(user){
+ const phone=$("forgotPhone").value.trim();
 
-    selectedUser = user;
+ if(!phone){
+  toast("Phone number দিন");
+  return;
+ }
 
-    document
-        .getElementById("layout")
-        .classList.add("chat-open");
+ try{
 
-    document
-        .getElementById("chatTitle")
-        .innerText = user.name;
+  const r=await fetch("/api/forgot-password",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({phone})
+  });
 
-    document
-        .getElementById("chatAvatar")
-        .innerText =
-        getInitial(user.name);
+  const data=await r.json();
 
-    document
-        .getElementById("chatStatus")
-        .innerText = "● Online";
+  if(!data.success){
+   toast(data.message);
+   return;
+  }
 
-    renderUsers();
+  $("otpArea").classList.remove("hidden");
 
-    renderConversation();
+  /*
+   Demo mode:
+   OTP Render log-এ থাকবে।
+  */
 
+  if(data.demoOtp){
+   toast("Demo OTP: "+data.demoOtp);
+  }
+
+ }catch(e){
+  toast("OTP error");
+ }
 }
 
 
-// RENDER PRIVATE CHAT
+async function verifyOTP(){
 
-function renderConversation(){
+ const phone=$("forgotPhone").value.trim();
+ const otp=$("otp").value.trim();
 
-    const box =
-        document.getElementById("messages");
+ const r=await fetch("/api/verify-otp",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({phone,otp})
+ });
 
-    if(!selectedUser){
+ const data=await r.json();
 
-        return;
-    }
+ if(!data.success){
+  toast(data.message);
+  return;
+ }
 
-    const messages =
-        conversations[selectedUser.id] || [];
+ $("newPasswordArea").classList.remove("hidden");
 
-    box.innerHTML = "";
-
-    if(!messages.length){
-
-        box.innerHTML = `
-        <div class="empty">
-
-            <div>
-
-                <div class="empty-icon">
-                    👋
-                </div>
-
-                <b>${escapeHtml(selectedUser.name)}</b>
-
-                <p>
-                    প্রথম মেসেজটি পাঠান
-                </p>
-
-            </div>
-
-        </div>`;
-
-        return;
-
-    }
-
-    messages.forEach(message => {
-
-        const div =
-            document.createElement("div");
-
-        div.className =
-            "message " +
-            (
-                message.senderId === myId
-                ? "me"
-                : "other"
-            );
-
-        div.innerHTML = `
-
-            ${
-                message.senderId !== myId
-                ? `<div class="sender">
-                    ${escapeHtml(message.sender)}
-                   </div>`
-                : ""
-            }
-
-            <div>
-                ${escapeHtml(message.text)}
-            </div>
-
-            <div class="time">
-                ${formatTime(message.time)}
-            </div>
-
-        `;
-
-        box.appendChild(div);
-
-    });
-
-    box.scrollTop =
-        box.scrollHeight;
-
+ toast("OTP verified");
 }
 
 
-// SEND MESSAGE
+async function resetPassword(){
 
-function sendMessage(){
+ const phone=$("forgotPhone").value.trim();
+ const newPassword=$("newPassword").value;
 
-    if(!socket || !socket.connected){
+ if(newPassword.length<6){
+  toast("কমপক্ষে ৬ অক্ষরের Password দিন");
+  return;
+ }
 
-        showToast("সার্ভারের সাথে সংযোগ নেই");
+ const r=await fetch("/api/reset-password",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({phone,newPassword})
+ });
 
-        return;
-    }
+ const data=await r.json();
 
-    if(!selectedUser){
+ if(!data.success){
+  toast(data.message);
+  return;
+ }
 
-        showToast("আগে একজন ইউজার নির্বাচন করুন");
+ toast("Password changed successfully");
 
-        return;
-    }
-
-    const input =
-        document.getElementById(
-            "messageInput"
-        );
-
-    const text =
-        input.value.trim();
-
-    if(!text) return;
-
-    socket.emit(
-        "private_message",
-        {
-            receiverId:
-                selectedUser.id,
-
-            text:text
-        }
-    );
-
-    input.value = "";
-
+ showAuth("login");
 }
 
-
-// ADD MESSAGE
-
-function addMessage(message){
-
-    /*
-      Public message এলে চাইলে
-      পরে আলাদা Global Chat যোগ করা যাবে।
-    */
-
-}
-
-
-// ENTER SEND
-
-function handleEnter(event){
-
-    if(event.key === "Enter"){
-
-        event.preventDefault();
-
-        sendMessage();
-
-    }
-
-}
-
-
-// SEARCH
-
-function searchUsers(){
-
-    renderUsers();
-
-}
-
-
-// CLOSE MOBILE CHAT
-
-function closeChat(){
-
-    document
-        .getElementById("layout")
-        .classList.remove("chat-open");
-
-    selectedUser = null;
-
-}
-
-
-// DARK MODE
-
-function toggleDark(){
-
-    document.body.classList.toggle("dark");
-
-    localStorage.setItem(
-        "shakibys_dark",
-        document.body.classList.contains("dark")
-    );
-
-}
-
-
-// LOGOUT
 
 function logout(){
 
-    if(socket){
+ localStorage.removeItem("shakibys_user");
 
-        socket.disconnect();
+ currentUser=null;
 
-    }
+ $("app").classList.add("hidden");
+ $("auth").classList.remove("hidden");
 
-    localStorage.removeItem(
-        "shakibys_name"
-    );
+ toast("Logged out");
+}
 
-    location.reload();
+
+/* =========================================
+   APP START
+========================================= */
+
+function startApp(){
+
+ if(!currentUser){
+  $("auth").classList.remove("hidden");
+  $("app").classList.add("hidden");
+  return;
+ }
+
+ $("auth").classList.add("hidden");
+ $("app").classList.remove("hidden");
+
+ const name=currentUser.name || "S";
+
+ $("smallAvatar").textContent=name[0].toUpperCase();
+ $("bigAvatar").textContent=name[0].toUpperCase();
+
+ $("profileName").textContent=name;
+ $("profilePhone").textContent=currentUser.phone || "";
+
+ socket.emit("user:join",{
+  username:name
+ });
+}
+
+
+if(currentUser){
+ startApp();
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+function go(section,button){
+
+ document.querySelectorAll(".section")
+  .forEach(x=>x.classList.remove("active"));
+
+ $(section).classList.add("active");
+
+ document.querySelectorAll(".nav")
+  .forEach(x=>x.classList.remove("active"));
+
+ button.classList.add("active");
+}
+
+
+/* =========================================
+   SOCKET INIT
+========================================= */
+
+socket.on("app:init",(data)=>{
+
+ posts=data.posts || [];
+ marketItems=data.marketplace || [];
+
+ renderPosts();
+ renderMarket();
+
+ renderStories(data.stories || []);
+
+});
+
+
+/* =========================================
+   CHAT
+========================================= */
+
+socket.on("chat:new",(message)=>{
+
+ const box=$("messages");
+
+ const mine=
+ message.sender===currentUser?.name;
+
+ const div=document.createElement("div");
+
+ div.className="bubble "+(mine?"mine":"theirs");
+
+ div.innerHTML=`
+  <b>${escapeHTML(message.sender)}</b><br>
+  ${escapeHTML(message.text)}
+  <div class="msg-meta">
+   ${new Date(message.time).toLocaleTimeString()}
+   ${mine && message.seen ? " • Seen" : ""}
+  </div>
+ `;
+
+ box.appendChild(div);
+
+ box.scrollTop=box.scrollHeight;
+
+});
+
+
+function sendMessage(){
+
+ const input=$("chatInput");
+
+ const text=input.value.trim();
+
+ if(!text)return;
+
+ socket.emit("chat:send",{text});
+
+ input.value="";
 
 }
 
 
-// TOAST
+function chatKey(e){
 
-function showToast(text){
+ if(e.key==="Enter"){
+  sendMessage();
+ }
+}
 
-    const toast =
-        document.getElementById("toast");
 
-    toast.innerText = text;
+function typing(){
 
-    toast.classList.add("show");
+ socket.emit("chat:typing",true);
 
-    setTimeout(() => {
+ clearTimeout(typingTimer);
 
-        toast.classList.remove("show");
+ typingTimer=setTimeout(()=>{
+  socket.emit("chat:typing",false);
+ },800);
+}
 
-    },2500);
+
+socket.on("chat:typing",(data)=>{
+
+ $("typing").textContent=
+ data.typing
+ ? `${data.username} is typing...`
+ : "";
+
+});
+
+
+/* =========================================
+   POSTS
+========================================= */
+
+function createPost(){
+
+ const input=$("postInput");
+
+ const content=input.value.trim();
+
+ if(!content){
+  toast("Post লিখুন");
+  return;
+ }
+
+ socket.emit("post:create",{content});
+
+ input.value="";
+}
+
+
+socket.on("post:new",(post)=>{
+
+ posts.unshift(post);
+
+ renderPosts();
+
+});
+
+
+socket.on("post:updated",(post)=>{
+
+ const index=posts.findIndex(
+  x=>x.id===post.id
+ );
+
+ if(index>=0)
+  posts[index]=post;
+
+ renderPosts();
+
+});
+
+
+function renderPosts(){
+
+ const feed=$("feed");
+
+ feed.innerHTML="";
+
+ posts.forEach(post=>{
+
+  const div=document.createElement("div");
+
+  div.className="card";
+
+  div.innerHTML=`
+
+   <div class="post-head">
+
+    <div class="avatar">
+     ${escapeHTML((post.author||"S")[0].toUpperCase())}
+    </div>
+
+    <div>
+     <div class="post-author">
+      ${escapeHTML(post.author)}
+     </div>
+
+     <div class="post-time">
+      ${new Date(post.time).toLocaleString()}
+     </div>
+    </div>
+
+   </div>
+
+   <div class="post-content">
+    ${escapeHTML(post.content)}
+   </div>
+
+   <div class="post-actions">
+
+    <button onclick="likePost('${post.id}')">
+     ❤️ ${post.likes?.length||0}
+    </button>
+
+    <button onclick="commentPost('${post.id}')">
+     💬 ${post.comments?.length||0}
+    </button>
+
+    <button onclick="sharePost('${post.id}')">
+     🔄 ${post.shares||0}
+    </button>
+
+   </div>
+
+   <div class="comments">
+
+    ${(post.comments||[]).slice(-5).map(c=>`
+     <div class="comment">
+      <b>${escapeHTML(c.username)}</b>
+      ${escapeHTML(c.text)}
+     </div>
+    `).join("")}
+
+   </div>
+
+  `;
+
+  feed.appendChild(div);
+
+ });
 
 }
 
 
-// NOTIFICATION
+function likePost(id){
+ socket.emit("post:like",id);
+}
 
-function notifyMessage(message){
 
-    if(
-        message.senderId !== myId &&
-        document.hidden
-    ){
+function commentPost(id){
 
-        if(
-            "Notification" in window &&
-            Notification.permission === "granted"
-        ){
+ const text=prompt("Comment লিখুন:");
 
-            new Notification(
-                "ShakibYS",
-                {
-                    body:
-                    message.sender +
-                    ": " +
-                    message.text
-                }
-            );
-
-        }
-
-    }
+ if(text?.trim()){
+  socket.emit("post:comment",{
+   postId:id,
+   text:text.trim()
+  });
+ }
 
 }
 
 
-// REQUEST NOTIFICATION
+function sharePost(id){
 
-document.addEventListener(
-    "click",
-    () => {
+ socket.emit("post:share",id);
 
-        if(
-            "Notification" in window &&
-            Notification.permission === "default"
-        ){
-
-            Notification.requestPermission();
-
-        }
-
-    },
-    {once:true}
-);
+ toast("Post shared");
+}
 
 
-// INITIAL LOAD
+/* =========================================
+   STORIES
+========================================= */
 
-window.onload = () => {
+function renderStories(storyList){
 
-    if(
-        localStorage.getItem(
-            "shakibys_dark"
-        ) === "true"
-    ){
+ const container=$("stories");
 
-        document.body.classList.add("dark");
+ container.innerHTML=`
 
-    }
+  <div class="story add-story"
+       onclick="openStoryModal()">
 
-    const saved =
-        localStorage.getItem(
-            "shakibys_name"
-        );
+   <b style="font-size:25px">＋</b>
+   Story
 
-    if(saved){
+  </div>
 
-        myName = saved;
+ `;
 
-        startApp();
+ storyList.forEach(story=>{
 
-    }
+  const div=document.createElement("div");
 
-};
+  div.className="story";
 
+  if(story.type==="video"){
 
-// HELPERS
+   div.innerHTML=`
+    <video src="${escapeHTML(story.media)}"
+           muted></video>
+    <div class="story-name">
+     ${escapeHTML(story.username)}
+    </div>
+   `;
 
-function getInitial(name){
+  }else{
 
-    return name
-        ? name.trim().charAt(0).toUpperCase()
-        : "?";
+   div.innerHTML=`
+    <img src="${escapeHTML(story.media)}">
+    <div class="story-name">
+     ${escapeHTML(story.username)}
+    </div>
+   `;
+
+  }
+
+  div.onclick=()=>{
+
+   socket.emit("story:view",story.id);
+
+   openStory(story);
+
+  };
+
+  container.appendChild(div);
+
+ });
 
 }
 
 
-function formatTime(time){
+socket.on("story:new",(story)=>{
 
-    if(!time) return "";
+ const container=$("stories");
 
-    const date =
-        new Date(time);
+ const existing=[];
 
-    return date.toLocaleTimeString(
-        "bn-BD",
-        {
-            hour:"2-digit",
-            minute:"2-digit"
-        }
-    );
+ document.querySelectorAll(".story")
+ .forEach((x,i)=>{
+  if(i>0) existing.push(x);
+ });
+
+ renderStories([story,...existing.map(()=>({}))]);
+
+ toast("New Story 🔥");
+
+});
+
+
+socket.on("stories:update",(stories)=>{
+
+ renderStories(stories);
+
+});
+
+
+function openStoryModal(){
+
+ openModal(
+  "Create Story",
+  `
+
+  <input id="storyMedia"
+         class="input"
+         placeholder="Image/Video URL">
+
+  <input id="storyCaption"
+         class="input"
+         placeholder="Story caption">
+
+  <button class="btn"
+          onclick="createStory()">
+   Publish Story
+  </button>
+
+  <p style="font-size:11px;color:var(--muted);margin-top:10px">
+   Story 24 ঘণ্টা পর expire হবে।
+  </p>
+
+  `
+ );
 
 }
 
 
-function escapeHtml(text){
+function createStory(){
 
-    return String(text)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+ const media=$("storyMedia").value.trim();
+
+ const caption=$("storyCaption").value.trim();
+
+ if(!media){
+  toast("Media URL দিন");
+  return;
+ }
+
+ const type=
+ /\.(mp4|webm|mov)(\?.*)?$/i.test(media)
+ ? "video"
+ : "image";
+
+ socket.emit("story:create",{
+  media,
+  caption,
+  type
+ });
+
+ closeModal();
+
+ toast("Story published");
+}
+
+
+function openStory(story){
+
+ openModal(
+  story.username+"'s Story",
+  `
+
+  ${
+   story.type==="video"
+   ? `<video src="${escapeHTML(story.media)}"
+             controls autoplay
+             style="width:100%;border-radius:15px"></video>`
+   : `<img src="${escapeHTML(story.media)}"
+           style="width:100%;border-radius:15px">`
+  }
+
+  <p style="margin-top:10px">
+   ${escapeHTML(story.caption||"")}
+  </p>
+
+  <small style="color:var(--muted)">
+   👀 ${story.views?.length||0} views
+  </small>
+
+  `
+ );
 
 }
+
+
+/* =========================================
+   USERS
+========================================= */
+
+socket.on("users:update",(list)=>{
+
+ users=list;
+
+ renderUsers();
+
+});
+
+
+function renderUsers(){
+
+ const box=$("users");
+
+ const search=$("userSearch")?.value.toLowerCase()||"";
+
+ box.innerHTML="";
+
+ users
+ .filter(u=>
+  u.username.toLowerCase().includes(search)
+ )
+ .forEach(user=>{
+
+  const div=document.createElement("div");
+
+  div.className="user-row";
+
+  div.innerHTML=`
+
+   <div class="avatar">
+    ${escapeHTML(user.username[0].toUpperCase())}
+   </div>
+
+   <div class="user-info">
+
+    <b>${escapeHTML(user.username)}</b>
+
+    <div style="font-size:10px">
+     <span class="online"></span>
+     Online
+    </div>
+
+   </div>
+
+   <button class="user-btn"
+           onclick="sendFriend('${user.id}')">
+    Add Friend
+   </button>
+
+  `;
+
+  box.appendChild(div);
+
+ });
+
+}
+
+
+function filterUsers(){
+ renderUsers();
+}
+
+
+function sendFriend(id){
+
+ socket.emit("friend:request",id);
+
+ toast("Friend Request sent");
+}
+
+
+socket.on("friend:request",(request)=>{
+
+ toast(
+  request.from+" sent you a Friend Request"
+ );
+
+});
+
+
+/* =========================================
+   MARKETPLACE
+========================================= */
+
+function renderMarket(){
+
+ const grid=$("marketGrid");
+
+ grid.innerHTML="";
+
+ marketItems.forEach(item=>{
+
+  const div=document.createElement("div");
+
+  div.className="product";
+
+  div.innerHTML=`
+
+   ${
+    item.image
+    ? `<img src="${escapeHTML(item.image)}">`
+    : `<div style="height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;background:#eee">🛒</div>`
+   }
+
+   <div class="product-body">
+
+    <b>${escapeHTML(item.title)}</b>
+
+    <div class="price">
+     ${escapeHTML(item.price)}
+    </div>
+
+    <p style="font-size:11px;color:var(--muted);margin-top:5px">
+     ${escapeHTML(item.description)}
+    </p>
+
+    <small>
+     👤 ${escapeHTML(item.seller)}
+    </small>
+
+   </div>
+
+  `;
+
+  grid.appendChild(div);
+
+ });
+
+}
+
+
+socket.on("market:new",(item)=>{
+
+ marketItems.unshift(item);
+
+ renderMarket();
+
+ toast("New Marketplace item");
+
+});
+
+
+function openMarketModal(){
+
+ openModal(
+  "Sell Product",
+  `
+
+  <input id="productTitle"
+         class="input"
+         placeholder="Product name">
+
+  <input id="productPrice"
+         class="input"
+         placeholder="Price">
+
+  <input id="productImage"
+         class="input"
+         placeholder="Image URL">
+
+  <textarea id="productDescription"
+            class="input"
+            placeholder="Description"
+            style="min-height:100px"></textarea>
+
+  <button class="btn"
+          onclick="publishProduct()">
+   Publish Product
+  </button>
+
+  `
+ );
+
+}
+
+
+function publishProduct(){
+
+ const title=$("productTitle").value.trim();
+ const price=$("productPrice").value.trim();
+ const image=$("productImage").value.trim();
+ const description=$("productDescription").value.trim();
+
+ if(!title||!price){
+  toast("Product name ও price দিন");
+  return;
+ }
+
+ socket.emit("market:create",{
+  title,
+  price,
+  image,
+  description
+ });
+
+ closeModal();
+
+}
+
+
+/* =========================================
+   AI ASSISTANT
+========================================= */
+
+function askAI(){
+
+ const input=$("aiInput").value.trim();
+
+ if(!input){
+  toast("আপনার প্রশ্ন লিখুন");
+  return;
+ }
+
+ $("aiResult").innerHTML=`
+  <b>✨ AI Suggestion</b><br><br>
+
+  আপনার পণ্যটির জন্য একটি পরিষ্কার title দিন,
+  তারপর ভালো ছবি ব্যবহার করুন এবং description-এ
+  product condition, price এবং delivery information
+  লিখুন।
+
+  <br><br>
+
+  <b>Suggested reply:</b><br>
+
+  আসসালামু আলাইকুম। পণ্যটি এখনো available আছে।
+  আপনি চাইলে product details এবং delivery সম্পর্কে
+  জানতে পারেন।
+ `;
+
+}
+
+
+/* =========================================
+   NOTIFICATIONS
+========================================= */
+
+socket.on("notification:new",(notification)=>{
+
+ notifications.unshift(notification);
+
+ renderNotifications();
+
+});
+
+
+function renderNotifications(){
+
+ const box=$("notificationList");
+
+ box.innerHTML="";
+
+ if(!notifications.length){
+
+  box.innerHTML=`
+   <div class="card">
+    No notifications
+   </div>
+  `;
+
+  return;
+ }
+
+ notifications.forEach(n=>{
+
+  const div=document.createElement("div");
+
+  div.className="card";
+
+  div.innerHTML=`
+   🔔 ${escapeHTML(n.message)}
+   <div style="font-size:10px;color:var(--muted);margin-top:5px">
+    ${new Date(n.time).toLocaleString()}
+   </div>
+  `;
+
+  box.appendChild(div);
+
+ });
+
+}
+
+
+function openNotifications(){
+
+ document.querySelectorAll(".section")
+ .forEach(x=>x.classList.remove("active"));
+
+ $("notifications").classList.add("active");
+
+}
+
+
+function openSearch(){
+
+ openModal(
+  "Search ShakibYS",
+  `
+
+  <input id="searchAll"
+         class="input"
+         placeholder="Search users / products / posts..."
+         oninput="globalSearch()">
+
+  <div id="searchResults"></div>
+
+  `
+ );
+
+}
+
+
+function globalSearch(){
+
+ const q=$("searchAll").value.toLowerCase();
+
+ const results=$("searchResults");
+
+ results.innerHTML="";
+
+ users
+ .filter(u=>u.username.toLowerCase().includes(q))
+ .forEach(u=>{
+
+  results.innerHTML+=`
+   <div class="user-row">
+    <div class="avatar">${u.username[0]}</div>
+    <div>${escapeHTML(u.username)}</div>
+   </div>
+  `;
+
+ });
+
+}
+
+
+/* =========================================
+   SETTINGS
+========================================= */
+
+function openSettings(){
+
+ openModal(
+  "Settings",
+  `
+
+  <div class="card">
+
+   <b>Appearance</b>
+
+   <button class="btn"
+           onclick="toggleDark()">
+    🌙 Toggle Dark Mode
+   </button>
+
+  </div>
+
+  <div class="card">
+
+   <b>Account</b>
+
+   <p style="font-size:12px;color:var(--muted);margin-top:8px">
+    Phone: ${escapeHTML(currentUser?.phone||"")}
+   </p>
+
+  </div>
+
+  <div class="card">
+
+   <b>Safety</b>
+
+   <button class="btn"
+           onclick="toast('Block system ready')">
+    🚫 Block / Report
+   </button>
+
+  </div>
+
+  `
+ );
+
+
+}
+
+
+function toggleDark(){
+
+ document.body.classList.toggle("dark");
+
+ localStorage.setItem(
+  "shakibys_dark",
+  document.body.classList.contains("dark")
+ );
+
+}
+
+
+if(localStorage.getItem("shakibys_dark")==="true"){
+ document.body.classList.add("dark");
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+function openModal(title,body){
+
+ $("modalTitle").textContent=title;
+ $("modalBody").innerHTML=body;
+
+ $("modal").classList.remove("hidden");
+
+}
+
+
+function closeModal(){
+
+ $("modal").classList.add("hidden");
+
+}
+
+
+/* =========================================
+   ONLINE STATUS
+========================================= */
+
+window.addEventListener("beforeunload",()=>{
+
+ socket.disconnect();
+
+});
+
 
 </script>
 
 </body>
-</html>
+    </html>
