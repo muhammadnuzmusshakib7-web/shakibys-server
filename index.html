@@ -3,36 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
 <title>ShakibYS Messenger</title>
 
-<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
+    font-family:Arial,"Noto Sans Bengali",sans-serif;
+}
+
+:root{
+    --primary:#ff2a5f;
+    --bg:#f3f4f6;
+    --card:#fff;
+    --text:#111827;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+}
+
+body.dark{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --border:#334155;
 }
 
 body{
-    font-family:Arial,sans-serif;
-    background:#f1f5f9;
-    color:#111827;
-}
-
-button,input{
-    font-family:inherit;
-}
-
-.hidden{
-    display:none!important;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
 }
 
 /* LOGIN */
 
-#loginPage{
+#login{
     min-height:100vh;
     display:flex;
     justify-content:center;
@@ -40,133 +48,179 @@ button,input{
     padding:20px;
 }
 
-.loginBox{
+.login-card{
     width:100%;
     max-width:400px;
-    background:white;
+    background:var(--card);
     padding:30px;
     border-radius:25px;
-    box-shadow:0 15px 50px rgba(0,0,0,.12);
     text-align:center;
+    box-shadow:0 15px 40px #0002;
 }
 
 .logo{
-    font-size:34px;
+    font-size:35px;
     font-weight:900;
-    color:#ff2a5f;
-    margin-bottom:10px;
+    color:var(--primary);
+    margin-bottom:8px;
 }
 
-.loginBox p{
-    color:#64748b;
+.subtitle{
+    color:var(--muted);
     margin-bottom:25px;
 }
 
-.loginBox input{
-    width:100%;
-    padding:15px;
-    border:1px solid #e2e8f0;
-    border-radius:15px;
+input{
+    border:1px solid var(--border);
+    background:var(--bg);
+    color:var(--text);
     outline:none;
-    margin-bottom:15px;
 }
 
-.primary{
+.login-input{
+    width:100%;
+    padding:15px;
+    border-radius:14px;
+    margin-bottom:12px;
+}
+
+.btn{
     width:100%;
     border:0;
-    padding:15px;
-    border-radius:15px;
-    background:linear-gradient(135deg,#ff2a5f,#e01b4d);
+    padding:14px;
+    border-radius:14px;
+    background:var(--primary);
     color:white;
-    font-size:16px;
     font-weight:bold;
-    cursor:pointer;
+    font-size:15px;
 }
 
 /* APP */
 
 #app{
+    display:none;
     height:100vh;
-    display:flex;
-    flex-direction:column;
 }
 
 .top{
-    height:65px;
-    background:white;
-    border-bottom:1px solid #e2e8f0;
+    height:62px;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:0 18px;
+    padding:0 16px;
 }
 
 .brand{
-    font-size:24px;
+    color:var(--primary);
+    font-size:23px;
     font-weight:900;
-    color:#ff2a5f;
 }
 
-.status{
-    font-size:12px;
-    color:#16a34a;
-}
-
-.main{
-    flex:1;
+.top-buttons{
     display:flex;
-    overflow:hidden;
+    gap:8px;
+}
+
+.icon-btn{
+    border:0;
+    background:var(--bg);
+    color:var(--text);
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    font-size:18px;
+}
+
+/* LAYOUT */
+
+.layout{
+    display:flex;
+    height:calc(100vh - 62px);
 }
 
 /* SIDEBAR */
 
 .sidebar{
-    width:320px;
-    background:white;
-    border-right:1px solid #e2e8f0;
-    overflow-y:auto;
+    width:310px;
+    background:var(--card);
+    border-right:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
 }
 
-.sidebarTitle{
+.sidebar-title{
     padding:18px;
-    font-size:18px;
+    font-size:20px;
     font-weight:bold;
 }
 
+.search{
+    margin:0 15px 12px;
+    padding:12px 15px;
+    border-radius:20px;
+    width:calc(100% - 30px);
+}
+
+.user-list{
+    overflow:auto;
+    flex:1;
+}
+
 .user{
-    padding:14px 18px;
+    padding:13px 16px;
     display:flex;
     align-items:center;
     gap:12px;
     cursor:pointer;
-    border-bottom:1px solid #f1f5f9;
 }
 
-.user:hover{
-    background:#f8fafc;
+.user:hover,
+.user.selected{
+    background:var(--bg);
 }
 
 .avatar{
     width:45px;
     height:45px;
     border-radius:50%;
-    background:linear-gradient(135deg,#ff2a5f,#ff758f);
+    background:var(--primary);
     color:white;
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
     font-weight:bold;
-    font-size:18px;
+    flex-shrink:0;
 }
 
-.userName{
+.user-info{
+    min-width:0;
+    flex:1;
+}
+
+.user-name{
     font-weight:bold;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .online{
+    color:#22c55e;
     font-size:11px;
-    color:#16a34a;
-    margin-top:4px;
+}
+
+.unread{
+    background:var(--primary);
+    color:white;
+    min-width:20px;
+    height:20px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
 }
 
 /* CHAT */
@@ -175,106 +229,111 @@ button,input{
     flex:1;
     display:flex;
     flex-direction:column;
-    background:#f8fafc;
+    min-width:0;
 }
 
-.chatHeader{
+.chat-header{
     height:65px;
-    background:white;
-    border-bottom:1px solid #e2e8f0;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
     display:flex;
     align-items:center;
-    padding:0 18px;
+    padding:10px 15px;
+    gap:10px;
+}
+
+.chat-title{
     font-weight:bold;
 }
 
-.chatHeader small{
-    display:block;
+.chat-status{
     font-size:11px;
-    color:#16a34a;
-    margin-top:3px;
+    color:#22c55e;
 }
 
 .messages{
     flex:1;
-    padding:20px;
     overflow-y:auto;
+    padding:18px;
     display:flex;
     flex-direction:column;
-    gap:10px;
+    gap:8px;
 }
 
 .message{
     max-width:75%;
-    padding:11px 14px;
-    border-radius:17px;
+    padding:10px 13px;
+    border-radius:16px;
     font-size:14px;
-    line-height:1.4;
+    word-wrap:break-word;
 }
 
-.me{
+.message.me{
     align-self:flex-end;
-    background:#ff2a5f;
+    background:var(--primary);
     color:white;
-    border-bottom-right-radius:5px;
+    border-bottom-right-radius:4px;
 }
 
-.other{
+.message.other{
     align-self:flex-start;
-    background:white;
-    border:1px solid #e2e8f0;
-    border-bottom-left-radius:5px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-bottom-left-radius:4px;
 }
 
-.messageName{
+.sender{
     font-size:10px;
-    font-weight:bold;
+    opacity:.7;
     margin-bottom:3px;
-    opacity:.8;
 }
 
 .time{
     font-size:9px;
-    opacity:.7;
+    opacity:.65;
     margin-top:4px;
+    text-align:right;
 }
 
-.system{
-    align-self:center;
-    color:#64748b;
-    font-size:11px;
-    background:#e2e8f0;
-    padding:7px 12px;
-    border-radius:20px;
-}
-
-/* INPUT */
-
-.inputArea{
-    background:white;
-    border-top:1px solid #e2e8f0;
-    padding:12px;
+.chat-input{
+    padding:10px;
+    background:var(--card);
+    border-top:1px solid var(--border);
     display:flex;
     gap:8px;
 }
 
-.inputArea input{
+.chat-input input{
     flex:1;
-    padding:13px 16px;
-    border:1px solid #e2e8f0;
+    padding:12px 15px;
     border-radius:25px;
-    outline:none;
 }
 
 .send{
     width:48px;
     height:48px;
-    border:0;
     border-radius:50%;
-    background:#ff2a5f;
+    border:0;
+    background:var(--primary);
     color:white;
     font-size:18px;
-    cursor:pointer;
+}
+
+/* EMPTY */
+
+.empty{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:var(--muted);
+    padding:30px;
+}
+
+.empty-icon{
+    font-size:55px;
+    margin-bottom:10px;
 }
 
 /* MOBILE */
@@ -282,34 +341,54 @@ button,input{
 @media(max-width:700px){
 
     .sidebar{
-        width:90px;
+        width:100%;
     }
 
-    .sidebarTitle{
-        font-size:12px;
-        text-align:center;
-        padding:12px 4px;
-    }
-
-    .user{
-        justify-content:center;
-        padding:12px 5px;
-    }
-
-    .userInfo{
+    .chat{
         display:none;
     }
 
-    .avatar{
-        width:48px;
-        height:48px;
+    .layout.chat-open .sidebar{
+        display:none;
     }
 
-    .message{
-        max-width:85%;
+    .layout.chat-open .chat{
+        display:flex;
+    }
+
+    .mobile-back{
+        display:block!important;
     }
 }
 
+.mobile-back{
+    display:none;
+    border:0;
+    background:none;
+    color:var(--text);
+    font-size:20px;
+}
+
+/* TOAST */
+
+#toast{
+    position:fixed;
+    left:50%;
+    bottom:25px;
+    transform:translateX(-50%) translateY(80px);
+    background:#111827;
+    color:white;
+    padding:12px 20px;
+    border-radius:30px;
+    opacity:0;
+    transition:.3s;
+    z-index:999;
+}
+
+#toast.show{
+    transform:translateX(-50%) translateY(0);
+    opacity:1;
+}
 </style>
 </head>
 
@@ -317,30 +396,25 @@ button,input{
 
 <!-- LOGIN -->
 
-<div id="loginPage">
+<div id="login">
 
-    <div class="loginBox">
+    <div class="login-card">
 
-        <div class="logo">
-            ShakibYS
+        <div class="logo">ShakibYS</div>
+
+        <div class="subtitle">
+            Connect with everyone 💬
         </div>
-
-        <p>
-            আপনার নাম দিয়ে Messenger-এ প্রবেশ করুন
-        </p>
 
         <input
             id="nameInput"
+            class="login-input"
             type="text"
             maxlength="30"
-            placeholder="আপনার নাম লিখুন"
-        >
+            placeholder="আপনার নাম লিখুন">
 
-        <button
-            class="primary"
-            onclick="join()"
-        >
-            Messenger-এ প্রবেশ করুন
+        <button class="btn" onclick="login()">
+            ShakibYS-এ প্রবেশ করুন 🚀
         </button>
 
     </div>
@@ -350,7 +424,7 @@ button,input{
 
 <!-- APP -->
 
-<div id="app" class="hidden">
+<div id="app">
 
     <div class="top">
 
@@ -358,85 +432,147 @@ button,input{
             ShakibYS
         </div>
 
-        <div class="status">
-            ● Live
+        <div class="top-buttons">
+
+            <button class="icon-btn" onclick="toggleDark()">
+                🌙
+            </button>
+
+            <button class="icon-btn" onclick="logout()">
+                🚪
+            </button>
+
         </div>
 
     </div>
 
 
-    <div class="main">
+    <div class="layout" id="layout">
 
         <!-- USERS -->
 
-        <div class="sidebar">
+        <aside class="sidebar">
 
-            <div class="sidebarTitle">
-                👥 Online Users
+            <div class="sidebar-title">
+                Messenger
             </div>
 
-            <div id="users"></div>
+            <input
+                id="search"
+                class="search"
+                placeholder="🔎 ইউজার খুঁজুন..."
+                oninput="searchUsers()">
 
-        </div>
+            <div id="userList" class="user-list">
+
+                <div class="empty">
+                    <div>
+                        <div class="empty-icon">👥</div>
+                        অপেক্ষা করুন...
+                    </div>
+                </div>
+
+            </div>
+
+        </aside>
 
 
         <!-- CHAT -->
 
-        <div class="chat">
+        <main class="chat">
 
-            <div class="chatHeader">
+            <div class="chat-header">
 
-                <div id="chatTitle">
-                    🌍 Global Chat
-                    <small>সবাই এখানে দেখতে পাবে</small>
+                <button
+                    class="mobile-back"
+                    onclick="closeChat()">
+                    ←
+                </button>
+
+                <div id="chatAvatar" class="avatar">
+                    💬
+                </div>
+
+                <div>
+                    <div id="chatTitle" class="chat-title">
+                        ShakibYS Messenger
+                    </div>
+
+                    <div id="chatStatus" class="chat-status">
+                        একটি ইউজার নির্বাচন করুন
+                    </div>
                 </div>
 
             </div>
 
 
-            <div
-                id="messages"
-                class="messages"
-            ></div>
+            <div id="messages" class="messages">
+
+                <div class="empty">
+
+                    <div>
+
+                        <div class="empty-icon">
+                            💬
+                        </div>
+
+                        <b>ShakibYS Messenger</b>
+
+                        <p>
+                            বাম পাশ থেকে একজন ইউজার নির্বাচন করুন
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
 
 
-            <div class="inputArea">
+            <div class="chat-input">
 
                 <input
                     id="messageInput"
-                    type="text"
-                    maxlength="1000"
                     placeholder="মেসেজ লিখুন..."
-                    onkeydown="handleEnter(event)"
-                >
+                    maxlength="1000"
+                    onkeydown="handleEnter(event)">
 
                 <button
                     class="send"
-                    onclick="sendMessage()"
-                >
+                    onclick="sendMessage()">
                     ➤
                 </button>
 
             </div>
 
-        </div>
+        </main>
 
     </div>
 
 </div>
 
 
+<div id="toast"></div>
+
+
 <script>
 
-const socket = io();
+let socket = null;
 
 let myName = "";
+
+let myId = "";
+
 let selectedUser = null;
 
+let users = [];
 
-/* LOGIN */
+let conversations = {};
 
-function join(){
+
+// LOGIN
+
+function login(){
 
     const input =
         document.getElementById("nameInput");
@@ -446,7 +582,7 @@ function join(){
 
     if(!name){
 
-        alert("আপনার নাম লিখুন");
+        showToast("আপনার নাম লিখুন");
 
         return;
     }
@@ -455,269 +591,380 @@ function join(){
 
     localStorage.setItem(
         "shakibys_name",
-        myName
+        name
     );
 
-    socket.emit(
-        "join",
-        myName
-    );
-
-    document
-        .getElementById("loginPage")
-        .classList.add("hidden");
-
-    document
-        .getElementById("app")
-        .classList.remove("hidden");
-
-    input.value = "";
+    startApp();
 }
 
 
-/* AUTO LOGIN */
+// START APP
 
-window.addEventListener("load",()=>{
+function startApp(){
 
-    const saved =
-        localStorage.getItem("shakibys_name");
+    document.getElementById("login")
+        .style.display = "none";
 
-    if(saved){
+    document.getElementById("app")
+        .style.display = "block";
 
-        myName = saved;
+    connectSocket();
+}
+
+
+// SOCKET CONNECTION
+
+function connectSocket(){
+
+    socket = io();
+
+    socket.on("connect", () => {
+
+        myId = socket.id;
 
         socket.emit(
             "join",
             myName
         );
 
-        document
-            .getElementById("loginPage")
-            .classList.add("hidden");
+        showToast("ShakibYS সার্ভারে যুক্ত হয়েছে");
 
-        document
-            .getElementById("app")
-            .classList.remove("hidden");
+    });
+
+
+    socket.on("joined", data => {
+
+        myId = data.id;
+
+    });
+
+
+    socket.on("users", list => {
+
+        users = list;
+
+        renderUsers();
+
+    });
+
+
+    socket.on("public_message", message => {
+
+        addMessage(
+            message,
+            false
+        );
+
+        notifyMessage(message);
+
+    });
+
+
+    socket.on("private_message", message => {
+
+        const otherId =
+            message.senderId === myId
+            ? message.receiverId
+            : message.senderId;
+
+        if(!conversations[otherId]){
+            conversations[otherId] = [];
+        }
+
+        conversations[otherId].push(message);
+
+        if(
+            selectedUser &&
+            (
+                selectedUser.id === message.senderId ||
+                selectedUser.id === message.receiverId
+            )
+        ){
+
+            renderConversation();
+
+        }else if(message.senderId !== myId){
+
+            showToast(
+                "💬 " +
+                message.sender +
+                ": নতুন মেসেজ"
+            );
+
+        }
+
+    });
+
+
+    socket.on("system_message", data => {
+
+        showToast(data.text);
+
+    });
+
+
+    socket.on("disconnect", () => {
+
+        showToast(
+            "সার্ভার থেকে সংযোগ বিচ্ছিন্ন"
+        );
+
+    });
+
+}
+
+
+// RENDER USERS
+
+function renderUsers(){
+
+    const list =
+        document.getElementById("userList");
+
+    const search =
+        document.getElementById("search")
+        .value
+        .toLowerCase();
+
+    const filtered =
+        users.filter(user =>
+            user.name
+            .toLowerCase()
+            .includes(search)
+        );
+
+    list.innerHTML = "";
+
+    if(!filtered.length){
+
+        list.innerHTML = `
+        <div class="empty">
+            <div>
+                <div class="empty-icon">👤</div>
+                কোনো ইউজার নেই
+            </div>
+        </div>`;
+
+        return;
     }
 
-});
+    filtered.forEach(user => {
 
-
-/* USERS */
-
-socket.on("users",(users)=>{
-
-    const container =
-        document.getElementById("users");
-
-    container.innerHTML = "";
-
-    users.forEach(user=>{
-
-        if(user.id === socket.id)
-            return;
+        if(user.id === myId) return;
 
         const div =
             document.createElement("div");
 
-        div.className = "user";
+        div.className =
+            "user" +
+            (
+                selectedUser &&
+                selectedUser.id === user.id
+                ? " selected"
+                : ""
+            );
 
         div.onclick = () =>
-            selectUser(user);
+            openChat(user);
 
-        const avatar =
-            document.createElement("div");
+        div.innerHTML = `
 
-        avatar.className = "avatar";
-
-        avatar.textContent =
-            user.name.charAt(0).toUpperCase();
-
-        const info =
-            document.createElement("div");
-
-        info.className = "userInfo";
-
-        info.innerHTML = `
-            <div class="userName">
-                ${escapeHTML(user.name)}
+            <div class="avatar">
+                ${getInitial(user.name)}
             </div>
 
-            <div class="online">
-                ● Online
+            <div class="user-info">
+
+                <div class="user-name">
+                    ${escapeHtml(user.name)}
+                </div>
+
+                <div class="online">
+                    ● Online
+                </div>
+
             </div>
+
         `;
 
-        div.appendChild(avatar);
-        div.appendChild(info);
-
-        container.appendChild(div);
+        list.appendChild(div);
 
     });
 
-});
+}
 
 
-/* SELECT USER */
+// OPEN CHAT
 
-function selectUser(user){
+function openChat(user){
 
     selectedUser = user;
 
     document
+        .getElementById("layout")
+        .classList.add("chat-open");
+
+    document
         .getElementById("chatTitle")
-        .innerHTML = `
-            💬 ${escapeHTML(user.name)}
-            <small>● Online</small>
+        .innerText = user.name;
+
+    document
+        .getElementById("chatAvatar")
+        .innerText =
+        getInitial(user.name);
+
+    document
+        .getElementById("chatStatus")
+        .innerText = "● Online";
+
+    renderUsers();
+
+    renderConversation();
+
+}
+
+
+// RENDER PRIVATE CHAT
+
+function renderConversation(){
+
+    const box =
+        document.getElementById("messages");
+
+    if(!selectedUser){
+
+        return;
+    }
+
+    const messages =
+        conversations[selectedUser.id] || [];
+
+    box.innerHTML = "";
+
+    if(!messages.length){
+
+        box.innerHTML = `
+        <div class="empty">
+
+            <div>
+
+                <div class="empty-icon">
+                    👋
+                </div>
+
+                <b>${escapeHtml(selectedUser.name)}</b>
+
+                <p>
+                    প্রথম মেসেজটি পাঠান
+                </p>
+
+            </div>
+
+        </div>`;
+
+        return;
+
+    }
+
+    messages.forEach(message => {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "message " +
+            (
+                message.senderId === myId
+                ? "me"
+                : "other"
+            );
+
+        div.innerHTML = `
+
+            ${
+                message.senderId !== myId
+                ? `<div class="sender">
+                    ${escapeHtml(message.sender)}
+                   </div>`
+                : ""
+            }
+
+            <div>
+                ${escapeHtml(message.text)}
+            </div>
+
+            <div class="time">
+                ${formatTime(message.time)}
+            </div>
+
         `;
 
+        box.appendChild(div);
+
+    });
+
+    box.scrollTop =
+        box.scrollHeight;
+
 }
 
 
-/* PUBLIC MESSAGE */
-
-socket.on("public_message",(data)=>{
-
-    addMessage(
-        data.sender,
-        data.text,
-        data.senderId === socket.id,
-        data.time
-    );
-
-});
-
-
-/* PRIVATE MESSAGE */
-
-socket.on("private_message",(data)=>{
-
-    addMessage(
-        data.sender,
-        data.text,
-        data.senderId === socket.id,
-        data.time
-    );
-
-});
-
-
-/* SYSTEM */
-
-socket.on("system_message",(data)=>{
-
-    const box =
-        document.getElementById("messages");
-
-    const div =
-        document.createElement("div");
-
-    div.className = "system";
-
-    div.textContent = data.text;
-
-    box.appendChild(div);
-
-    scrollBottom();
-
-});
-
-
-/* ADD MESSAGE */
-
-function addMessage(
-    sender,
-    text,
-    mine,
-    time
-){
-
-    const box =
-        document.getElementById("messages");
-
-    const div =
-        document.createElement("div");
-
-    div.className =
-        "message " +
-        (mine ? "me" : "other");
-
-    const date =
-        new Date(time);
-
-    const timeText =
-        date.toLocaleTimeString(
-            "bn-BD",
-            {
-                hour:"2-digit",
-                minute:"2-digit"
-            }
-        );
-
-    div.innerHTML = `
-
-        <div class="messageName">
-            ${escapeHTML(sender)}
-        </div>
-
-        <div>
-            ${escapeHTML(text)}
-        </div>
-
-        <div class="time">
-            ${timeText}
-        </div>
-
-    `;
-
-    box.appendChild(div);
-
-    scrollBottom();
-}
-
-
-/* SEND */
+// SEND MESSAGE
 
 function sendMessage(){
 
+    if(!socket || !socket.connected){
+
+        showToast("সার্ভারের সাথে সংযোগ নেই");
+
+        return;
+    }
+
+    if(!selectedUser){
+
+        showToast("আগে একজন ইউজার নির্বাচন করুন");
+
+        return;
+    }
+
     const input =
-        document.getElementById("messageInput");
+        document.getElementById(
+            "messageInput"
+        );
 
     const text =
         input.value.trim();
 
-    if(!text)
-        return;
+    if(!text) return;
 
+    socket.emit(
+        "private_message",
+        {
+            receiverId:
+                selectedUser.id,
 
-    if(selectedUser){
-
-        socket.emit(
-            "private_message",
-            {
-                receiverId:selectedUser.id,
-                text:text
-            }
-        );
-
-    }else{
-
-        socket.emit(
-            "public_message",
-            {
-                text:text
-            }
-        );
-
-    }
+            text:text
+        }
+    );
 
     input.value = "";
 
-    input.focus();
 }
 
 
-/* ENTER */
+// ADD MESSAGE
+
+function addMessage(message){
+
+    /*
+      Public message এলে চাইলে
+      পরে আলাদা Global Chat যোগ করা যাবে।
+    */
+
+}
+
+
+// ENTER SEND
 
 function handleEnter(event){
 
@@ -732,29 +979,199 @@ function handleEnter(event){
 }
 
 
-/* SCROLL */
+// SEARCH
 
-function scrollBottom(){
+function searchUsers(){
 
-    const box =
-        document.getElementById("messages");
-
-    box.scrollTop =
-        box.scrollHeight;
+    renderUsers();
 
 }
 
 
-/* SECURITY */
+// CLOSE MOBILE CHAT
 
-function escapeHTML(text){
+function closeChat(){
+
+    document
+        .getElementById("layout")
+        .classList.remove("chat-open");
+
+    selectedUser = null;
+
+}
+
+
+// DARK MODE
+
+function toggleDark(){
+
+    document.body.classList.toggle("dark");
+
+    localStorage.setItem(
+        "shakibys_dark",
+        document.body.classList.contains("dark")
+    );
+
+}
+
+
+// LOGOUT
+
+function logout(){
+
+    if(socket){
+
+        socket.disconnect();
+
+    }
+
+    localStorage.removeItem(
+        "shakibys_name"
+    );
+
+    location.reload();
+
+}
+
+
+// TOAST
+
+function showToast(text){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.innerText = text;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    },2500);
+
+}
+
+
+// NOTIFICATION
+
+function notifyMessage(message){
+
+    if(
+        message.senderId !== myId &&
+        document.hidden
+    ){
+
+        if(
+            "Notification" in window &&
+            Notification.permission === "granted"
+        ){
+
+            new Notification(
+                "ShakibYS",
+                {
+                    body:
+                    message.sender +
+                    ": " +
+                    message.text
+                }
+            );
+
+        }
+
+    }
+
+}
+
+
+// REQUEST NOTIFICATION
+
+document.addEventListener(
+    "click",
+    () => {
+
+        if(
+            "Notification" in window &&
+            Notification.permission === "default"
+        ){
+
+            Notification.requestPermission();
+
+        }
+
+    },
+    {once:true}
+);
+
+
+// INITIAL LOAD
+
+window.onload = () => {
+
+    if(
+        localStorage.getItem(
+            "shakibys_dark"
+        ) === "true"
+    ){
+
+        document.body.classList.add("dark");
+
+    }
+
+    const saved =
+        localStorage.getItem(
+            "shakibys_name"
+        );
+
+    if(saved){
+
+        myName = saved;
+
+        startApp();
+
+    }
+
+};
+
+
+// HELPERS
+
+function getInitial(name){
+
+    return name
+        ? name.trim().charAt(0).toUpperCase()
+        : "?";
+
+}
+
+
+function formatTime(time){
+
+    if(!time) return "";
+
+    const date =
+        new Date(time);
+
+    return date.toLocaleTimeString(
+        "bn-BD",
+        {
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+
+function escapeHtml(text){
 
     return String(text)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 
 }
 
