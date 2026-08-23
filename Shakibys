@@ -1,0 +1,102 @@
+const http = require("http");
+const { WebSocketServer } = require("ws");
+
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer((req, res) => {
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    });
+
+    res.end(JSON.stringify({
+        app: "ShakibYS Server",
+        status: "online",
+        message: "ShakibYS messaging server is running!"
+    }));
+});
+
+const wss = new WebSocketServer({ server });
+
+const users = new Map();
+
+wss.on("connection", (socket) => {
+
+    console.log("New user connected");
+
+    socket.on("message", (data) => {
+
+        try {
+            const message = JSON.parse(data.toString());
+
+            // ইউজার অনলাইন হলে তালিকায় রাখবে
+            if (message.type === "login") {
+
+                users.set(message.userId, socket);
+
+                socket.userId = message.userId;
+
+                socket.send(JSON.stringify({
+                    type: "system",
+                    message: "ShakibYS server connected successfully."
+                }));
+
+                return;
+            }
+
+            // মেসেজ পাঠানো
+            if (message.type === "message") {
+
+                const receiver = users.get(message.receiverId);
+
+                if (receiver && receiver.readyState === 1) {
+
+                    receiver.send(JSON.stringify({
+                        type: "message",
+                        senderId: message.senderId,
+                        text: message.text,
+                        time: new Date().toISOString()
+                    }));
+
+                    // Sender-কে confirmation
+                    socket.send(JSON.stringify({
+                        type: "sent",
+                        receiverId: message.receiverId,
+                        text: message.text,
+                        time: new Date().toISOString()
+                    }));
+
+                } else {
+
+                    socket.send(JSON.stringify({
+                        type: "error",
+                        message: "এই ইউজার বর্তমানে অনলাইনে নেই।"
+                    }));
+
+                }
+            }
+
+        } catch (error) {
+
+            socket.send(JSON.stringify({
+                type: "error",
+                message: "Invalid message format."
+            }));
+
+        }
+
+    });
+
+    socket.on("close", () => {
+
+        if (socket.userId) {
+            users.delete(socket.userId);
+        }
+
+        console.log("User disconnected");
+    });
+
+});
+
+server.listen(PORT, () => {
+    console.log(`ShakibYS server running on port ${PORT}`);
+});
