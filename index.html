@@ -1,2619 +1,1869 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
->
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>ShakibYS</title>
-
 <script src="/socket.io/socket.io.js"></script>
 
 <style>
-
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-
-:root{
-  --pink:#ff3f91;
-  --pink2:#ff75b0;
-  --bg:#fff5fa;
-  --card:#ffffff;
-  --text:#222;
-  --muted:#888;
-  --line:#f1dce7;
-}
-
+*{box-sizing:border-box}
 body{
   margin:0;
-  font-family:Arial,"Noto Sans Bengali",sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  font-size:14px;
+  font-family:Arial,sans-serif;
+  background:#f4f5f9;
+  color:#222;
 }
+button,input,textarea{font:inherit}
+button{cursor:pointer;border:0}
+.hidden{display:none!important}
 
-button,
-input,
-textarea{
-  font:inherit;
-}
-
-button{
-  border:0;
-  cursor:pointer;
-}
-
-.hidden{
-  display:none!important;
-}
-
-/* LOGIN */
-
-#loginPage{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  background:
-    radial-gradient(circle at top,#ffd6e9,#fff5fa 55%);
-}
-
-.loginBox{
-  width:100%;
-  max-width:390px;
-  background:#fff;
-  padding:28px 22px;
-  border-radius:28px;
-  box-shadow:0 15px 45px #d94c8b25;
-}
-
-.logo{
-  width:72px;
-  height:72px;
-  border-radius:23px;
-  background:linear-gradient(135deg,var(--pink),#ff9ac5);
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin:auto;
-  font-size:32px;
-  font-weight:900;
-  box-shadow:0 10px 25px #ff3f9140;
-}
-
-.loginBox h1{
-  text-align:center;
-  margin:15px 0 5px;
-}
-
-.loginBox p{
-  text-align:center;
-  color:var(--muted);
-  margin-bottom:22px;
-}
-
-.input{
-  width:100%;
-  border:1px solid var(--line);
-  background:#fffafd;
-  border-radius:14px;
-  padding:13px;
-  outline:none;
-  margin-bottom:10px;
-}
-
-.input:focus{
-  border-color:var(--pink);
-  box-shadow:0 0 0 3px #ff3f9115;
-}
-
-.primary{
-  width:100%;
-  padding:13px;
-  border-radius:14px;
-  background:linear-gradient(135deg,var(--pink),var(--pink2));
-  color:white;
-  font-weight:bold;
-  box-shadow:0 8px 20px #ff3f9135;
-}
-
-.small{
-  font-size:11px;
-  color:#999;
-  text-align:center;
-  margin-top:12px;
-}
-
-/* APP */
-
-#app{
-  min-height:100vh;
-  padding-bottom:72px;
-}
-
-.top{
+header{
   position:sticky;
   top:0;
-  z-index:20;
-  height:58px;
+  z-index:50;
+  height:62px;
+  background:#fff;
+  box-shadow:0 2px 12px #0001;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding:8px 12px;
-  background:#ffffffee;
-  backdrop-filter:blur(15px);
-  border-bottom:1px solid var(--line);
+  padding:0 15px;
+  gap:12px;
 }
-
-.brand{
-  font-size:19px;
+.logo{
+  font-size:24px;
   font-weight:900;
-  color:var(--pink);
+  color:#e83e8c;
 }
-
-.topRight{
-  display:flex;
-  align-items:center;
-  gap:7px;
-}
-
-.iconBtn{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:#fff0f7;
-  color:var(--pink);
-  font-size:18px;
-}
-
-.avatar{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--pink),#ff9dc8);
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-weight:bold;
-}
-
-main{
-  max-width:700px;
-  margin:auto;
-  padding:10px;
-}
-
-/* PAGES */
-
-.page{
-  display:none;
-}
-
-.page.active{
-  display:block;
-}
-
-/* WELCOME */
-
-.welcome{
-  padding:18px;
-  border-radius:20px;
-  background:linear-gradient(
-    135deg,
-    #ff3f91,
-    #ff78b2
-  );
-  color:#fff;
-  margin-bottom:12px;
-  box-shadow:0 10px 25px #ff3f9130;
-}
-
-.welcome h2{
-  margin:0 0 5px;
-}
-
-.welcome p{
-  margin:0;
-  opacity:.9;
-  font-size:12px;
-}
-
-/* CARDS */
-
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:13px;
-  margin-bottom:10px;
-  box-shadow:0 4px 14px #cc5d8a0b;
-}
-
-.sectionHead{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin:14px 2px 8px;
-}
-
-.sectionHead h3{
-  margin:0;
-  font-size:16px;
-}
-
-.createPost{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.createPost input{
+.search{
   flex:1;
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:10px 13px;
-  outline:none;
+  max-width:420px;
+  position:relative;
 }
-
-.createPost button{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  background:var(--pink);
-  color:white;
-  font-size:18px;
+.search input{
+  width:100%;
+  border:0;
+  outline:0;
+  background:#f1f2f6;
+  border-radius:25px;
+  padding:12px 18px;
 }
-
-/* POST */
-
-.postHead{
-  display:flex;
-  align-items:center;
-  gap:9px;
-}
-
-.postUser{
-  flex:1;
-}
-
-.postUser strong{
-  display:block;
-}
-
-.postUser span{
-  color:#999;
-  font-size:10px;
-}
-
-.more{
-  background:none;
-  font-size:20px;
-  color:#999;
-}
-
-.postText{
-  padding:10px 2px;
-  line-height:1.55;
-  white-space:normal;
-}
-
-.postStats{
-  display:flex;
-  gap:15px;
-  color:#999;
-  font-size:10px;
-  border-bottom:1px solid var(--line);
-  padding-bottom:8px;
-}
-
-.postActions{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:5px;
-  padding-top:8px;
-}
-
-.postActions button{
-  padding:8px 3px;
-  border-radius:10px;
-  background:#fff2f8;
-  color:#d92f76;
-  font-size:11px;
-}
-
-/* SEARCH */
-
-.searchBox{
-  display:flex;
-  gap:7px;
-  margin-bottom:12px;
-}
-
-.searchBox input{
-  flex:1;
-  border:1px solid var(--line);
+.search-results{
+  position:absolute;
+  top:52px;
+  left:0;
+  right:0;
+  background:white;
   border-radius:15px;
+  box-shadow:0 8px 30px #0002;
+  max-height:350px;
+  overflow:auto;
+}
+.user-result{
   padding:12px;
-  outline:none;
-}
-
-.searchBox button{
-  width:45px;
-  border-radius:15px;
-  background:var(--pink);
-  color:white;
-  font-size:18px;
-}
-
-.userCard{
   display:flex;
   align-items:center;
   gap:10px;
-  padding:12px;
-  background:white;
-  border:1px solid var(--line);
-  border-radius:16px;
-  margin-bottom:8px;
+  border-bottom:1px solid #eee;
 }
+.user-result:hover{background:#fafafa}
 
-.userInfo{
-  flex:1;
-}
-
-.userInfo strong{
-  display:block;
-}
-
-.userInfo span{
-  color:#999;
-  font-size:10px;
-}
-
-.onlineDot{
-  width:9px;
-  height:9px;
-  background:#25c875;
-  border-radius:50%;
-  display:inline-block;
-  margin-right:3px;
-}
-
-.chatBtn{
-  background:#fff0f7;
-  color:var(--pink);
-  padding:9px 11px;
-  border-radius:12px;
-}
-
-/* CHAT */
-
-.chatTop{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:5px 0 10px;
-}
-
-.back{
-  background:#fff0f7;
-  color:var(--pink);
-  width:38px;
-  height:38px;
-  border-radius:50%;
-}
-
-.chatTitle{
-  flex:1;
-}
-
-.chatTitle strong{
-  display:block;
-}
-
-.chatTitle span{
-  color:#999;
-  font-size:10px;
-}
-
-.callButtons{
-  display:flex;
-  gap:5px;
-}
-
-.callButtons button{
-  width:35px;
-  height:35px;
-  border-radius:50%;
-  background:#fff0f7;
-  color:var(--pink);
-}
-
-.messages{
-  height:calc(100vh - 210px);
-  min-height:300px;
-  overflow-y:auto;
-  padding:10px 2px;
-}
-
-.bubble{
-  max-width:78%;
-  padding:9px 12px;
-  margin:5px 0;
-  border-radius:16px;
-  line-height:1.45;
-  word-wrap:break-word;
-}
-
-.mine{
-  margin-left:auto;
-  background:var(--pink);
-  color:white;
-  border-bottom-right-radius:4px;
-}
-
-.theirs{
-  margin-right:auto;
-  background:white;
-  border:1px solid var(--line);
-  border-bottom-left-radius:4px;
-}
-
-.chatInput{
-  position:fixed;
-  bottom:60px;
-  left:50%;
-  transform:translateX(-50%);
-  width:min(700px,100%);
-  background:#fff;
-  padding:8px;
-  display:flex;
-  gap:6px;
-  border-top:1px solid var(--line);
-  z-index:15;
-}
-
-.chatInput input{
-  flex:1;
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:10px 13px;
-  outline:none;
-}
-
-.chatInput button{
+.icon-btn{
   width:42px;
   height:42px;
   border-radius:50%;
-  background:var(--pink);
-  color:white;
+  background:#ffe1ef;
+  color:#e83e8c;
+  font-size:20px;
 }
+.icon-btn:hover{background:#e83e8c;color:white}
 
-/* AI */
-
-.aiBox{
-  display:flex;
-  gap:7px;
-}
-
-.aiBox textarea{
-  flex:1;
-  min-height:90px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  padding:11px;
-  resize:none;
-  outline:none;
-}
-
-.aiSend{
-  align-self:flex-end;
+.avatar{
   width:45px;
   height:45px;
   border-radius:50%;
-  background:var(--pink);
-  color:white;
-}
-
-.aiAnswer{
-  margin-top:10px;
-  padding:12px;
-  background:#fff1f7;
-  border-radius:15px;
-  line-height:1.6;
-}
-
-/* BOTTOM */
-
-.bottom{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  height:60px;
-  background:#fff;
-  border-top:1px solid var(--line);
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  z-index:30;
-}
-
-.nav{
-  background:none;
-  color:#999;
-  font-size:10px;
-}
-
-.nav.active{
-  color:var(--pink);
+  object-fit:cover;
+  background:#ffd3e6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#e83e8c;
   font-weight:bold;
 }
-
-.navIcon{
-  display:block;
-  font-size:19px;
-  margin-bottom:2px;
+.avatar.big{
+  width:85px;
+  height:85px;
+  font-size:30px;
 }
 
-/* CALL */
+.container{
+  max-width:1100px;
+  margin:20px auto;
+  padding:0 12px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:240px 1fr 260px;
+  gap:18px;
+}
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 2px 12px #0000000c;
+  margin-bottom:15px;
+}
+.menu button{
+  width:100%;
+  padding:12px;
+  margin:4px 0;
+  border-radius:12px;
+  background:white;
+  text-align:left;
+}
+.menu button:hover{
+  background:#ffe6f1;
+  color:#e83e8c;
+}
 
-.callScreen{
+.profile-mini{
+  text-align:center;
+}
+.profile-mini .avatar{
+  margin:auto;
+}
+
+.post-box textarea{
+  width:100%;
+  resize:none;
+  border:0;
+  outline:0;
+  background:#f5f6f9;
+  border-radius:15px;
+  padding:13px;
+  min-height:80px;
+}
+.row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.between{
+  justify-content:space-between;
+}
+.primary{
+  background:#e83e8c;
+  color:white;
+  padding:10px 18px;
+  border-radius:25px;
+  font-weight:bold;
+}
+.secondary{
+  background:#ffe2ef;
+  color:#d52c7d;
+  padding:9px 15px;
+  border-radius:22px;
+}
+.post{
+  padding:15px;
+  border-bottom:1px solid #eee;
+}
+.post:last-child{border:0}
+.post-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.post-media{
+  width:100%;
+  max-height:450px;
+  object-fit:cover;
+  border-radius:14px;
+  margin-top:10px;
+}
+.post-actions{
+  display:flex;
+  gap:7px;
+  margin-top:10px;
+}
+.post-actions button{
+  flex:1;
+  background:#f4f4f7;
+  padding:9px;
+  border-radius:12px;
+}
+.post-actions button:hover{
+  background:#ffe3ef;
+  color:#e83e8c;
+}
+
+.badge{
+  background:#e83e8c;
+  color:white;
+  border-radius:20px;
+  padding:2px 7px;
+  font-size:11px;
+}
+
+.modal{
   position:fixed;
   inset:0;
   z-index:100;
-  background:#160b12;
-  color:white;
-  display:none;
+  background:#0008;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+.modal-box{
+  background:white;
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow:auto;
+  border-radius:22px;
+  padding:20px;
+}
+.close{
+  float:right;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  background:#eee;
+}
+
+.auth{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(135deg,#ffe6f1,#fff);
+}
+.auth-box{
+  width:100%;
+  max-width:390px;
+  background:white;
+  border-radius:25px;
+  padding:28px;
+  box-shadow:0 10px 40px #0002;
+}
+.auth-box input{
+  width:100%;
+  padding:14px;
+  margin:7px 0;
+  border:1px solid #ddd;
+  border-radius:13px;
+  outline:0;
+}
+.auth-box input:focus{border-color:#e83e8c}
+
+.chat{
+  height:70vh;
+  display:flex;
   flex-direction:column;
-  align-items:center;
-  justify-content:center;
 }
-
-.callScreen.active{
-  display:flex;
-}
-
-.callAvatar{
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--pink),#ff8abb);
+.chat-head{
   display:flex;
   align-items:center;
-  justify-content:center;
-  font-size:40px;
-  font-weight:bold;
-  margin-bottom:15px;
+  gap:10px;
+  border-bottom:1px solid #eee;
+  padding-bottom:10px;
 }
-
-.callName{
-  font-size:22px;
-  font-weight:bold;
+.messages{
+  flex:1;
+  overflow:auto;
+  padding:15px 3px;
 }
-
-.callStatus{
-  color:#ddd;
-  margin:8px 0 25px;
+.msg{
+  max-width:75%;
+  padding:10px 13px;
+  border-radius:17px;
+  margin:6px 0;
+  background:#eee;
+  clear:both;
 }
-
-.callControls{
-  display:flex;
-  gap:15px;
-}
-
-.callControls button{
-  width:55px;
-  height:55px;
-  border-radius:50%;
+.msg.mine{
+  margin-left:auto;
+  background:#e83e8c;
   color:white;
-  background:#ffffff22;
-  font-size:20px;
+}
+.chat-input{
+  display:flex;
+  gap:7px;
+  padding-top:10px;
+}
+.chat-input input{
+  flex:1;
+  border:0;
+  background:#f1f2f5;
+  border-radius:25px;
+  padding:12px;
+  outline:0;
 }
 
-.callControls .end{
-  background:#ef315f;
+.notification{
+  padding:12px;
+  border-bottom:1px solid #eee;
+}
+.online{
+  width:10px;
+  height:10px;
+  background:#21c55d;
+  border-radius:50%;
+  display:inline-block;
 }
 
-/* VIDEO */
-
-#remoteVideo,
-#localVideo{
-  position:absolute;
-  object-fit:cover;
-  background:#111;
-}
-
-#remoteVideo{
+.call-screen{
+  position:fixed;
   inset:0;
+  background:#111;
+  z-index:200;
+  color:white;
+  display:flex;
+  flex-direction:column;
+}
+.call-video{
+  flex:1;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#remoteVideo{
   width:100%;
   height:100%;
+  object-fit:cover;
 }
-
 #localVideo{
-  width:120px;
-  height:170px;
+  position:absolute;
   right:15px;
   top:15px;
+  width:120px;
+  height:170px;
+  object-fit:cover;
   border-radius:15px;
   border:2px solid white;
 }
+.call-buttons{
+  padding:20px;
+  display:flex;
+  justify-content:center;
+  gap:15px;
+}
+.call-buttons button{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  background:#333;
+  color:white;
+  font-size:22px;
+}
+.call-buttons .end{
+  background:#e11;
+}
 
-/* TOAST */
-
-#toast{
+.toast{
   position:fixed;
+  bottom:20px;
   left:50%;
-  bottom:80px;
   transform:translateX(-50%);
   background:#222;
   color:white;
-  padding:10px 15px;
-  border-radius:20px;
-  font-size:12px;
-  display:none;
-  z-index:200;
+  padding:12px 20px;
+  border-radius:25px;
+  z-index:500;
 }
 
+@media(max-width:850px){
+  .grid{grid-template-columns:1fr}
+  .left,.right{display:none}
+}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<!-- AUTH -->
+<div id="authPage" class="auth">
+  <div class="auth-box">
+    <div class="logo" style="text-align:center;font-size:32px">ShakibYS</div>
+    <p style="text-align:center;color:#777">Connect with everyone</p>
 
-<section id="loginPage">
-
-  <div class="loginBox">
-
-    <div class="logo">S</div>
-
-    <h1>ShakibYS</h1>
-
-    <p>Connect • Message • Call</p>
-
-    <input
-      id="loginName"
-      class="input"
-      placeholder="আপনার নাম"
-      maxlength="40"
-    >
-
-    <input
-      id="loginPhone"
-      class="input"
-      type="tel"
-      placeholder="মোবাইল নম্বর"
-      maxlength="20"
-    >
-
-    <button
-      class="primary"
-      onclick="login()"
-    >
-      🚀 Continue
-    </button>
-
-    <div class="small">
-      নাম ও মোবাইল নম্বর দিয়ে প্রবেশ করুন
+    <div id="loginForm">
+      <input id="loginPhone" type="tel" placeholder="মোবাইল নাম্বার">
+      <button class="primary" style="width:100%" onclick="login()">Login</button>
+      <p style="text-align:center">
+        অ্যাকাউন্ট নেই?
+        <button class="secondary" onclick="showRegister()">Register</button>
+      </p>
     </div>
 
+    <div id="registerForm" class="hidden">
+      <input id="regName" placeholder="আপনার নাম">
+      <input id="regPhone" type="tel" placeholder="মোবাইল নাম্বার">
+      <button class="primary" style="width:100%" onclick="registerUser()">Create Account</button>
+      <p style="text-align:center">
+        আগে থেকেই অ্যাকাউন্ট আছে?
+        <button class="secondary" onclick="showLogin()">Login</button>
+      </p>
+    </div>
   </div>
-
-</section>
-
+</div>
 
 <!-- APP -->
-
-<section id="app" class="hidden">
-
-  <header class="top">
-
-    <div class="brand">
-      ShakibYS
-    </div>
-
-    <div class="topRight">
-
-      <button
-        class="iconBtn"
-        onclick="showPage('search')"
-      >🔍</button>
-
-      <div
-        id="topAvatar"
-        class="avatar"
-      >S</div>
-
-    </div>
-
-  </header>
-
-
-  <main>
-
-    <!-- HOME -->
-
-    <section
-      id="home"
-      class="page active"
-    >
-
-      <div class="welcome">
-
-        <h2 id="welcome">
-          স্বাগতম 👋
-        </h2>
-
-        <p>
-          আপনার বন্ধুদের সাথে যুক্ত থাকুন
-        </p>
-
-      </div>
-
-      <div class="card createPost">
-
-        <input
-          id="postInput"
-          placeholder="আপনার মনের কথা লিখুন..."
-        >
-
-        <button onclick="createPost()">
-          ＋
-        </button>
-
-      </div>
-
-      <div class="sectionHead">
-
-        <h3>
-          🔥 News Feed
-        </h3>
-
-        <button
-          class="chatBtn"
-          onclick="loadPosts()"
-        >
-          ↻
-        </button>
-
-      </div>
-
-      <div id="feed"></div>
-
-    </section>
-
-
-    <!-- SEARCH -->
-
-    <section
-      id="search"
-      class="page"
-    >
-
-      <div class="sectionHead">
-
-        <h3>
-          🔎 Find Users
-        </h3>
-
-      </div>
-
-      <div class="searchBox">
-
-        <input
-          id="searchInput"
-          placeholder="নাম বা মোবাইল নম্বর..."
-          onkeydown="if(event.key==='Enter')searchUsers()"
-        >
-
-        <button onclick="searchUsers()">
-          🔍
-        </button>
-
-      </div>
-
-      <div id="userResults">
-
-        <div class="card">
-          নাম অথবা মোবাইল নম্বর দিয়ে
-          ইউজার খুঁজুন।
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- CHAT -->
-
-    <section
-      id="chat"
-      class="page"
-    >
-
-      <div class="chatTop">
-
-        <button
-          class="back"
-          onclick="showPage('search')"
-        >
-          ←
-        </button>
-
-        <div class="avatar" id="chatAvatar">
-          U
-        </div>
-
-        <div class="chatTitle">
-
-          <strong id="chatName">
-            User
-          </strong>
-
-          <span id="chatStatus">
-            Offline
-          </span>
-
-        </div>
-
-        <div class="callButtons">
-
-          <button
-            onclick="startCall('voice')"
-          >
-            📞
-          </button>
-
-          <button
-            onclick="startCall('video')"
-          >
-            🎥
-          </button>
-
-        </div>
-
-      </div>
-
-      <div
-        id="messages"
-        class="messages"
-      ></div>
-
-      <div class="chatInput">
-
-        <input
-          id="messageInput"
-          placeholder="Message লিখুন..."
-          oninput="typingStart()"
-          onkeydown="
-            if(event.key==='Enter')sendMessage()
-          "
-        >
-
-        <button onclick="sendMessage()">
-          ➤
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <!-- AI -->
-
-    <section
-      id="ai"
-      class="page"
-    >
-
-      <div class="sectionHead">
-        <h3>🤖 ShakibYS AI</h3>
-      </div>
-
-      <div class="card">
-
-        <div class="aiBox">
-
-          <textarea
-            id="aiInput"
-            placeholder="AI-কে কিছু জিজ্ঞেস করুন..."
-          ></textarea>
-
-          <button
-            class="aiSend"
-            onclick="askAI()"
-          >
-            ➤
-          </button>
-
-        </div>
-
-        <div
-          id="aiAnswer"
-          class="aiAnswer hidden"
-        ></div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- NAV -->
-
-  <nav class="bottom">
-
-    <button
-      class="nav active"
-      data-page="home"
-      onclick="showPage('home')"
-    >
-      <span class="navIcon">🏠</span>
-      Home
-    </button>
-
-    <button
-      class="nav"
-      data-page="search"
-      onclick="showPage('search')"
-    >
-      <span class="navIcon">🔍</span>
-      Search
-    </button>
-
-    <button
-      class="nav"
-      data-page="chat"
-      onclick="openLastChat()"
-    >
-      <span class="navIcon">💬</span>
-      Messenger
-    </button>
-
-    <button
-      class="nav"
-      data-page="ai"
-      onclick="showPage('ai')"
-    >
-      <span class="navIcon">🤖</span>
-      AI
-    </button>
-
-  </nav>
-
-</section>
-
-
-<!-- CALL SCREEN -->
-
-<div
-  id="callScreen"
-  class="callScreen"
->
-
-  <video
-    id="remoteVideo"
-    autoplay
-    playsinline
-  ></video>
-
-  <video
-    id="localVideo"
-    autoplay
-    muted
-    playsinline
-  ></video>
-
-  <div
-    id="callAvatar"
-    class="callAvatar"
-  >
-    U
+<div id="appPage" class="hidden">
+
+<header>
+  <div class="logo">ShakibYS</div>
+
+  <div class="search">
+    <input id="searchInput"
+           placeholder="🔎 User খুঁজুন..."
+           oninput="searchUsers()">
+    <div id="searchResults" class="search-results hidden"></div>
   </div>
 
-  <div
-    id="callName"
-    class="callName"
-  >
-    User
+  <button class="icon-btn" onclick="openNotifications()">🔔</button>
+  <button class="icon-btn" onclick="openProfile(currentUser.id)">👤</button>
+</header>
+
+<div class="container">
+<div class="grid">
+
+<!-- LEFT -->
+<div class="left">
+
+  <div class="card profile-mini">
+    <div class="avatar big" id="miniAvatar">S</div>
+    <h3 id="miniName">Shakib</h3>
+    <small id="miniPhone"></small>
   </div>
 
-  <div
-    id="callStatus"
-    class="callStatus"
-  >
-    Calling...
-  </div>
-
-  <div class="callControls">
-
-    <button
-      onclick="toggleMute()"
-      id="muteBtn"
-    >
-      🎤
-    </button>
-
-    <button
-      onclick="toggleCamera()"
-      id="cameraBtn"
-    >
-      📹
-    </button>
-
-    <button
-      class="end"
-      onclick="endCall()"
-    >
-      ☎
-    </button>
-
+  <div class="card menu">
+    <button onclick="loadFeed()">🏠 Home</button>
+    <button onclick="openProfile(currentUser.id)">👤 Profile</button>
+    <button onclick="openMessenger()">💬 Messenger</button>
+    <button onclick="openNotifications()">🔔 Notifications</button>
+    <button onclick="showFriends()">👥 Friends</button>
+    <button onclick="showFollowers()">❤️ Followers</button>
+    <button onclick="logout()">🚪 Logout</button>
   </div>
 
 </div>
 
+<!-- CENTER -->
+<div>
 
-<div id="toast"></div>
+  <div class="card post-box">
+    <div class="row">
+      <div class="avatar" id="postAvatar">S</div>
+      <b id="postName">Shakib</b>
+    </div>
 
+    <textarea id="postText"
+      placeholder="আপনার মনে কী আছে?"></textarea>
+
+    <div class="row between" style="margin-top:10px">
+      <label class="secondary">
+        📷 Photo/Video
+        <input id="mediaInput"
+               type="file"
+               accept="image/*,video/*"
+               style="display:none"
+               onchange="previewMedia(event)">
+      </label>
+
+      <button class="primary" onclick="createPost()">Post</button>
+    </div>
+
+    <div id="mediaPreview"></div>
+  </div>
+
+  <div class="card">
+    <h3>📰 News Feed</h3>
+    <div id="feed"></div>
+  </div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+
+  <div class="card">
+    <h3>🟢 Online</h3>
+    <div id="onlineList">User online হলে এখানে দেখা যাবে</div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ Quick Menu</h3>
+    <button class="secondary" style="width:100%;margin:4px"
+            onclick="openMessenger()">💬 Messenger</button>
+    <button class="secondary" style="width:100%;margin:4px"
+            onclick="openNotifications()">🔔 Notifications</button>
+  </div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="profileModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('profileModal')">×</button>
+
+    <div style="text-align:center">
+      <div class="avatar big" id="profileAvatar" style="margin:auto">U</div>
+      <h2 id="profileName">User</h2>
+      <p id="profileBio"></p>
+
+      <div class="row" style="justify-content:center">
+        <span><b id="followersCount">0</b> Followers</span>
+        <span><b id="followingCount">0</b> Following</span>
+        <span><b id="friendsCount">0</b> Friends</span>
+      </div>
+
+      <div id="profileActions" style="margin-top:15px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT MODAL -->
+<div id="chatModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('chatModal')">×</button>
+
+    <div class="chat">
+      <div class="chat-head">
+        <div class="avatar" id="chatAvatar">U</div>
+        <div>
+          <b id="chatName">User</b>
+          <br>
+          <small id="chatStatus">offline</small>
+        </div>
+
+        <div style="margin-left:auto">
+          <button class="icon-btn" onclick="startCall('voice')">📞</button>
+          <button class="icon-btn" onclick="startCall('video')">🎥</button>
+        </div>
+      </div>
+
+      <div id="messages" class="messages"></div>
+
+      <div class="chat-input">
+        <input id="messageInput"
+               placeholder="Message লিখুন..."
+               onkeydown="if(event.key==='Enter')sendMessage()"
+               oninput="typingStart()">
+        <button class="primary" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION MODAL -->
+<div id="notificationModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('notificationModal')">×</button>
+    <h2>🔔 Notifications</h2>
+    <div id="notificationList"></div>
+  </div>
+</div>
+
+<!-- CALL SCREEN -->
+<div id="callScreen" class="call-screen hidden">
+
+  <div style="padding:18px;text-align:center">
+    <h2 id="callTitle">Calling...</h2>
+    <small id="callStatus">Connecting...</small>
+  </div>
+
+  <div class="call-video">
+    <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localVideo" autoplay muted playsinline></video>
+  </div>
+
+  <div class="call-buttons">
+    <button onclick="toggleMute()">🎤</button>
+    <button onclick="toggleCamera()">📷</button>
+    <button class="end" onclick="endCall()">📵</button>
+  </div>
+
+</div>
+
+<div id="toast" class="toast hidden"></div>
 
 <script>
-
-/* =========================
+/* =========================================================
    GLOBAL
-========================= */
+========================================================= */
 
 const socket = io();
 
 let currentUser =
-  JSON.parse(
-    localStorage.getItem("shakibys_user") || "null"
-  );
+  JSON.parse(localStorage.getItem("shakibys_user") || "null");
 
-let selectedUser = null;
+let currentChatUser = null;
+let currentCallUser = null;
 
-let lastChatUser = null;
-
-let peer = null;
-
+let peerConnection = null;
 let localStream = null;
+let currentCallType = "voice";
 
-let callType = "voice";
+const iceServers = {
+  iceServers: [
+    {urls:"stun:stun.l.google.com:19302"},
+    {urls:"stun:stun1.l.google.com:19302"}
+  ]
+};
 
-let pendingOffer = null;
+/* =========================================================
+   HELPERS
+========================================================= */
 
+function $(id){
+  return document.getElementById(id);
+}
 
-/* =========================
-   UTIL
-========================= */
+function toast(text){
+  $("toast").textContent = text;
+  $("toast").classList.remove("hidden");
 
-function esc(value){
+  setTimeout(()=>{
+    $("toast").classList.add("hidden");
+  },2500);
+}
 
-  return String(value ?? "")
+function escapeHtml(text){
+  return String(text || "")
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
-
 }
 
-
-function toast(text){
-
-  const el =
-    document.getElementById("toast");
-
-  el.textContent = text;
-
-  el.style.display = "block";
-
-  clearTimeout(window.toastTimer);
-
-  window.toastTimer =
-    setTimeout(
-      () => el.style.display = "none",
-      2200
-    );
-
+function closeModal(id){
+  $(id).classList.add("hidden");
 }
 
+function showRegister(){
+  $("loginForm").classList.add("hidden");
+  $("registerForm").classList.remove("hidden");
+}
 
-/* =========================
-   LOGIN
-========================= */
+function showLogin(){
+  $("registerForm").classList.add("hidden");
+  $("loginForm").classList.remove("hidden");
+}
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+async function registerUser(){
+
+  const name = $("regName").value.trim();
+  const phone = $("regPhone").value.trim();
+
+  if(!name || !phone){
+    toast("নাম ও মোবাইল নাম্বার দিন");
+    return;
+  }
+
+  const res = await fetch("/api/auth/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({name,phone})
+  });
+
+  const data = await res.json();
+
+  if(!data.success){
+    toast(data.message || "Register failed");
+    return;
+  }
+
+  currentUser = data.user;
+
+  localStorage.setItem(
+    "shakibys_user",
+    JSON.stringify(currentUser)
+  );
+
+  enterApp();
+}
 
 async function login(){
 
-  const name =
-    document
-      .getElementById("loginName")
-      .value.trim();
+  const phone = $("loginPhone").value.trim();
 
-  const phone =
-    document
-      .getElementById("loginPhone")
-      .value.trim();
-
-  if(!name){
-
-    toast("নাম লিখুন");
-
+  if(!phone){
+    toast("মোবাইল নাম্বার দিন");
     return;
   }
 
-  if(!phone || phone.length < 5){
+  const res = await fetch("/api/auth/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({phone})
+  });
 
-    toast("সঠিক মোবাইল নম্বর দিন");
+  const data = await res.json();
 
+  if(!data.success){
+    toast(data.message || "Login failed");
     return;
   }
 
-  try{
+  currentUser = data.user;
 
-    const response =
-      await fetch("/api/auth",{
+  localStorage.setItem(
+    "shakibys_user",
+    JSON.stringify(currentUser)
+  );
 
-        method:"POST",
-
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
-
-        body:JSON.stringify({
-          name,
-          phone
-        })
-
-      });
-
-    const data =
-      await response.json();
-
-    if(!data.success){
-
-      toast(data.message || "Login failed");
-
-      return;
-    }
-
-    currentUser = data.user;
-
-    localStorage.setItem(
-      "shakibys_user",
-      JSON.stringify(currentUser)
-    );
-
-    enterApp();
-
-  }catch(error){
-
-    toast("Server connection নেই");
-
-  }
-
+  enterApp();
 }
-
 
 function enterApp(){
 
-  document
-    .getElementById("loginPage")
-    .classList.add("hidden");
+  $("authPage").classList.add("hidden");
+  $("appPage").classList.remove("hidden");
 
-  document
-    .getElementById("app")
-    .classList.remove("hidden");
+  updateMiniProfile();
 
-  document
-    .getElementById("welcome")
-    .textContent =
-      "স্বাগতম, " +
-      currentUser.name +
-      " 👋";
+  socket.emit("user:online",{
+    userId:currentUser.id,
+    name:currentUser.name,
+    phone:currentUser.phone
+  });
 
-  document
-    .getElementById("topAvatar")
-    .textContent =
-      currentUser.name
-        .charAt(0)
-        .toUpperCase();
-
-  socket.emit(
-    "user:online",
-    {
-      userId:currentUser.id,
-      phone:currentUser.phone,
-      name:currentUser.name
-    }
-  );
-
-  loadPosts();
-
+  loadFeed();
 }
 
+function logout(){
 
-/* =========================
-   AUTO LOGIN
-========================= */
+  localStorage.removeItem("shakibys_user");
+  location.reload();
+}
+
+/* =========================================================
+   INITIAL
+========================================================= */
 
 if(currentUser){
-
   enterApp();
-
 }
 
+/* =========================================================
+   PROFILE MINI
+========================================================= */
 
-/* =========================
-   PAGE
-========================= */
+function updateMiniProfile(){
 
-function showPage(page){
+  $("miniName").textContent =
+    currentUser.name;
 
-  document
-    .querySelectorAll(".page")
-    .forEach(
-      el => el.classList.remove("active")
-    );
+  $("miniPhone").textContent =
+    currentUser.phone;
 
-  const target =
-    document.getElementById(page);
+  $("postName").textContent =
+    currentUser.name;
 
-  if(target){
-    target.classList.add("active");
-  }
+  $("miniAvatar").textContent =
+    currentUser.name.charAt(0).toUpperCase();
 
-  document
-    .querySelectorAll(".nav")
-    .forEach(btn => {
-
-      btn.classList.toggle(
-        "active",
-        btn.dataset.page === page
-      );
-
-    });
-
-  if(page === "search"){
-    setTimeout(
-      () => document
-        .getElementById("searchInput")
-        ?.focus(),
-      100
-    );
-  }
-
+  $("postAvatar").textContent =
+    currentUser.name.charAt(0).toUpperCase();
 }
 
+/* =========================================================
+   SEARCH USERS
+========================================================= */
 
-/* =========================
-   NEWS FEED
-========================= */
+let searchTimer;
 
-async function loadPosts(){
+function searchUsers(){
 
-  try{
-
-    const response =
-      await fetch("/api/posts");
-
-    const data =
-      await response.json();
-
-    if(data.success){
-
-      renderPosts(data.posts);
-
-    }
-
-  }catch(e){}
-
-}
-
-
-function renderPosts(list){
-
-  const feed =
-    document.getElementById("feed");
-
-  feed.innerHTML = "";
-
-  if(!list || !list.length){
-
-    feed.innerHTML = `
-      <div class="card">
-        এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি আপনি করুন। 💗
-      </div>
-    `;
-
-    return;
-  }
-
-  list.forEach(
-    post => addPost(post,false)
-  );
-
-}
-
-
-function addPost(post,top=true){
-
-  const feed =
-    document.getElementById("feed");
-
-  const article =
-    document.createElement("article");
-
-  article.className = "card";
-
-  const first =
-    esc(
-      (post.author || "S")
-        .charAt(0)
-        .toUpperCase()
-    );
-
-  const time =
-    new Date(
-      post.createdAt || Date.now()
-    ).toLocaleString(
-      "bn-BD",
-      {
-        dateStyle:"short",
-        timeStyle:"short"
-      }
-    );
-
-  article.innerHTML = `
-
-    <div class="postHead">
-
-      <div class="avatar">
-        ${first}
-      </div>
-
-      <div class="postUser">
-
-        <strong>
-          ${esc(post.author || "Shakib")}
-        </strong>
-
-        <span>
-          ${time} • 🌐 Public
-        </span>
-
-      </div>
-
-      <button class="more">
-        ⋯
-      </button>
-
-    </div>
-
-    <div class="postText">
-      ${esc(post.content)
-        .replace(/\n/g,"<br>")}
-    </div>
-
-    <div class="postStats">
-
-      <span>
-        ❤️ ${post.likes || 0} Likes
-      </span>
-
-      <span>
-        💬 ${post.comments || 0} Comments
-      </span>
-
-    </div>
-
-    <div class="postActions">
-
-      <button onclick="likePost(this)">
-        ❤️ Like
-      </button>
-
-      <button onclick="toast('Comment system আসছে')">
-        💬 Comment
-      </button>
-
-      <button onclick="sharePost()">
-        🔄 Share
-      </button>
-
-    </div>
-
-  `;
-
-  if(top)
-    feed.prepend(article);
-  else
-    feed.appendChild(article);
-
-}
-
-
-async function createPost(){
-
-  const input =
-    document.getElementById("postInput");
-
-  const content =
-    input.value.trim();
-
-  if(!content){
-
-    toast("Post লিখুন");
-
-    return;
-  }
-
-  try{
-
-    const response =
-      await fetch("/api/posts",{
-
-        method:"POST",
-
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
-
-        body:JSON.stringify({
-
-          author:
-            currentUser.name,
-
-          authorId:
-            currentUser.id,
-
-          content
-
-        })
-
-      });
-
-    const data =
-      await response.json();
-
-    if(data.success){
-
-      input.value = "";
-
-      toast("Post published ✅");
-
-    }else{
-
-      toast(data.message || "Post failed");
-
-    }
-
-  }catch(e){
-
-    toast("Server connection নেই");
-
-  }
-
-}
-
-
-function likePost(button){
-
-  button.textContent = "💗 Liked";
-
-  button.disabled = true;
-
-}
-
-
-function sharePost(){
-
-  if(
-    navigator.share
-  ){
-
-    navigator.share({
-      title:"ShakibYS",
-      text:"Check this post on ShakibYS"
-    });
-
-  }else{
-
-    toast("Share অপশনটি আপনার ফোনে নেই");
-
-  }
-
-}
-
-
-/* =========================
-   SOCKET POSTS
-========================= */
-
-socket.on(
-  "posts:init",
-  posts => renderPosts(posts)
-);
-
-
-socket.on(
-  "post:created",
-  post => {
-
-    addPost(post,true);
-
-  }
-);
-
-
-socket.on(
-  "post:error",
-  data => toast(data.message)
-);
-
-
-/* =========================
-   USER SEARCH
-========================= */
-
-async function searchUsers(){
+  clearTimeout(searchTimer);
 
   const q =
-    document
-      .getElementById("searchInput")
-      .value.trim();
-
-  const box =
-    document.getElementById("userResults");
+    $("searchInput").value.trim();
 
   if(!q){
-
-    box.innerHTML = `
-      <div class="card">
-        নাম অথবা মোবাইল নম্বর লিখুন।
-      </div>
-    `;
-
+    $("searchResults").classList.add("hidden");
     return;
   }
 
-  try{
+  searchTimer = setTimeout(async()=>{
 
-    const response =
+    const res =
       await fetch(
-        "/api/users?q=" +
-        encodeURIComponent(q) +
-        "&current=" +
-        encodeURIComponent(
-          currentUser.phone
-        )
+        "/api/users?q="+
+        encodeURIComponent(q)
       );
 
-    const data =
-      await response.json();
+    const data = await res.json();
+
+    const box = $("searchResults");
 
     box.innerHTML = "";
 
     if(!data.users.length){
+      box.innerHTML =
+        "<div style='padding:15px'>কোনো User পাওয়া যায়নি</div>";
 
-      box.innerHTML = `
-        <div class="card">
-          😔 কোনো ইউজার পাওয়া যায়নি।
-        </div>
-      `;
-
+      box.classList.remove("hidden");
       return;
     }
 
-    data.users.forEach(
-      user => {
+    data.users.forEach(user=>{
 
-        const div =
-          document.createElement("div");
+      const div =
+        document.createElement("div");
 
-        div.className = "userCard";
+      div.className = "user-result";
 
-        const first =
-          esc(
-            user.name
-              .charAt(0)
-              .toUpperCase()
-          );
+      div.innerHTML = `
+        <div class="avatar">
+          ${escapeHtml(user.name.charAt(0))}
+        </div>
 
-        div.innerHTML = `
+        <div style="flex:1">
+          <b>${escapeHtml(user.name)}</b><br>
+          <small>${escapeHtml(user.phone)}</small>
+        </div>
 
-          <div class="avatar">
-            ${first}
-          </div>
+        <button class="secondary"
+          onclick="openProfile('${user.id}')">
+          Profile
+        </button>
+      `;
 
-          <div class="userInfo">
+      box.appendChild(div);
+    });
 
-            <strong>
-              ${esc(user.name)}
-            </strong>
+    box.classList.remove("hidden");
 
-            <span>
-              ${user.online
-                ? '<i class="onlineDot"></i>Online'
-                : '⚪ Offline'}
-              • ${esc(user.phone)}
-            </span>
+  },300);
+}
 
-          </div>
+/* =========================================================
+   PROFILE
+========================================================= */
 
-          <button
-            class="chatBtn"
-            onclick='openChat(${JSON.stringify(user)})'
-          >
-            💬
-          </button>
+async function openProfile(userId){
 
-        `;
+  const res =
+    await fetch("/api/users/"+userId);
 
-        box.appendChild(div);
+  const data = await res.json();
 
-      }
-    );
-
-  }catch(e){
-
-    toast("User search failed");
-
+  if(!data.success){
+    toast("User পাওয়া যায়নি");
+    return;
   }
 
-}
+  const user = data.user;
 
+  $("profileName").textContent =
+    user.name;
 
-/* =========================
-   CHAT
-========================= */
+  $("profileBio").textContent =
+    user.bio || "No bio";
 
-function openChat(user){
+  $("profileAvatar").textContent =
+    user.name.charAt(0).toUpperCase();
 
-  selectedUser = user;
+  $("followersCount").textContent =
+    user.followers || 0;
 
-  lastChatUser = user;
+  $("followingCount").textContent =
+    user.following || 0;
 
-  document
-    .getElementById("chatName")
-    .textContent =
-      user.name;
+  $("friendsCount").textContent =
+    user.friends || 0;
 
-  document
-    .getElementById("chatAvatar")
-    .textContent =
-      user.name
-        .charAt(0)
-        .toUpperCase();
+  const actions = $("profileActions");
 
-  updateChatStatus(user);
+  actions.innerHTML = "";
 
-  showPage("chat");
+  if(String(user.id) === String(currentUser.id)){
 
-  document
-    .getElementById("messages")
-    .innerHTML = "";
-
-  socket.emit(
-    "message:history",
-    {
-      userA:currentUser.id,
-      userB:user.id
-    }
-  );
-
-}
-
-
-function openLastChat(){
-
-  if(lastChatUser){
-
-    openChat(lastChatUser);
+    actions.innerHTML = `
+      <button class="primary"
+        onclick="openMessenger()">
+        💬 Messenger
+      </button>
+    `;
 
   }else{
 
-    showPage("search");
+    actions.innerHTML = `
+      <button class="primary"
+        onclick="followUser('${user.id}')">
+        ➕ Follow
+      </button>
 
-    toast("আগে একজন User খুঁজুন");
+      <button class="secondary"
+        onclick="sendFriendRequest('${user.id}')">
+        👥 Friend Request
+      </button>
 
+      <button class="secondary"
+        onclick="openChat('${user.id}')">
+        💬 Message
+      </button>
+    `;
   }
 
+  $("profileModal").classList.remove("hidden");
 }
 
+/* =========================================================
+   FOLLOW
+========================================================= */
 
-socket.on(
-  "message:history",
-  list => {
+async function followUser(userId){
 
-    if(!selectedUser) return;
+  const res =
+    await fetch("/api/follow",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        followerId:currentUser.id,
+        followingId:userId
+      })
+    });
 
-    const box =
-      document.getElementById("messages");
+  const data = await res.json();
 
-    box.innerHTML = "";
+  if(data.success){
+    toast("Follow করা হয়েছে ❤️");
+  }else{
+    toast(data.message || "Follow failed");
+  }
+}
 
-    list.forEach(
-      renderMessage
+/* =========================================================
+   FRIEND REQUEST
+========================================================= */
+
+async function sendFriendRequest(userId){
+
+  const res =
+    await fetch("/api/friends/request",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        fromId:currentUser.id,
+        toId:userId
+      })
+    });
+
+  const data = await res.json();
+
+  if(data.success){
+    toast("Friend Request পাঠানো হয়েছে 👥");
+  }else{
+    toast(data.message || "Request failed");
+  }
+}
+
+/* =========================================================
+   FEED
+========================================================= */
+
+async function loadFeed(){
+
+  const res =
+    await fetch("/api/posts");
+
+  const data = await res.json();
+
+  renderPosts(data.posts || []);
+}
+
+function renderPosts(posts){
+
+  const feed = $("feed");
+
+  feed.innerHTML = "";
+
+  if(!posts.length){
+    feed.innerHTML =
+      "<p style='text-align:center;color:#777'>এখনো কোনো Post নেই</p>";
+    return;
+  }
+
+  posts.forEach(post=>{
+
+    const div =
+      document.createElement("div");
+
+    div.className = "post";
+
+    let mediaHtml = "";
+
+    if(post.media){
+
+      if(post.type === "video"){
+        mediaHtml =
+          `<video class="post-media"
+             src="${escapeHtml(post.media)}"
+             controls></video>`;
+      }else{
+        mediaHtml =
+          `<img class="post-media"
+             src="${escapeHtml(post.media)}">`;
+      }
+    }
+
+    div.innerHTML = `
+      <div class="post-head">
+        <div class="avatar">
+          ${escapeHtml(
+            (post.author || "U").charAt(0)
+          )}
+        </div>
+
+        <div>
+          <b>${escapeHtml(post.author)}</b><br>
+          <small>${new Date(post.createdAt).toLocaleString()}</small>
+        </div>
+      </div>
+
+      <p>${escapeHtml(post.content)}</p>
+
+      ${mediaHtml}
+
+      <div class="post-actions">
+        <button onclick="likePost('${post.id}')">❤️ Like</button>
+        <button onclick="commentPost('${post.id}')">💬 Comment</button>
+        <button onclick="sharePost('${post.id}')">↗ Share</button>
+      </div>
+    `;
+
+    feed.appendChild(div);
+  });
+}
+
+/* =========================================================
+   CREATE POST
+========================================================= */
+
+let selectedMedia = "";
+
+function previewMedia(event){
+
+  const file =
+    event.target.files[0];
+
+  if(!file)return;
+
+  const reader =
+    new FileReader();
+
+  reader.onload = e=>{
+
+    selectedMedia =
+      e.target.result;
+
+    $("mediaPreview").innerHTML =
+      file.type.startsWith("video")
+      ?
+      `<video src="${selectedMedia}"
+              style="max-width:100%;max-height:250px"
+              controls></video>`
+      :
+      `<img src="${selectedMedia}"
+            style="max-width:100%;max-height:250px;border-radius:12px">`;
+  };
+
+  reader.readAsDataURL(file);
+}
+
+async function createPost(){
+
+  const content =
+    $("postText").value.trim();
+
+  const file =
+    $("mediaInput").files[0];
+
+  let type = "text";
+
+  if(file){
+    type =
+      file.type.startsWith("video")
+      ? "video"
+      : "image";
+  }
+
+  if(!content && !selectedMedia){
+    toast("Post লিখুন অথবা ছবি/ভিডিও দিন");
+    return;
+  }
+
+  const res =
+    await fetch("/api/posts",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        authorId:currentUser.id,
+        author:currentUser.name,
+        content,
+        type,
+        media:selectedMedia,
+        privacy:"public"
+      })
+    });
+
+  const data = await res.json();
+
+  if(data.success){
+
+    $("postText").value = "";
+    $("mediaInput").value = "";
+    $("mediaPreview").innerHTML = "";
+    selectedMedia = "";
+
+    toast("Post হয়েছে 🎉");
+  }else{
+    toast(data.message || "Post হয়নি");
+  }
+}
+
+function likePost(id){
+  toast("❤️ Like");
+}
+
+function commentPost(id){
+
+  const text =
+    prompt("Comment লিখুন");
+
+  if(text){
+    toast("Comment করা হয়েছে 💬");
+  }
+}
+
+function sharePost(id){
+  toast("Post Share করা হয়েছে ↗");
+}
+
+/* =========================================================
+   MESSENGER
+========================================================= */
+
+function openMessenger(){
+
+  const q =
+    prompt(
+      "যাকে Message করতে চান তার নাম বা নম্বর লিখুন:"
     );
 
-    scrollMessages();
+  if(!q)return;
 
+  searchForChatUser(q);
+}
+
+async function searchForChatUser(q){
+
+  const res =
+    await fetch(
+      "/api/users?q="+
+      encodeURIComponent(q)
+    );
+
+  const data =
+    await res.json();
+
+  const user =
+    data.users.find(
+      u =>
+        String(u.id) !==
+        String(currentUser.id)
+    );
+
+  if(!user){
+    toast("User পাওয়া যায়নি");
+    return;
   }
-);
 
+  openChat(user.id);
+}
+
+async function openChat(userId){
+
+  closeModal("profileModal");
+
+  const res =
+    await fetch("/api/users/"+userId);
+
+  const data =
+    await res.json();
+
+  if(!data.success){
+    toast("User পাওয়া যায়নি");
+    return;
+  }
+
+  currentChatUser =
+    data.user;
+
+  $("chatName").textContent =
+    currentChatUser.name;
+
+  $("chatAvatar").textContent =
+    currentChatUser.name
+      .charAt(0)
+      .toUpperCase();
+
+  $("chatStatus").textContent =
+    currentChatUser.online
+    ? "🟢 Online"
+    : "Offline";
+
+  $("messages").innerHTML = "";
+
+  $("chatModal").classList.remove("hidden");
+
+  socket.emit("message:history",{
+    userA:currentUser.id,
+    userB:currentChatUser.id
+  });
+}
+
+function sendMessage(){
+
+  if(!currentChatUser)return;
+
+  const input =
+    $("messageInput");
+
+  const text =
+    input.value.trim();
+
+  if(!text)return;
+
+  socket.emit("message:send",{
+    senderId:currentUser.id,
+    senderName:currentUser.name,
+    receiverId:currentChatUser.id,
+    text,
+    type:"text"
+  });
+
+  input.value = "";
+}
 
 function renderMessage(message){
-
-  const box =
-    document.getElementById("messages");
 
   const div =
     document.createElement("div");
 
   div.className =
-    "bubble " +
+    "msg " +
     (
-      message.senderId === currentUser.id
-        ? "mine"
-        : "theirs"
+      String(message.senderId) ===
+      String(currentUser.id)
+      ? "mine"
+      : ""
     );
 
-  div.innerHTML =
-    esc(message.text)
-      .replace(/\n/g,"<br>");
+  div.textContent =
+    message.text;
 
-  box.appendChild(div);
+  $("messages").appendChild(div);
 
+  $("messages").scrollTop =
+    $("messages").scrollHeight;
 }
 
-
-function sendMessage(){
-
-  if(!selectedUser){
-
-    toast("আগে একজন User নির্বাচন করুন");
-
-    return;
-  }
-
-  const input =
-    document.getElementById("messageInput");
-
-  const text =
-    input.value.trim();
-
-  if(!text) return;
-
-  socket.emit(
-    "message:send",
-    {
-      senderId:
-        currentUser.id,
-
-      senderName:
-        currentUser.name,
-
-      receiverId:
-        selectedUser.id,
-
-      text,
-
-      type:"text"
-    }
-  );
-
-  input.value = "";
-
-}
-
-
-socket.on(
-  "message:new",
-  message => {
-
-    if(!selectedUser) return;
-
-    const valid =
-      (
-        message.senderId === currentUser.id &&
-        message.receiverId === selectedUser.id
-      ) ||
-      (
-        message.senderId === selectedUser.id &&
-        message.receiverId === currentUser.id
-      );
-
-    if(!valid) return;
-
-    renderMessage(message);
-
-    scrollMessages();
-
-  }
-);
-
-
-function scrollMessages(){
-
-  const box =
-    document.getElementById("messages");
-
-  box.scrollTop =
-    box.scrollHeight;
-
-}
-
-
-/* =========================
-   ONLINE STATUS
-========================= */
-
-socket.on(
-  "user:status",
-  data => {
-
-    if(
-      selectedUser &&
-      (
-        data.userId === selectedUser.id ||
-        data.userId === selectedUser.phone
-      )
-    ){
-
-      selectedUser.online =
-        data.online;
-
-      updateChatStatus(
-        selectedUser
-      );
-
-    }
-
-  }
-);
-
-
-function updateChatStatus(user){
-
-  document
-    .getElementById("chatStatus")
-    .textContent =
-      user.online
-        ? "🟢 Online"
-        : "⚪ Offline";
-
-}
-
-
-/* =========================
+/* =========================================================
    TYPING
-========================= */
+========================================================= */
 
 let typingTimer;
 
 function typingStart(){
 
-  if(!selectedUser) return;
+  if(!currentChatUser)return;
 
-  socket.emit(
-    "typing:start",
-    {
-      receiverId:
-        selectedUser.id,
-
-      senderName:
-        currentUser.name
-    }
-  );
+  socket.emit("typing:start",{
+    receiverId:currentChatUser.id,
+    senderName:currentUser.name
+  });
 
   clearTimeout(typingTimer);
 
   typingTimer =
-    setTimeout(
-      () => {
+    setTimeout(()=>{
+      socket.emit("typing:stop",{
+        receiverId:currentChatUser.id
+      });
+    },1000);
+}
 
-        socket.emit(
-          "typing:stop",
-          {
-            receiverId:
-              selectedUser.id
-          }
-        );
+/* =========================================================
+   SOCKET EVENTS
+========================================================= */
 
-      },
-      1000
+socket.on("message:history",messages=>{
+
+  $("messages").innerHTML = "";
+
+  messages.forEach(renderMessage);
+});
+
+socket.on("message:new",message=>{
+
+  if(
+    currentChatUser &&
+    (
+      String(message.senderId) ===
+      String(currentChatUser.id)
+      ||
+      String(message.receiverId) ===
+      String(currentChatUser.id)
+    )
+  ){
+    renderMessage(message);
+  }
+
+  if(
+    String(message.receiverId) ===
+    String(currentUser?.id)
+  ){
+    toast("💬 নতুন Message এসেছে");
+  }
+});
+
+socket.on("post:created",post=>{
+
+  loadFeed();
+
+});
+
+socket.on("post:deleted",()=>{
+  loadFeed();
+});
+
+socket.on("user:status",data=>{
+
+  if(
+    currentChatUser &&
+    String(data.userId) ===
+    String(currentChatUser.id)
+  ){
+    $("chatStatus").textContent =
+      data.online
+      ? "🟢 Online"
+      : "Offline";
+  }
+});
+
+socket.on("typing:start",data=>{
+
+  if(currentChatUser){
+    $("chatStatus").textContent =
+      "✍️ typing...";
+  }
+});
+
+socket.on("typing:stop",()=>{
+
+  if(currentChatUser){
+    $("chatStatus").textContent =
+      currentChatUser.online
+      ? "🟢 Online"
+      : "Offline";
+  }
+});
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+async function openNotifications(){
+
+  const res =
+    await fetch(
+      "/api/notifications/"+
+      currentUser.id
     );
 
-}
+  const data =
+    await res.json();
 
+  const box =
+    $("notificationList");
 
-socket.on(
-  "typing:start",
-  data => {
+  box.innerHTML = "";
 
-    if(selectedUser){
+  if(!data.notifications.length){
+    box.innerHTML =
+      "<p>কোনো Notification নেই</p>";
+  }
 
-      document
-        .getElementById("chatStatus")
-        .textContent =
-          data.senderName +
-          " typing...";
+  data.notifications.forEach(n=>{
 
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "notification";
+
+    let text = "";
+
+    if(n.type === "friend_request"){
+      text =
+        `👥 ${escapeHtml(n.fromUserName)}
+        আপনাকে Friend Request দিয়েছে`;
+    }
+    else if(n.type === "friend_accepted"){
+      text =
+        `✅ ${escapeHtml(n.fromUserName)}
+        আপনার Friend Request গ্রহণ করেছে`;
+    }
+    else if(n.type === "follow"){
+      text =
+        `❤️ ${escapeHtml(n.fromUserName)}
+        আপনাকে Follow করেছে`;
+    }
+    else{
+      text = "🔔 নতুন Notification";
     }
 
-  }
-);
+    div.innerHTML =
+      `<div>${text}</div>
+       <small>${new Date(n.createdAt).toLocaleString()}</small>`;
 
+    box.appendChild(div);
+  });
 
-socket.on(
-  "typing:stop",
-  () => {
-
-    if(selectedUser)
-      updateChatStatus(selectedUser);
-
-  }
-);
-
-
-/* =========================
-   AI
-========================= */
-
-async function askAI(){
-
-  const input =
-    document.getElementById("aiInput");
-
-  const answer =
-    document.getElementById("aiAnswer");
-
-  const question =
-    input.value.trim();
-
-  if(!question){
-
-    toast("প্রশ্ন লিখুন");
-
-    return;
-  }
-
-  answer.classList.remove("hidden");
-
-  answer.textContent =
-    "🤖 AI ভাবছে...";
-
-  try{
-
-    const response =
-      await fetch(
-        "/api/ai",
-        {
-          method:"POST",
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-          body:JSON.stringify({
-            message:question
-          })
-        }
-      );
-
-    const data =
-      await response.json();
-
-    answer.textContent =
-      data.answer ||
-      data.message ||
-      "কোনো উত্তর পাওয়া যায়নি।";
-
-  }catch(e){
-
-    answer.textContent =
-      "AI server connection নেই।";
-
-  }
-
+  $("notificationModal")
+    .classList.remove("hidden");
 }
 
+socket.on("notification:new",n=>{
 
-/* =========================
-   WEBRTC CALL
-========================= */
+  toast(
+    "🔔 "+n.fromUserName+
+    " থেকে নতুন Notification"
+  );
+});
 
-function rtcConfig(){
+/* =========================================================
+   FRIENDS / FOLLOWERS
+========================================================= */
 
-  return {
-
-    iceServers:[
-
-      {
-        urls:
-          "stun:stun.l.google.com:19302"
-      },
-
-      {
-        urls:
-          "stun:stun1.l.google.com:19302"
-      }
-
-    ]
-
-  };
-
+function showFriends(){
+  toast("Friends system চালু আছে 👥");
 }
 
+function showFollowers(){
+  toast("Followers system চালু আছে ❤️");
+}
+
+/* =========================================================
+   CALL — WEBRTC
+========================================================= */
 
 async function createPeer(){
 
-  peer =
+  peerConnection =
     new RTCPeerConnection(
-      rtcConfig()
+      iceServers
     );
 
-  peer.onicecandidate =
-    event => {
+  peerConnection.onicecandidate =
+    event=>{
 
-      if(
-        event.candidate &&
-        selectedUser
-      ){
+      if(event.candidate &&
+         currentCallUser){
 
-        socket.emit(
-          "call:ice",
-          {
-            targetUserId:
-              selectedUser.id,
-
-            candidate:
-              event.candidate
-          }
-        );
-
+        socket.emit("call:ice",{
+          targetUserId:
+            currentCallUser.id,
+          candidate:
+            event.candidate
+        });
       }
-
     };
 
+  peerConnection.ontrack =
+    event=>{
 
-  peer.ontrack =
-    event => {
-
-      const video =
-        document.getElementById(
-          "remoteVideo"
-        );
-
-      video.srcObject =
+      $("remoteVideo").srcObject =
         event.streams[0];
-
     };
 
+  if(localStream){
 
-  peer.onconnectionstatechange =
-    () => {
+    localStream
+      .getTracks()
+      .forEach(track=>{
+        peerConnection
+          .addTrack(
+            track,
+            localStream
+          );
+      });
+  }
 
-      if(
-        peer.connectionState ===
-        "connected"
-      ){
-
-        document
-          .getElementById("callStatus")
-          .textContent =
-            "Connected";
-
-      }
-
-      if(
-        ["failed","disconnected","closed"]
-        .includes(peer.connectionState)
-      ){
-
-        endCall(false);
-
-      }
-
-    };
-
+  return peerConnection;
 }
-
-
-async function getMedia(type){
-
-  return navigator.mediaDevices.getUserMedia({
-
-    audio:true,
-
-    video:
-      type === "video"
-
-  });
-
-}
-
-
-function showCallScreen(name){
-
-  const screen =
-    document.getElementById(
-      "callScreen"
-    );
-
-  screen.classList.add("active");
-
-  document
-    .getElementById("callAvatar")
-    .textContent =
-      name
-        .charAt(0)
-        .toUpperCase();
-
-  document
-    .getElementById("callName")
-    .textContent =
-      name;
-
-}
-
 
 async function startCall(type){
 
-  if(!selectedUser){
-
-    toast("আগে একজন User নির্বাচন করুন");
-
+  if(!currentChatUser){
+    toast("আগে একজন User-এর Chat খুলুন");
     return;
   }
 
-  if(!window.isSecureContext){
+  currentCallType =
+    type;
 
-    toast("Call-এর জন্য HTTPS দরকার");
-
-    return;
-  }
-
-  callType = type;
+  currentCallUser =
+    currentChatUser;
 
   try{
 
     localStream =
-      await getMedia(type);
+      await navigator.mediaDevices
+      .getUserMedia({
+        audio:true,
+        video:type === "video"
+      });
 
-    showCallScreen(
-      selectedUser.name
-    );
-
-    document
-      .getElementById("callStatus")
-      .textContent =
-        "Calling...";
-
-    const localVideo =
-      document.getElementById(
-        "localVideo"
-      );
-
-    localVideo.srcObject =
+    $("localVideo").srcObject =
       localStream;
 
-    localVideo.style.display =
-      type === "video"
-        ? "block"
-        : "none";
+    $("callScreen")
+      .classList.remove("hidden");
 
-    document
-      .getElementById("remoteVideo")
-      .style.display =
+    $("callTitle").textContent =
+      `${currentCallUser.name}-কে ${
         type === "video"
-          ? "block"
-          : "none";
+        ? "Video"
+        : "Voice"
+      } Call`;
+
+    $("callStatus").textContent =
+      "Calling...";
 
     await createPeer();
 
-    localStream
-      .getTracks()
-      .forEach(
-        track =>
-          peer.addTrack(
-            track,
-            localStream
-          )
+    const offer =
+      await peerConnection
+        .createOffer();
+
+    await peerConnection
+      .setLocalDescription(
+        offer
       );
 
-    const offer =
-      await peer.createOffer();
-
-    await peer.setLocalDescription(
+    socket.emit("call:offer",{
+      receiverId:
+        currentCallUser.id,
+      callerId:
+        currentUser.id,
+      callerName:
+        currentUser.name,
+      callType:type,
       offer
-    );
-
-    socket.emit(
-      "call:offer",
-      {
-        receiverId:
-          selectedUser.id,
-
-        callerId:
-          currentUser.id,
-
-        callerName:
-          currentUser.name,
-
-        callType:type,
-
-        offer
-      }
-    );
+    });
 
   }catch(error){
 
     console.error(error);
 
     toast(
-      "Camera/Microphone permission দিন"
+      "Microphone/Camera permission দিন"
     );
-
-    endCall(false);
-
   }
-
 }
-
 
 /* INCOMING CALL */
 
-socket.on(
-  "call:offer",
-  async data => {
+socket.on("call:offer",async data=>{
 
-    pendingOffer = data;
+  const accept =
+    confirm(
+      `${data.callerName} আপনাকে ${
+        data.callType === "video"
+        ? "Video"
+        : "Voice"
+      } Call দিচ্ছে। গ্রহণ করবেন?`
+    );
 
-    const accept =
-      confirm(
-        data.callerName +
-        " আপনাকে " +
-        (
-          data.callType === "video"
-            ? "Video"
-            : "Audio"
-        ) +
-        " Call দিচ্ছে।\n\nAccept?"
-      );
+  if(!accept){
 
-    if(!accept){
+    socket.emit("call:reject",{
+      callerId:data.callerId,
+      receiverId:currentUser.id
+    });
 
-      socket.emit(
-        "call:reject",
-        {
-          callerId:
-            data.callerId,
+    return;
+  }
 
-          receiverId:
-            currentUser.id
-        }
-      );
+  currentCallType =
+    data.callType;
 
-      pendingOffer = null;
+  currentCallUser = {
+    id:data.callerId,
+    name:data.callerName
+  };
 
-      return;
-    }
+  try{
 
-    callType =
-      data.callType;
+    localStream =
+      await navigator.mediaDevices
+      .getUserMedia({
+        audio:true,
+        video:data.callType === "video"
+      });
 
-    selectedUser = {
-      id:data.callerId,
-      name:data.callerName
-    };
+    $("localVideo").srcObject =
+      localStream;
 
-    try{
+    $("callScreen")
+      .classList.remove("hidden");
 
-      localStream =
-        await getMedia(
-          callType
-        );
+    $("callTitle").textContent =
+      `${data.callerName} Calling...`;
 
-      showCallScreen(
-        data.callerName
-      );
+    $("callStatus").textContent =
+      "Connected";
 
-      const localVideo =
-        document.getElementById(
-          "localVideo"
-        );
+    await createPeer();
 
-      localVideo.srcObject =
-        localStream;
-
-      localVideo.style.display =
-        callType === "video"
-          ? "block"
-          : "none";
-
-      document
-        .getElementById("remoteVideo")
-        .style.display =
-          callType === "video"
-            ? "block"
-            : "none";
-
-      await createPeer();
-
-      localStream
-        .getTracks()
-        .forEach(
-          track =>
-            peer.addTrack(
-              track,
-              localStream
-            )
-        );
-
-      await peer.setRemoteDescription(
+    await peerConnection
+      .setRemoteDescription(
         new RTCSessionDescription(
           data.offer
         )
       );
 
-      const answer =
-        await peer.createAnswer();
+    const answer =
+      await peerConnection
+        .createAnswer();
 
-      await peer.setLocalDescription(
+    await peerConnection
+      .setLocalDescription(
         answer
       );
 
-      socket.emit(
-        "call:answer",
-        {
-          callerId:
-            data.callerId,
+    socket.emit("call:answer",{
+      callerId:data.callerId,
+      receiverId:currentUser.id,
+      answer
+    });
 
-          receiverId:
-            currentUser.id,
+  }catch(error){
 
-          answer
-        }
-      );
+    console.error(error);
 
-    }catch(error){
-
-      console.error(error);
-
-      toast(
-        "Call permission দেওয়া হয়নি"
-      );
-
-      endCall(false);
-
-    }
-
+    toast(
+      "Camera/Microphone চালু করা যায়নি"
+    );
   }
-);
-
+});
 
 /* ANSWER */
 
-socket.on(
-  "call:answer",
-  async data => {
+socket.on("call:answer",async data=>{
 
-    if(
-      !peer ||
-      !data.answer
-    ) return;
+  if(!peerConnection)return;
 
-    await peer.setRemoteDescription(
+  await peerConnection
+    .setRemoteDescription(
       new RTCSessionDescription(
         data.answer
       )
     );
 
-    document
-      .getElementById("callStatus")
-      .textContent =
-        "Connected";
-
-  }
-);
-
+  $("callStatus").textContent =
+    "Connected";
+});
 
 /* ICE */
 
-socket.on(
-  "call:ice",
-  async data => {
+socket.on("call:ice",async data=>{
 
-    try{
+  try{
 
-      if(
-        peer &&
-        data.candidate
-      ){
+    if(
+      peerConnection &&
+      data.candidate
+    ){
 
-        await peer.addIceCandidate(
+      await peerConnection
+        .addIceCandidate(
           new RTCIceCandidate(
             data.candidate
           )
         );
+    }
 
-      }
-
-    }catch(e){}
-
+  }catch(error){
+    console.error(error);
   }
-);
-
+});
 
 /* REJECT */
 
-socket.on(
-  "call:rejected",
-  () => {
-
-    toast("Call rejected");
-
-    endCall(false);
-
-  }
-);
-
+socket.on("call:rejected",()=>{
+  toast("Call গ্রহণ করা হয়নি");
+  endCall(false);
+});
 
 /* END */
 
-socket.on(
-  "call:ended",
-  () => {
+socket.on("call:ended",()=>{
+  toast("Call শেষ হয়েছে");
+  endCall(false);
+});
 
-    toast("Call ended");
-
-    endCall(false);
-
-  }
-);
-
+/* =========================================================
+   CALL CONTROLS
+========================================================= */
 
 function toggleMute(){
 
-  if(!localStream) return;
+  if(!localStream)return;
 
   const track =
-    localStream.getAudioTracks()[0];
+    localStream
+      .getAudioTracks()[0];
 
-  if(!track) return;
+  if(track){
+    track.enabled =
+      !track.enabled;
 
-  track.enabled =
-    !track.enabled;
-
-  document
-    .getElementById("muteBtn")
-    .textContent =
+    toast(
       track.enabled
-        ? "🎤"
-        : "🔇";
-
+      ? "Microphone ON"
+      : "Microphone OFF"
+    );
+  }
 }
-
 
 function toggleCamera(){
 
-  if(!localStream) return;
+  if(!localStream)return;
 
   const track =
-    localStream.getVideoTracks()[0];
+    localStream
+      .getVideoTracks()[0];
 
-  if(!track) return;
+  if(track){
+    track.enabled =
+      !track.enabled;
 
-  track.enabled =
-    !track.enabled;
-
-  document
-    .getElementById("cameraBtn")
-    .textContent =
+    toast(
       track.enabled
-        ? "📹"
-        : "🚫";
-
+      ? "Camera ON"
+      : "Camera OFF"
+    );
+  }
 }
 
-
-function endCall(send=true){
+function endCall(sendSignal=true){
 
   if(
-    send &&
-    selectedUser
+    sendSignal &&
+    currentCallUser
   ){
 
-    socket.emit(
-      "call:end",
-      {
-        targetUserId:
-          selectedUser.id,
-
-        from:
-          currentUser.id
-      }
-    );
-
+    socket.emit("call:end",{
+      targetUserId:
+        currentCallUser.id,
+      from:
+        currentUser.id
+    });
   }
 
-  if(peer){
+  if(peerConnection){
 
-    peer.close();
-
-    peer = null;
-
+    peerConnection.close();
+    peerConnection = null;
   }
 
   if(localStream){
 
     localStream
       .getTracks()
-      .forEach(
-        track =>
-          track.stop()
-      );
+      .forEach(track=>track.stop());
 
     localStream = null;
-
   }
 
-  document
-    .getElementById("localVideo")
-    .srcObject = null;
+  $("localVideo").srcObject = null;
+  $("remoteVideo").srcObject = null;
 
-  document
-    .getElementById("remoteVideo")
-    .srcObject = null;
+  $("callScreen")
+    .classList.add("hidden");
 
-  document
-    .getElementById("callScreen")
-    .classList.remove("active");
-
+  currentCallUser = null;
 }
 
+/* =========================================================
+   CLOSE SEARCH WHEN CLICKING OUTSIDE
+========================================================= */
 
-/* =========================
-   SOCKET CONNECT
-========================= */
+document.addEventListener("click",event=>{
 
-socket.on(
-  "connect",
-  () => {
+  const search =
+    document.querySelector(".search");
 
-    if(currentUser){
-
-      socket.emit(
-        "user:online",
-        {
-          userId:
-            currentUser.id,
-
-          phone:
-            currentUser.phone,
-
-          name:
-            currentUser.name
-        }
-      );
-
-    }
-
+  if(
+    search &&
+    !search.contains(event.target)
+  ){
+    $("searchResults")
+      .classList.add("hidden");
   }
-);
+});
+
+/* =========================================================
+   SOCKET CONNECT
+========================================================= */
+
+socket.on("connect",()=>{
+
+  console.log(
+    "Socket connected:",
+    socket.id
+  );
+
+  if(currentUser){
+
+    socket.emit("user:online",{
+      userId:currentUser.id,
+      name:currentUser.name,
+      phone:currentUser.phone
+    });
+  }
+});
+
+socket.on("disconnect",()=>{
+
+  console.log("Socket disconnected");
+});
 
 </script>
 
 </body>
- </html>
+  </html>
