@@ -4,1403 +4,1075 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#7c3aed">
-<title>ShakibYS Premium</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>ShakibYS Premium</title>
 
 <style>
 :root{
- --primary:#7c3aed;
- --primary2:#ec4899;
- --blue:#2563eb;
- --bg:#f6f7fb;
- --card:#ffffff;
- --text:#171725;
- --muted:#7b7d8a;
- --line:#e9e9f0;
- --soft:#f3efff;
- --green:#22c55e;
- --shadow:0 8px 30px rgba(35,25,70,.07);
+  --primary:#7c3aed;
+  --pink:#ec4899;
+  --blue:#2563eb;
+  --bg:#f6f7fb;
+  --card:#fff;
+  --text:#171725;
+  --muted:#777989;
+  --line:#e7e7ef;
+  --soft:#f1edff;
+  --green:#22c55e;
 }
 
 *{
- box-sizing:border-box;
+  box-sizing:border-box;
 }
 
 html{
- scroll-behavior:smooth;
+  scroll-behavior:smooth;
 }
 
 body{
- margin:0;
- background:var(--bg);
- color:var(--text);
- font-family:"Inter","Hind Siliguri",sans-serif;
- -webkit-font-smoothing:antialiased;
-}
-
-body.bn{
- font-family:"Hind Siliguri","Inter",sans-serif;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,"Noto Sans Bengali",sans-serif;
 }
 
 body.dark{
- --bg:#080a12;
- --card:#11131d;
- --text:#f7f7fb;
- --muted:#a4a6b3;
- --line:#272a38;
- --soft:#211a38;
- --shadow:0 10px 35px rgba(0,0,0,.25);
+  --bg:#080a12;
+  --card:#11131d;
+  --text:#fff;
+  --muted:#a5a7b4;
+  --line:#292c39;
+  --soft:#211a38;
 }
 
 button,
 input,
 textarea,
 select{
- font-family:inherit;
+  font-family:inherit;
 }
 
 button{
- border:0;
- cursor:pointer;
+  border:0;
+  cursor:pointer;
 }
 
 .app{
- width:100%;
- max-width:1080px;
- margin:auto;
- padding-bottom:92px;
+  width:100%;
+  max-width:1080px;
+  margin:auto;
+  padding-bottom:90px;
 }
 
 /* HEADER */
 
 .topbar{
- position:sticky;
- top:0;
- z-index:100;
- background:rgba(255,255,255,.88);
- backdrop-filter:blur(20px);
- border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
 }
 
 .dark .topbar{
- background:rgba(17,19,29,.88);
+  background:rgba(17,19,29,.94);
 }
 
 .header{
- min-height:72px;
- padding:12px 18px;
- display:flex;
- align-items:center;
- gap:12px;
+  min-height:70px;
+  padding:10px 15px;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .brand{
- display:flex;
- align-items:center;
- gap:9px;
- min-width:max-content;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
 .brand-logo{
- width:42px;
- height:42px;
- border-radius:14px;
- display:grid;
- place-items:center;
- color:white;
- font-weight:800;
- font-size:19px;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
- box-shadow:0 7px 20px rgba(124,58,237,.28);
+  width:43px;
+  height:43px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:20px;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
 }
 
 .brand-name{
- font-size:21px;
- font-weight:800;
- letter-spacing:-.7px;
+  font-size:21px;
+  font-weight:900;
 }
 
 .brand-name span{
- background:linear-gradient(90deg,var(--primary),var(--primary2));
- -webkit-background-clip:text;
- color:transparent;
+  color:var(--pink);
 }
 
 .searchbox{
- flex:1;
- max-width:470px;
- margin:auto;
- position:relative;
+  flex:1;
+  max-width:480px;
+  margin:auto;
+  position:relative;
 }
 
 .searchbox input{
- width:100%;
- height:45px;
- border:1px solid transparent;
- background:var(--bg);
- border-radius:15px;
- padding:0 45px 0 17px;
- color:var(--text);
- outline:none;
- transition:.2s;
-}
-
-.searchbox input:focus{
- border-color:var(--primary);
- background:var(--card);
- box-shadow:0 0 0 4px rgba(124,58,237,.08);
+  width:100%;
+  height:44px;
+  border:0;
+  outline:0;
+  border-radius:15px;
+  padding:0 45px 0 15px;
+  background:var(--bg);
+  color:var(--text);
 }
 
 .search-icon{
- position:absolute;
- right:13px;
- top:12px;
- color:var(--muted);
+  position:absolute;
+  right:14px;
+  top:11px;
+  color:var(--muted);
 }
 
 .header-actions{
- display:flex;
- gap:7px;
+  display:flex;
+  gap:6px;
 }
 
 .circle-btn{
- width:43px;
- height:43px;
- border-radius:14px;
- background:var(--bg);
- color:var(--text);
- display:grid;
- place-items:center;
- font-size:19px;
- transition:.18s;
-}
-
-.circle-btn:hover{
- transform:translateY(-2px);
- background:var(--soft);
- color:var(--primary);
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:var(--bg);
+  color:var(--text);
+  font-size:18px;
 }
 
 /* MAIN */
 
 main{
- padding:18px;
+  padding:16px;
 }
 
 .page{
- display:none;
- animation:pageIn .22s ease;
+  display:none;
 }
 
 .page.active{
- display:block;
-}
-
-@keyframes pageIn{
- from{
-  opacity:0;
-  transform:translateY(6px);
- }
- to{
-  opacity:1;
-  transform:translateY(0);
- }
+  display:block;
 }
 
 /* WELCOME */
 
 .welcome{
- border-radius:24px;
- padding:23px;
- color:white;
- background:
- radial-gradient(circle at 90% 20%,rgba(255,255,255,.22),transparent 28%),
- linear-gradient(135deg,#5b21b6,#7c3aed 48%,#ec4899);
- box-shadow:0 15px 40px rgba(124,58,237,.18);
- margin-bottom:17px;
+  padding:22px;
+  border-radius:23px;
+  color:#fff;
+  margin-bottom:15px;
+  background:
+    radial-gradient(circle at 90% 20%,rgba(255,255,255,.2),transparent 30%),
+    linear-gradient(135deg,#5b21b6,#7c3aed,#ec4899);
 }
 
 .welcome h1{
- margin:0 0 5px;
- font-size:26px;
- letter-spacing:-.8px;
+  margin:0 0 5px;
+  font-size:25px;
 }
 
 .welcome p{
- margin:0;
- opacity:.86;
- font-size:14px;
+  margin:0;
+  opacity:.9;
 }
 
 .quick-ai{
- margin-top:17px;
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:12px 14px;
- border-radius:16px;
- background:rgba(255,255,255,.14);
- border:1px solid rgba(255,255,255,.18);
+  margin-top:16px;
+  padding:12px;
+  border-radius:16px;
+  background:rgba(255,255,255,.15);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
 .quick-ai button{
- padding:9px 13px;
- border-radius:12px;
- color:#5b21b6;
- background:#fff;
- font-weight:700;
+  padding:9px 14px;
+  border-radius:12px;
+  color:var(--primary);
+  background:#fff;
+  font-weight:bold;
 }
 
 /* CARD */
 
 .card{
- background:var(--card);
- border:1px solid var(--line);
- border-radius:21px;
- padding:16px;
- margin-bottom:15px;
- box-shadow:var(--shadow);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:16px;
+  margin-bottom:15px;
 }
 
+/* CREATE */
+
+.create-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.avatar{
+  width:45px;
+  height:45px;
+  flex:none;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
+}
+
+.create-input{
+  flex:1;
+  height:45px;
+  border-radius:15px;
+  background:var(--bg);
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  cursor:pointer;
+}
+
+.create-actions{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  margin-top:12px;
+}
+
+.create-actions button{
+  padding:10px 5px;
+  border-radius:13px;
+  background:var(--bg);
+  color:var(--muted);
+}
+
+/* SECTION */
+
 .section-head{
- display:flex;
- align-items:center;
- justify-content:space-between;
- margin:20px 2px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:20px 2px 12px;
 }
 
 .section-head h2{
- margin:0;
- font-size:19px;
- letter-spacing:-.4px;
+  margin:0;
+  font-size:19px;
 }
 
 .section-head button{
- color:var(--primary);
- background:none;
- font-weight:700;
+  background:none;
+  color:var(--primary);
+  font-weight:bold;
 }
 
 /* STORIES */
 
 .story-scroll{
- display:flex;
- gap:12px;
- overflow-x:auto;
- padding:2px 1px 5px;
- scrollbar-width:none;
-}
-
-.story-scroll::-webkit-scrollbar{
- display:none;
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
 }
 
 .story{
- min-width:92px;
- width:92px;
- height:138px;
- border-radius:18px;
- padding:8px;
- display:flex;
- align-items:flex-end;
- color:#fff;
- position:relative;
- overflow:hidden;
- background:linear-gradient(160deg,#111827,#7c3aed,#ec4899);
- box-shadow:0 7px 18px rgba(0,0,0,.12);
-}
-
-.story:before{
- content:"";
- position:absolute;
- inset:0;
- background:linear-gradient(transparent 35%,rgba(0,0,0,.7));
-}
-
-.story-content{
- position:relative;
- z-index:1;
- font-size:12px;
- font-weight:700;
+  min-width:90px;
+  height:135px;
+  border-radius:17px;
+  color:#fff;
+  padding:8px;
+  display:flex;
+  align-items:flex-end;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(160deg,#111827,#7c3aed,#ec4899);
 }
 
 .story-avatar{
- position:absolute;
- top:8px;
- left:8px;
- width:34px;
- height:34px;
- border:3px solid #fff;
- border-radius:50%;
- display:grid;
- place-items:center;
- background:linear-gradient(135deg,#7c3aed,#ec4899);
- font-size:13px;
- z-index:2;
+  position:absolute;
+  top:8px;
+  left:8px;
+  width:34px;
+  height:34px;
+  border:3px solid #fff;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--primary);
+}
+
+.story-content{
+  font-size:12px;
+  font-weight:bold;
 }
 
 .story.add{
- background:var(--soft);
- color:var(--primary);
- align-items:center;
- justify-content:center;
- text-align:center;
-}
-
-.story.add:before{
- display:none;
+  background:var(--soft);
+  color:var(--primary);
+  align-items:center;
+  justify-content:center;
+  text-align:center;
 }
 
 .add-icon{
- width:40px;
- height:40px;
- border-radius:50%;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
- color:#fff;
- display:grid;
- place-items:center;
- font-size:23px;
- margin:auto auto 8px;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  margin:auto auto 8px;
+  color:#fff;
+  font-size:24px;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
 }
 
-/* CREATE POST */
-
-.create-row{
- display:flex;
- gap:11px;
- align-items:center;
-}
-
-.avatar{
- width:46px;
- height:46px;
- flex:none;
- border-radius:50%;
- display:grid;
- place-items:center;
- color:#fff;
- font-weight:800;
- background:linear-gradient(135deg,#7c3aed,#ec4899);
- box-shadow:0 5px 14px rgba(124,58,237,.18);
-}
-
-.create-input{
- flex:1;
- height:46px;
- border-radius:15px;
- background:var(--bg);
- border:1px solid var(--line);
- color:var(--muted);
- display:flex;
- align-items:center;
- padding:0 15px;
- cursor:pointer;
-}
-
-.create-actions{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:7px;
- margin-top:13px;
-}
-
-.create-actions button{
- background:var(--bg);
- border-radius:13px;
- padding:10px 5px;
- color:var(--muted);
- font-size:12px;
- font-weight:600;
-}
-
-.create-actions button:first-letter{
- font-size:17px;
-}
-
-/* FEED FILTER */
+/* FILTER */
 
 .filter-scroll{
- display:flex;
- gap:8px;
- overflow:auto;
- scrollbar-width:none;
-}
-
-.filter-scroll::-webkit-scrollbar{
- display:none;
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
 }
 
 .filter{
- white-space:nowrap;
- padding:9px 14px;
- border-radius:12px;
- background:var(--card);
- border:1px solid var(--line);
- color:var(--muted);
- font-size:13px;
- font-weight:600;
+  white-space:nowrap;
+  padding:9px 14px;
+  border-radius:12px;
+  background:var(--card);
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-weight:bold;
 }
 
 .filter.active{
- color:#fff;
- border-color:transparent;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:#fff;
+  border:0;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
 }
 
 /* POST */
 
 .post-head{
- display:flex;
- align-items:center;
- gap:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .post-user{
- flex:1;
+  flex:1;
 }
 
 .post-user strong{
- display:block;
- font-size:14px;
+  display:block;
+  font-size:14px;
 }
 
 .post-user span{
- color:var(--muted);
- font-size:11px;
+  color:var(--muted);
+  font-size:11px;
 }
 
-.more{
- background:none;
- color:var(--muted);
- font-size:21px;
+.verified{
+  display:inline-grid;
+  place-items:center;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#2563eb;
+  color:#fff;
+  font-size:10px;
 }
 
 .post-text{
- line-height:1.65;
- font-size:14px;
- margin:15px 0;
+  margin:15px 0;
+  line-height:1.6;
 }
 
 .post-image{
- height:280px;
- border-radius:17px;
- display:grid;
- place-items:center;
- color:#fff;
- font-size:55px;
- background:
- linear-gradient(135deg,#312e81,#7c3aed,#db2777);
+  height:280px;
+  border-radius:17px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-size:60px;
+  background:linear-gradient(135deg,#312e81,#7c3aed,#db2777);
 }
 
 .post-stats{
- display:flex;
- justify-content:space-between;
- color:var(--muted);
- font-size:12px;
- padding:11px 3px;
- border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:12px;
+  padding:11px 2px;
+  border-bottom:1px solid var(--line);
 }
 
 .post-actions{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:4px;
- padding-top:7px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
 }
 
 .post-actions button{
- background:none;
- color:var(--muted);
- border-radius:10px;
- padding:9px 2px;
- font-size:12px;
-}
-
-.post-actions button:hover{
- background:var(--soft);
- color:var(--primary);
+  padding:10px 2px;
+  background:none;
+  color:var(--muted);
 }
 
 /* REELS */
 
 .reel{
- position:relative;
- overflow:hidden;
- border-radius:22px;
- background:#111;
- color:#fff;
- margin-bottom:15px;
+  position:relative;
+  overflow:hidden;
+  border-radius:22px;
+  background:#111;
+  color:#fff;
+  margin-top:13px;
 }
 
 .reel-screen{
- height:570px;
- display:grid;
- place-items:center;
- font-size:65px;
- background:
- radial-gradient(circle at 30% 20%,#ec4899,transparent 25%),
- radial-gradient(circle at 70% 70%,#7c3aed,transparent 30%),
- linear-gradient(145deg,#020617,#312e81,#be185d);
+  height:570px;
+  display:grid;
+  place-items:center;
+  font-size:65px;
+  background:
+    radial-gradient(circle at 30% 20%,#ec4899,transparent 25%),
+    radial-gradient(circle at 70% 70%,#7c3aed,transparent 30%),
+    linear-gradient(145deg,#020617,#312e81,#be185d);
 }
 
 .reel-info{
- position:absolute;
- left:15px;
- right:15px;
- bottom:14px;
-}
-
-.reel-info strong{
- font-size:15px;
+  position:absolute;
+  left:15px;
+  bottom:15px;
+  right:15px;
 }
 
 .reel-info p{
- font-size:13px;
- margin:7px 0;
- opacity:.9;
+  font-size:13px;
 }
 
 .reel-side{
- position:absolute;
- right:12px;
- bottom:95px;
- display:grid;
- gap:10px;
+  position:absolute;
+  right:12px;
+  bottom:90px;
+  display:grid;
+  gap:10px;
 }
 
 .reel-side button{
- width:48px;
- height:48px;
- border-radius:16px;
- background:rgba(0,0,0,.38);
- backdrop-filter:blur(10px);
- color:#fff;
- font-size:20px;
+  width:48px;
+  height:48px;
+  border-radius:15px;
+  background:rgba(0,0,0,.4);
+  color:#fff;
 }
 
-.reel-side small{
- display:block;
- font-size:9px;
- margin-top:-5px;
-}
-
-/* MESSENGER */
+/* CHAT */
 
 .chat-list{
- display:grid;
- gap:7px;
+  display:grid;
+  gap:8px;
 }
 
 .chat-item{
- display:flex;
- align-items:center;
- gap:11px;
- padding:13px;
- border-radius:16px;
- background:var(--card);
- border:1px solid var(--line);
- cursor:pointer;
- transition:.18s;
-}
-
-.chat-item:hover{
- background:var(--soft);
- transform:translateX(2px);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px;
+  border-radius:16px;
+  background:var(--card);
+  border:1px solid var(--line);
 }
 
 .chat-info{
- flex:1;
- min-width:0;
+  flex:1;
 }
 
 .chat-info strong{
- display:block;
+  display:block;
 }
 
 .chat-info span{
- display:block;
- margin-top:3px;
- color:var(--muted);
- font-size:12px;
- white-space:nowrap;
- overflow:hidden;
- text-overflow:ellipsis;
-}
-
-.online{
- width:10px;
- height:10px;
- border-radius:50%;
- background:var(--green);
- border:2px solid var(--card);
- margin-left:-18px;
- margin-top:29px;
-}
-
-.chat-page{
- height:calc(100vh - 120px);
- min-height:500px;
- display:flex;
- flex-direction:column;
+  color:var(--muted);
+  font-size:12px;
 }
 
 .messages{
- flex:1;
- overflow:auto;
- padding:10px 3px;
+  min-height:400px;
+  max-height:55vh;
+  overflow:auto;
+  padding:10px 0;
 }
 
 .message{
- max-width:75%;
- width:max-content;
- padding:10px 13px;
- border-radius:17px;
- background:var(--card);
- border:1px solid var(--line);
- margin:6px 0;
- font-size:13px;
+  max-width:75%;
+  width:max-content;
+  padding:10px 13px;
+  border-radius:17px;
+  background:var(--bg);
+  margin:6px 0;
 }
 
 .message.mine{
- margin-left:auto;
- color:#fff;
- border:0;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
- border-bottom-right-radius:5px;
-}
-
-.message:not(.mine){
- border-bottom-left-radius:5px;
+  margin-left:auto;
+  color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
 }
 
 .chat-compose{
- display:flex;
- gap:7px;
- padding-top:10px;
+  display:flex;
+  gap:7px;
 }
 
 .chat-compose input{
- flex:1;
- border:1px solid var(--line);
- background:var(--bg);
- color:var(--text);
- border-radius:15px;
- padding:12px;
- outline:none;
+  flex:1;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  background:var(--bg);
+  color:var(--text);
+  outline:none;
 }
 
 .send{
- width:45px;
- border-radius:14px;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
- color:#fff;
- font-size:18px;
+  width:46px;
+  border-radius:14px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
 }
 
 /* MARKET */
 
 .market-banner{
- padding:20px;
- border-radius:21px;
- color:#fff;
- background:
- radial-gradient(circle at 85% 15%,rgba(255,255,255,.22),transparent 25%),
- linear-gradient(135deg,#0f766e,#0891b2,#2563eb);
+  padding:20px;
+  border-radius:21px;
+  color:#fff;
+  background:linear-gradient(135deg,#0f766e,#0891b2,#2563eb);
 }
 
 .market-banner h2{
- margin:0 0 5px;
+  margin:0;
 }
 
 .market-search{
- margin-top:14px;
- display:flex;
- gap:7px;
+  display:flex;
+  gap:7px;
+  margin-top:14px;
 }
 
 .market-search input{
- flex:1;
- border:0;
- border-radius:14px;
- padding:12px;
- outline:none;
-}
-
-.market-search button{
- width:46px;
- border-radius:14px;
- background:#fff;
- color:#2563eb;
+  flex:1;
+  padding:12px;
+  border:0;
+  border-radius:14px;
+  outline:0;
 }
 
 .product-grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:12px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
 }
 
 .product{
- overflow:hidden;
- background:var(--card);
- border:1px solid var(--line);
- border-radius:18px;
- box-shadow:var(--shadow);
+  overflow:hidden;
+  border-radius:18px;
+  background:var(--card);
+  border:1px solid var(--line);
 }
 
 .product-photo{
- height:165px;
- display:grid;
- place-items:center;
- font-size:54px;
- background:linear-gradient(135deg,#e0e7ff,#fce7f3);
+  height:150px;
+  display:grid;
+  place-items:center;
+  font-size:55px;
+  background:linear-gradient(135deg,#e0e7ff,#fce7f3);
 }
 
 .product-body{
- padding:12px;
+  padding:12px;
 }
 
 .product-title{
- font-size:13px;
- font-weight:700;
- line-height:1.35;
+  font-weight:bold;
 }
 
 .product-price{
- margin-top:6px;
- color:var(--primary);
- font-size:18px;
- font-weight:800;
+  color:var(--primary);
+  font-size:18px;
+  font-weight:900;
+  margin:6px 0;
 }
 
-.rating{
- color:#f59e0b;
- font-size:11px;
- margin:5px 0;
-}
-
-.buy{
- width:100%;
- padding:10px;
- border-radius:12px;
- color:#fff;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
- font-weight:700;
-}
-
-/* AI */
-
-.ai-card{
- background:
- radial-gradient(circle at 90% 10%,rgba(236,72,153,.25),transparent 30%),
- linear-gradient(135deg,#18122b,#27144c);
- color:#fff;
- border:0;
-}
-
-.ai-orb{
- width:70px;
- height:70px;
- border-radius:24px;
- display:grid;
- place-items:center;
- font-size:34px;
- background:linear-gradient(135deg,#8b5cf6,#ec4899);
- box-shadow:0 10px 30px rgba(236,72,153,.3);
-}
-
-.ai-input{
- display:flex;
- gap:7px;
- margin-top:15px;
-}
-
-.ai-input input{
- flex:1;
- padding:12px;
- border:0;
- border-radius:14px;
- outline:none;
-}
-
-.ai-input button{
- width:47px;
- border-radius:14px;
- background:#fff;
- color:#7c3aed;
+.buy,
+.primary{
+  width:100%;
+  padding:11px;
+  border-radius:13px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
+  font-weight:bold;
 }
 
 /* PROFILE */
 
 .cover{
- height:180px;
- border-radius:22px 22px 0 0;
- background:
- radial-gradient(circle at 20% 20%,#ec4899,transparent 25%),
- linear-gradient(135deg,#312e81,#7c3aed,#db2777);
- position:relative;
+  height:180px;
+  border-radius:22px 22px 0 0;
+  background:linear-gradient(135deg,#312e81,#7c3aed,#db2777);
 }
 
 .profile-card{
- margin-top:-40px;
- position:relative;
- text-align:center;
+  margin-top:-45px;
+  position:relative;
+  text-align:center;
 }
 
 .profile-avatar{
- width:92px;
- height:92px;
- border:5px solid var(--card);
- margin:auto;
- border-radius:50%;
- display:grid;
- place-items:center;
- color:#fff;
- font-size:30px;
- font-weight:800;
- background:linear-gradient(135deg,#7c3aed,#ec4899);
+  width:92px;
+  height:92px;
+  margin:auto;
+  border:5px solid var(--card);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-size:30px;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
 }
 
 .profile-name{
- font-size:21px;
- font-weight:800;
- margin-top:10px;
-}
-
-.verified{
- display:inline-grid;
- place-items:center;
- width:18px;
- height:18px;
- border-radius:50%;
- background:#2563eb;
- color:#fff;
- font-size:10px;
- margin-left:3px;
+  font-size:21px;
+  font-weight:900;
+  margin-top:10px;
 }
 
 .profile-bio{
- color:var(--muted);
- font-size:13px;
- margin:6px auto 15px;
- max-width:500px;
+  color:var(--muted);
+  font-size:13px;
+  margin:7px auto 15px;
+  max-width:500px;
 }
 
 .profile-stats{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- border-top:1px solid var(--line);
- border-bottom:1px solid var(--line);
- padding:13px 0;
- margin-top:14px;
-}
-
-.profile-stats strong{
- display:block;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:13px 0;
+  margin-top:15px;
 }
 
 .profile-stats span{
- color:var(--muted);
- font-size:11px;
+  display:block;
+  color:var(--muted);
+  font-size:11px;
 }
 
 .profile-menu{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:10px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
 }
 
 .profile-menu button{
- padding:17px 7px;
- border-radius:16px;
- background:var(--card);
- border:1px solid var(--line);
- color:var(--text);
- font-weight:600;
+  padding:15px 5px;
+  border-radius:15px;
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--text);
 }
 
 .profile-menu i{
- display:block;
- font-style:normal;
- font-size:24px;
- margin-bottom:6px;
+  display:block;
+  font-size:24px;
+  margin-bottom:5px;
+  font-style:normal;
 }
 
-/* SETTINGS */
+/* AI */
 
-.setting{
- display:flex;
- align-items:center;
- gap:13px;
- padding:14px 2px;
- border-bottom:1px solid var(--line);
+.ai-card{
+  padding:20px;
+  border-radius:20px;
+  color:#fff;
+  background:linear-gradient(135deg,#18122b,#27144c);
 }
 
-.setting:last-child{
- border-bottom:0;
+.ai-input{
+  display:flex;
+  gap:7px;
+  margin-top:15px;
 }
 
-.setting-icon{
- width:42px;
- height:42px;
- border-radius:13px;
- background:var(--soft);
- display:grid;
- place-items:center;
- font-size:18px;
+.ai-input input{
+  flex:1;
+  border:0;
+  border-radius:14px;
+  padding:12px;
+  outline:0;
 }
 
-.setting-info{
- flex:1;
-}
-
-.setting-info strong{
- display:block;
- font-size:14px;
-}
-
-.setting-info span{
- display:block;
- color:var(--muted);
- font-size:11px;
- margin-top:3px;
-}
-
-.chevron{
- color:var(--muted);
-}
-
-/* BOTTOM */
-
-.bottom-nav{
- position:fixed;
- left:50%;
- transform:translateX(-50%);
- bottom:0;
- z-index:120;
- width:100%;
- max-width:1080px;
- height:76px;
- padding:8px 10px;
- background:rgba(255,255,255,.92);
- backdrop-filter:blur(20px);
- border-top:1px solid var(--line);
- display:grid;
- grid-template-columns:repeat(5,1fr);
-}
-
-.dark .bottom-nav{
- background:rgba(17,19,29,.94);
-}
-
-.nav-btn{
- background:none;
- color:var(--muted);
- border-radius:15px;
- font-size:10px;
- font-weight:600;
- display:flex;
- flex-direction:column;
- align-items:center;
- justify-content:center;
- gap:3px;
-}
-
-.nav-icon{
- font-size:22px;
- line-height:1;
-}
-
-.nav-btn.active{
- color:var(--primary);
- background:var(--soft);
+.ai-input button{
+  width:45px;
+  border-radius:14px;
+  color:var(--primary);
 }
 
 /* MODAL */
 
 .modal{
- position:fixed;
- inset:0;
- z-index:300;
- background:rgba(0,0,0,.6);
- backdrop-filter:blur(5px);
- display:none;
- align-items:flex-end;
+  position:fixed;
+  inset:0;
+  z-index:300;
+  display:none;
+  align-items:flex-end;
+  background:rgba(0,0,0,.6);
 }
 
 .modal.show{
- display:flex;
+  display:flex;
 }
 
 .sheet{
- width:100%;
- max-width:620px;
- max-height:90vh;
- overflow:auto;
- margin:auto auto 0;
- padding:20px;
- border-radius:25px 25px 0 0;
- background:var(--card);
- color:var(--text);
- animation:sheetIn .2s ease;
-}
-
-@keyframes sheetIn{
- from{
-  transform:translateY(100%);
- }
- to{
-  transform:translateY(0);
- }
+  width:100%;
+  max-width:620px;
+  max-height:90vh;
+  overflow:auto;
+  margin:auto auto 0;
+  padding:20px;
+  border-radius:25px 25px 0 0;
+  background:var(--card);
+  color:var(--text);
 }
 
 .close{
- float:right;
- width:36px;
- height:36px;
- border-radius:50%;
- background:var(--bg);
- color:var(--text);
- font-size:22px;
-}
-
-.sheet h2{
- margin-top:3px;
+  float:right;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:var(--bg);
+  color:var(--text);
+  font-size:22px;
 }
 
 .form{
- display:grid;
- gap:10px;
- clear:both;
+  display:grid;
+  gap:10px;
+  clear:both;
 }
 
 .form input,
 .form textarea,
 .form select{
- width:100%;
- padding:12px;
- border:1px solid var(--line);
- border-radius:13px;
- background:var(--bg);
- color:var(--text);
- outline:none;
-}
-
-.primary{
- padding:12px 17px;
- border-radius:13px;
- color:#fff;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
- font-weight:700;
+  width:100%;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--bg);
+  color:var(--text);
+  outline:none;
 }
 
 .secondary{
- padding:12px 17px;
- border-radius:13px;
- background:var(--soft);
- color:var(--primary);
- font-weight:700;
-}
-
-.menu-grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:9px;
- clear:both;
-}
-
-.menu-grid button{
- padding:15px;
- border-radius:15px;
- background:var(--bg);
- color:var(--text);
- text-align:left;
- border:1px solid var(--line);
-}
-
-.menu-grid b{
- display:block;
- font-size:22px;
- margin-bottom:7px;
+  padding:11px 15px;
+  border-radius:13px;
+  background:var(--soft);
+  color:var(--primary);
+  font-weight:bold;
 }
 
 /* LOGIN */
 
 .login{
- position:fixed;
- inset:0;
- z-index:500;
- display:flex;
- align-items:center;
- justify-content:center;
- padding:20px;
- background:
- radial-gradient(circle at 10% 20%,rgba(124,58,237,.18),transparent 30%),
- radial-gradient(circle at 90% 80%,rgba(236,72,153,.18),transparent 30%),
- var(--bg);
+  position:fixed;
+  inset:0;
+  z-index:500;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:var(--bg);
 }
 
 .login-card{
- width:100%;
- max-width:410px;
- padding:30px;
- border-radius:28px;
- background:var(--card);
- border:1px solid var(--line);
- box-shadow:0 25px 80px rgba(40,20,80,.14);
- text-align:center;
+  width:100%;
+  max-width:410px;
+  padding:30px;
+  text-align:center;
+  border-radius:28px;
+  background:var(--card);
+  border:1px solid var(--line);
 }
 
 .login-logo{
- width:76px;
- height:76px;
- margin:auto;
- border-radius:24px;
- display:grid;
- place-items:center;
- color:#fff;
- font-size:32px;
- font-weight:900;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
- box-shadow:0 15px 35px rgba(124,58,237,.25);
+  width:75px;
+  height:75px;
+  margin:auto;
+  border-radius:24px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-size:32px;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
 }
 
 .login-title{
- font-size:29px;
- font-weight:900;
- margin:15px 0 3px;
+  font-size:29px;
+  font-weight:900;
+  margin:15px 0 5px;
 }
 
 .login-sub{
- color:var(--muted);
- font-size:13px;
- margin-bottom:22px;
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:20px;
 }
 
 .login-input{
- width:100%;
- padding:14px;
- border:1px solid var(--line);
- border-radius:15px;
- background:var(--bg);
- color:var(--text);
- outline:none;
- margin-bottom:9px;
+  width:100%;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:var(--bg);
+  color:var(--text);
+  outline:none;
+  margin-bottom:9px;
 }
 
 .login-button{
- width:100%;
- padding:14px;
- border-radius:15px;
- color:#fff;
- background:linear-gradient(135deg,var(--primary),var(--primary2));
- font-weight:800;
+  width:100%;
+  padding:14px;
+  border-radius:15px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--pink));
+  font-weight:900;
+}
+
+/* BOTTOM */
+
+.bottom-nav{
+  position:fixed;
+  left:50%;
+  bottom:0;
+  transform:translateX(-50%);
+  z-index:120;
+  width:100%;
+  max-width:1080px;
+  height:75px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  padding:7px;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);
+}
+
+.dark .bottom-nav{
+  background:rgba(17,19,29,.95);
+}
+
+.nav-btn{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  border-radius:14px;
+  background:none;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:bold;
+}
+
+.nav-btn.active{
+  color:var(--primary);
+  background:var(--soft);
+}
+
+.nav-icon{
+  font-size:22px;
 }
 
 /* TOAST */
 
 .toast{
- position:fixed;
- left:50%;
- bottom:95px;
- transform:translate(-50%,20px);
- z-index:1000;
- background:#171725;
- color:#fff;
- padding:11px 17px;
- border-radius:13px;
- font-size:13px;
- opacity:0;
- pointer-events:none;
- transition:.25s;
- box-shadow:0 10px 30px rgba(0,0,0,.2);
+  position:fixed;
+  left:50%;
+  bottom:95px;
+  transform:translateX(-50%);
+  z-index:1000;
+  padding:11px 17px;
+  border-radius:13px;
+  color:#fff;
+  background:#171725;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
 }
 
 .toast.show{
- opacity:1;
- transform:translate(-50%,0);
+  opacity:1;
 }
 
-/* RESPONSIVE */
+/* MOBILE */
 
 @media(max-width:650px){
 
- .header{
-  padding:9px 11px;
-  gap:7px;
- }
+  .brand-name{
+    display:none;
+  }
 
- .brand-name{
-  display:none;
- }
+  main{
+    padding:12px;
+  }
 
- .brand-logo{
-  width:40px;
-  height:40px;
- }
+  .header{
+    padding:9px 10px;
+  }
 
- .searchbox{
-  max-width:none;
- }
+  .header-actions .circle-btn:first-child{
+    display:none;
+  }
 
- .header-actions .circle-btn:nth-child(1){
-  display:none;
- }
+  .reel-screen{
+    height:540px;
+  }
 
- main{
-  padding:13px;
- }
+  .product-photo{
+    height:135px;
+  }
 
- .welcome{
-  padding:19px;
- }
-
- .welcome h1{
-  font-size:23px;
- }
-
- .create-actions{
-  grid-template-columns:repeat(4,1fr);
- }
-
- .create-actions button{
-  font-size:10px;
- }
-
- .reel-screen{
-  height:540px;
- }
-
- .product-grid{
-  gap:9px;
- }
-
- .product-photo{
-  height:135px;
- }
-
- .profile-stats{
-  grid-template-columns:repeat(4,1fr);
- }
-
- .profile-menu{
-  grid-template-columns:repeat(3,1fr);
- }
-
- .profile-menu button{
-  font-size:11px;
- }
-
-}
-
-@media(min-width:800px){
-
- .bottom-nav{
-  border:1px solid var(--line);
-  border-radius:22px 22px 0 0;
- }
-
+  .profile-menu button{
+    font-size:11px;
+  }
 }
 </style>
 </head>
 
-<body class="bn">
+<body>
 
 <!-- LOGIN -->
 
 <div id="loginScreen" class="login">
 
- <div class="login-card">
+  <div class="login-card">
 
-  <div class="login-logo">S</div>
+    <div class="login-logo">S</div>
 
-  <div class="login-title">ShakibYS</div>
+    <div class="login-title">
+      ShakibYS
+    </div>
 
-  <div class="login-sub">
-   Social • Messenger • Reels • Marketplace • AI
+    <div class="login-sub">
+      Social • Messenger • Reels • Marketplace • AI
+    </div>
+
+    <input
+      id="loginName"
+      class="login-input"
+      placeholder="আপনার নাম লিখুন"
+    >
+
+    <button
+      class="login-button"
+      onclick="login()"
+    >
+      🚀 ShakibYS-এ প্রবেশ করুন
+    </button>
+
+    <p style="color:var(--muted);font-size:11px">
+      Premium Social Super App
+    </p>
+
   </div>
-
-  <input
-   id="loginName"
-   class="login-input"
-   placeholder="আপনার নাম লিখুন"
-  >
-
-  <button
-   class="login-button"
-   onclick="login()"
-  >
-   🚀 ShakibYS-এ প্রবেশ করুন
-  </button>
-
-  <p
-   style="color:var(--muted);font-size:11px;margin-top:15px"
-  >
-   Premium Social Super App
-  </p>
-
- </div>
 
 </div>
 
 
 <!-- APP -->
 
-<div id="app" class="app" style="display:none">
+<div
+  id="app"
+  class="app"
+  style="display:none"
+>
 
 <header class="topbar">
 
- <div class="header">
+  <div class="header">
 
-  <div class="brand">
+    <div class="brand">
 
-   <div class="brand-logo">S</div>
+      <div class="brand-logo">
+        S
+      </div>
 
-   <div class="brand-name">
-    Shakib<span>YS</span>
-   </div>
+      <div class="brand-name">
+        Shakib<span>YS</span>
+      </div>
+
+    </div>
+
+
+    <div class="searchbox">
+
+      <input
+        placeholder="মানুষ, পোস্ট, রিলস, পণ্য খুঁজুন..."
+        oninput="globalSearch(this.value)"
+      >
+
+      <span class="search-icon">
+        ⌕
+      </span>
+
+    </div>
+
+
+    <div class="header-actions">
+
+      <button
+        class="circle-btn"
+        onclick="openPage('search')"
+      >
+        🔎
+      </button>
+
+      <button
+        class="circle-btn"
+        onclick="openNotifications()"
+      >
+        🔔
+      </button>
+
+      <button
+        class="circle-btn"
+        onclick="openSettings()"
+      >
+        ⚙️
+      </button>
+
+    </div>
 
   </div>
-
-  <div class="searchbox">
-
-   <input
-    placeholder="মানুষ, পোস্ট, রিলস, পণ্য খুঁজুন..."
-    oninput="globalSearch(this.value)"
-   >
-
-   <span class="search-icon">⌕</span>
-
-  </div>
-
-  <div class="header-actions">
-
-   <button
-    class="circle-btn"
-    onclick="openPage('search')"
-   >
-    🔎
-   </button>
-
-   <button
-    class="circle-btn"
-    onclick="openNotifications()"
-   >
-    🔔
-   </button>
-
-   <button
-    class="circle-btn"
-    onclick="openSettings()"
-   >
-    ⚙️
-   </button>
-
-  </div>
-
- </div>
 
 </header>
 
@@ -1409,923 +1081,908 @@ main{
 
 <!-- HOME -->
 
-<section id="home" class="page active">
+<section
+  id="home"
+  class="page active"
+>
 
- <div class="welcome">
+  <div class="welcome">
 
-  <h1 id="welcomeText">
-   আসসালামু আলাইকুম 👋
-  </h1>
+    <h1 id="welcomeText">
+      স্বাগতম 👋
+    </h1>
 
-  <p>
-   Welcome to your ShakibYS Premium world
-  </p>
+    <p>
+      Welcome to your ShakibYS Premium world
+    </p>
 
-  <div class="quick-ai">
+    <div class="quick-ai">
 
-   <div>
-    🤖 <b>ShakibYS AI</b>
-    <br>
-    <small>আপনার জন্য সবসময় প্রস্তুত</small>
-   </div>
+      <div>
+        🤖 <b>ShakibYS AI</b>
+        <br>
+        <small>
+          আপনার জন্য সবসময় প্রস্তুত
+        </small>
+      </div>
 
-   <button onclick="openAI()">
-    Ask AI
-   </button>
+      <button onclick="openAI()">
+        Ask AI
+      </button>
 
-  </div>
-
- </div>
-
-
- <div class="card">
-
-  <div class="create-row">
-
-   <div class="avatar" id="userAvatar">
-    S
-   </div>
-
-   <div
-    class="create-input"
-    onclick="createPost()"
-   >
-    সবার সাথে কিছু শেয়ার করুন...
-   </div>
+    </div>
 
   </div>
 
-  <div class="create-actions">
 
-   <button onclick="createPost()">
-    📷<br>Photo
-   </button>
+  <div class="card">
 
-   <button onclick="createStory()">
-    📖<br>Story
-   </button>
+    <div class="create-row">
 
-   <button onclick="createPoll()">
-    📊<br>Poll
-   </button>
+      <div
+        id="userAvatar"
+        class="avatar"
+      >
+        S
+      </div>
 
-   <button onclick="createMusic()">
-    🎵<br>Music
-   </button>
+      <div
+        class="create-input"
+        onclick="createPost()"
+      >
+        সবার সাথে কিছু শেয়ার করুন...
+      </div>
 
-  </div>
-
- </div>
-
-
- <div class="section-head">
-
-  <h2>📖 Stories</h2>
-
-  <button onclick="createStory()">
-   Add
-  </button>
-
- </div>
+    </div>
 
 
- <div class="story-scroll">
+    <div class="create-actions">
 
-  <div class="story add" onclick="createStory()">
+      <button onclick="createPost()">
+        📷<br>
+        Photo
+      </button>
 
-   <div>
+      <button onclick="createStory()">
+        📖<br>
+        Story
+      </button>
 
-    <div class="add-icon">+</div>
+      <button onclick="createPoll()">
+        📊<br>
+        Poll
+      </button>
 
-    <b>Add Story</b>
+      <button onclick="createMusic()">
+        🎵<br>
+        Music
+      </button>
 
-   </div>
-
-  </div>
-
-  <div class="story">
-
-   <div class="story-avatar">S</div>
-
-   <div class="story-content">
-    Your Story
-   </div>
-
-  </div>
-
-  <div class="story">
-
-   <div class="story-avatar">A</div>
-
-   <div class="story-content">
-    Alex
-   </div>
-
-  </div>
-
-  <div class="story">
-
-   <div class="story-avatar">R</div>
-
-   <div class="story-content">
-    Reels
-   </div>
-
-  </div>
-
-  <div class="story">
-
-   <div class="story-avatar">M</div>
-
-   <div class="story-content">
-    Market
-   </div>
-
-  </div>
-
- </div>
-
-
- <div class="section-head">
-
-  <h2>🔥 Feed</h2>
-
-  <button onclick="toast('Feed refreshed')">
-   Refresh
-  </button>
-
- </div>
-
-
- <div class="filter-scroll">
-
-  <button class="filter active">
-   🔥 Trending
-  </button>
-
-  <button class="filter">
-   🆕 Latest
-  </button>
-
-  <button class="filter">
-   👥 Friends
-  </button>
-
-  <button class="filter">
-   📌 Saved
-  </button>
-
-  <button class="filter">
-   📊 Polls
-  </button>
-
- </div>
-
-
- <article class="card" style="margin-top:12px">
-
-  <div class="post-head">
-
-   <div class="avatar">
-    S
-   </div>
-
-   <div class="post-user">
-
-    <strong id="postAuthor">
-     Mohammad Nazmus Sakib
-     <span class="verified">✓</span>
-    </strong>
-
-    <span>
-     Just now • 🌐 Public
-    </span>
-
-   </div>
-
-   <button class="more">
-    ⋯
-   </button>
+    </div>
 
   </div>
 
 
-  <div class="post-text">
+  <div class="section-head">
 
-   স্বাগতম ShakibYS Premium Social Super App-এ! ❤️
-   <br>
-   এখানে Social, Messenger, Reels,
-   Marketplace এবং AI—সব এক জায়গায়।
+    <h2>
+      📖 Stories
+    </h2>
 
-  </div>
-
-
-  <div class="post-image">
-   ✨
-  </div>
-
-
-  <div class="post-stats">
-
-   <span>❤️ 1.2K Likes</span>
-
-   <span>💬 86 Comments • 🔄 42 Shares</span>
+    <button onclick="createStory()">
+      Add
+    </button>
 
   </div>
 
 
-  <div class="post-actions">
+  <div class="story-scroll">
 
-   <button onclick="like(this)">
-    ❤️ Like
-   </button>
+    <div
+      class="story add"
+      onclick="createStory()"
+    >
 
-   <button onclick="comment()">
-    💬 Comment
-   </button>
+      <div>
 
-   <button onclick="sharePost()">
-    🔄 Share
-   </button>
+        <div class="add-icon">
+          +
+        </div>
 
-   <button onclick="savePost(this)">
-    🔖 Save
-   </button>
+        <b>
+          Add Story
+        </b>
+
+      </div>
+
+    </div>
+
+
+    <div class="story">
+
+      <div
+        class="story-avatar"
+        id="storyAvatar"
+      >
+        S
+      </div>
+
+      <div
+        class="story-content"
+        id="storyName"
+      >
+        Your Story
+      </div>
+
+    </div>
+
+
+    <div class="story">
+
+      <div class="story-avatar">
+        A
+      </div>
+
+      <div class="story-content">
+        Alex
+      </div>
+
+    </div>
+
+
+    <div class="story">
+
+      <div class="story-avatar">
+        R
+      </div>
+
+      <div class="story-content">
+        Reels
+      </div>
+
+    </div>
+
+
+    <div class="story">
+
+      <div class="story-avatar">
+        M
+      </div>
+
+      <div class="story-content">
+        Market
+      </div>
+
+    </div>
 
   </div>
 
- </article>
+
+  <div class="section-head">
+
+    <h2>
+      🔥 Feed
+    </h2>
+
+    <button onclick="toast('Feed refreshed')">
+      Refresh
+    </button>
+
+  </div>
+
+
+  <div class="filter-scroll">
+
+    <button class="filter active">
+      🔥 Trending
+    </button>
+
+    <button class="filter">
+      🆕 Latest
+    </button>
+
+    <button class="filter">
+      👥 Friends
+    </button>
+
+    <button class="filter">
+      📌 Saved
+    </button>
+
+    <button class="filter">
+      📊 Polls
+    </button>
+
+  </div>
+
+
+  <article
+    class="card"
+    style="margin-top:12px"
+  >
+
+    <div class="post-head">
+
+      <div
+        id="postAvatar"
+        class="avatar"
+      >
+        S
+      </div>
+
+      <div class="post-user">
+
+        <!-- এখানে শুধু অ্যাকাউন্টের নাম থাকবে -->
+
+        <strong id="postAuthor">
+          User
+        </strong>
+
+        <span>
+          Just now • 🌐 Public
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="post-text">
+
+      স্বাগতম ShakibYS Premium Social Super App-এ! ❤️
+      <br>
+      এখানে Social, Messenger, Reels,
+      Marketplace এবং AI—সব এক জায়গায়।
+
+    </div>
+
+
+    <div class="post-image">
+      ✨
+    </div>
+
+
+    <div class="post-stats">
+
+      <span>
+        ❤️ 1.2K Likes
+      </span>
+
+      <span>
+        💬 86 Comments • 🔄 42 Shares
+      </span>
+
+    </div>
+
+
+    <div class="post-actions">
+
+      <button onclick="like(this)">
+        ❤️ Like
+      </button>
+
+      <button onclick="comment()">
+        💬 Comment
+      </button>
+
+      <button onclick="sharePost()">
+        🔄 Share
+      </button>
+
+      <button onclick="savePost(this)">
+        🔖 Save
+      </button>
+
+    </div>
+
+  </article>
 
 </section>
 
 
 <!-- REELS -->
 
-<section id="reels" class="page">
+<section
+  id="reels"
+  class="page"
+>
 
- <div class="section-head">
+  <div class="section-head">
 
-  <h2>🎬 Reels</h2>
+    <h2>
+      🎬 Reels
+    </h2>
 
-  <button onclick="createReel()">
-   ＋ Create
-  </button>
-
- </div>
-
-
- <div class="filter-scroll">
-
-  <button class="filter active">
-   🔥 Trending
-  </button>
-
-  <button class="filter">
-   👥 Following
-  </button>
-
-  <button class="filter">
-   🎵 Music
-  </button>
-
-  <button class="filter">
-   🔖 Saved
-  </button>
-
-  <button class="filter">
-   🕘 History
-  </button>
-
- </div>
-
-
- <div class="reel" style="margin-top:13px">
-
-  <div class="reel-screen">
-   ▶
-  </div>
-
-  <div class="reel-side">
-
-   <button onclick="like(this)">
-    ❤️
-    <small>1.8K</small>
-   </button>
-
-   <button onclick="comment()">
-    💬
-    <small>120</small>
-   </button>
-
-   <button onclick="sharePost()">
-    🔄
-    <small>Share</small>
-   </button>
-
-   <button>
-    🔖
-    <small>Save</small>
-   </button>
+    <button onclick="createReel()">
+      ＋ Create
+    </button>
 
   </div>
 
-  <div class="reel-info">
 
-   <strong>
-    @ShakibYS
-    <span class="verified">✓</span>
-   </strong>
+  <div class="filter-scroll">
 
-   <p>
-    Welcome to ShakibYS 🔥
-    #ShakibYS #Bangladesh #Reels
-   </p>
+    <button class="filter active">
+      🔥 Trending
+    </button>
 
-   <small>🎵 Original audio</small>
+    <button class="filter">
+      👥 Following
+    </button>
+
+    <button class="filter">
+      🎵 Music
+    </button>
+
+    <button class="filter">
+      🔖 Saved
+    </button>
 
   </div>
 
- </div>
+
+  <div class="reel">
+
+    <div class="reel-screen">
+      ▶
+    </div>
+
+    <div class="reel-side">
+
+      <button onclick="like(this)">
+        ❤️
+        <small>1.8K</small>
+      </button>
+
+      <button onclick="comment()">
+        💬
+        <small>120</small>
+      </button>
+
+      <button onclick="sharePost()">
+        🔄
+        <small>Share</small>
+      </button>
+
+      <button onclick="toast('Saved')">
+        🔖
+        <small>Save</small>
+      </button>
+
+    </div>
+
+    <div class="reel-info">
+
+      <strong id="reelAuthor">
+        User
+      </strong>
+
+      <p>
+        Welcome to ShakibYS 🔥
+        #ShakibYS #Bangladesh #Reels
+      </p>
+
+      <small>
+        🎵 Original audio
+      </small>
+
+    </div>
+
+  </div>
 
 </section>
 
 
 <!-- MESSENGER -->
 
-<section id="messenger" class="page">
+<section
+  id="messenger"
+  class="page"
+>
 
- <div class="section-head">
+  <div class="section-head">
 
-  <h2>💬 Messenger</h2>
+    <h2>
+      💬 Messenger
+    </h2>
 
-  <button onclick="createGroup()">
-   ＋ Group
-  </button>
-
- </div>
-
-
- <div class="card">
-
-  <div class="filter-scroll">
-
-   <button class="filter active">
-    All
-   </button>
-
-   <button class="filter">
-    Unread
-   </button>
-
-   <button class="filter">
-    Groups
-   </button>
-
-   <button class="filter">
-    Communities
-   </button>
-
-  </div>
-
- </div>
-
-
- <div class="chat-list">
-
-  <div
-   class="chat-item"
-   onclick="openChat('Global Chat')"
-  >
-
-   <div class="avatar">
-    🌐
-   </div>
-
-   <span class="online"></span>
-
-   <div class="chat-info">
-
-    <strong>Global Chat</strong>
-
-    <span>
-     Everyone is talking...
-    </span>
-
-   </div>
-
-   <small>Now</small>
+    <button onclick="createGroup()">
+      ＋ Group
+    </button>
 
   </div>
 
 
-  <div
-   class="chat-item"
-   onclick="openChat('Alex')"
-  >
+  <div class="chat-list">
 
-   <div class="avatar">
-    A
-   </div>
+    <div
+      class="chat-item"
+      onclick="openChat('Global Chat')"
+    >
 
-   <span class="online"></span>
+      <div class="avatar">
+        🌐
+      </div>
 
-   <div class="chat-info">
+      <div class="chat-info">
 
-    <strong>Alex</strong>
+        <strong>
+          Global Chat
+        </strong>
 
-    <span>
-     Typing...
-    </span>
+        <span>
+          Everyone is talking...
+        </span>
 
-   </div>
+      </div>
 
-   <small>2m</small>
+      <small>
+        Now
+      </small>
+
+    </div>
+
+
+    <div
+      class="chat-item"
+      onclick="openChat('Alex')"
+    >
+
+      <div class="avatar">
+        A
+      </div>
+
+      <div class="chat-info">
+
+        <strong>
+          Alex
+        </strong>
+
+        <span>
+          Typing...
+        </span>
+
+      </div>
+
+      <small>
+        2m
+      </small>
+
+    </div>
+
+
+    <div
+      class="chat-item"
+      onclick="openChat('Friends Group')"
+    >
+
+      <div class="avatar">
+        👥
+      </div>
+
+      <div class="chat-info">
+
+        <strong>
+          Friends Group
+        </strong>
+
+        <span>
+          You: See you tomorrow
+        </span>
+
+      </div>
+
+      <small>
+        10m
+      </small>
+
+    </div>
 
   </div>
-
-
-  <div
-   class="chat-item"
-   onclick="openChat('Friends Group')"
-  >
-
-   <div class="avatar">
-    👥
-   </div>
-
-   <div class="chat-info">
-
-    <strong>Friends Group</strong>
-
-    <span>
-     You: See you tomorrow
-    </span>
-
-   </div>
-
-   <small>10m</small>
-
-  </div>
-
-
-  <div
-   class="chat-item"
-   onclick="openChat('ShakibYS Community')"
-  >
-
-   <div class="avatar">
-    ✨
-   </div>
-
-   <div class="chat-info">
-
-    <strong>ShakibYS Community</strong>
-
-    <span>
-     New announcement
-    </span>
-
-   </div>
-
-   <small>1h</small>
-
-  </div>
-
- </div>
 
 </section>
 
 
 <!-- MARKET -->
 
-<section id="market" class="page">
+<section
+  id="market"
+  class="page"
+>
 
- <div class="market-banner">
+  <div class="market-banner">
 
-  <h2>🛒 ShakibYS Marketplace</h2>
+    <h2>
+      🛒 ShakibYS Marketplace
+    </h2>
 
-  <p>
-   Buy • Sell • Chat • Order • Track
-  </p>
+    <p>
+      Buy • Sell • Chat • Order • Track
+    </p>
 
-  <div class="market-search">
+    <div class="market-search">
 
-   <input
-    id="marketSearch"
-    placeholder="পণ্য খুঁজুন..."
-    oninput="filterProducts(this.value)"
-   >
+      <input
+        id="marketSearch"
+        placeholder="পণ্য খুঁজুন..."
+        oninput="filterProducts(this.value)"
+      >
 
-   <button>🔎</button>
+      <button>
+        🔎
+      </button>
+
+    </div>
 
   </div>
 
- </div>
 
+  <div class="section-head">
 
- <div class="section-head">
+    <h2>
+      🔥 Popular Products
+    </h2>
 
-  <h2>Categories</h2>
-
-  <button onclick="openSeller()">
-   Seller
-  </button>
-
- </div>
-
-
- <div class="filter-scroll">
-
-  <button class="filter active">All</button>
-  <button class="filter">📱 Phones</button>
-  <button class="filter">💻 Electronics</button>
-  <button class="filter">👕 Fashion</button>
-  <button class="filter">🏠 Home</button>
-  <button class="filter">🎮 Gaming</button>
-
- </div>
-
-
- <div class="section-head">
-
-  <h2>🔥 Popular Products</h2>
-
-  <button>See all</button>
-
- </div>
-
-
- <div id="productGrid" class="product-grid">
-
-
-  <div class="product">
-
-   <div class="product-photo">
-    📱
-   </div>
-
-   <div class="product-body">
-
-    <div class="product-title">
-     Premium Smartphone
-    </div>
-
-    <div class="rating">
-     ⭐ 4.8 • 245 reviews
-    </div>
-
-    <div class="product-price">
-     ৳25,000
-    </div>
-
-    <button
-     class="buy"
-     onclick="openProduct('Premium Smartphone','৳25,000')"
-    >
-     View & Buy
+    <button onclick="openSeller()">
+      Seller
     </button>
 
-   </div>
-
   </div>
 
 
-  <div class="product">
+  <div
+    id="productGrid"
+    class="product-grid"
+  >
 
-   <div class="product-photo">
-    ⌚
-   </div>
+    <div class="product">
 
-   <div class="product-body">
+      <div class="product-photo">
+        📱
+      </div>
 
-    <div class="product-title">
-     Premium Smart Watch
+      <div class="product-body">
+
+        <div class="product-title">
+          Premium Smartphone
+        </div>
+
+        <div>
+          ⭐ 4.8 • 245 reviews
+        </div>
+
+        <div class="product-price">
+          ৳25,000
+        </div>
+
+        <button
+          class="buy"
+          onclick="openProduct('Premium Smartphone','৳25,000')"
+        >
+          View & Buy
+        </button>
+
+      </div>
+
     </div>
 
-    <div class="rating">
-     ⭐ 4.7 • 120 reviews
+
+    <div class="product">
+
+      <div class="product-photo">
+        ⌚
+      </div>
+
+      <div class="product-body">
+
+        <div class="product-title">
+          Premium Smart Watch
+        </div>
+
+        <div>
+          ⭐ 4.7 • 120 reviews
+        </div>
+
+        <div class="product-price">
+          ৳3,500
+        </div>
+
+        <button
+          class="buy"
+          onclick="openProduct('Premium Smart Watch','৳3,500')"
+        >
+          View & Buy
+        </button>
+
+      </div>
+
     </div>
 
-    <div class="product-price">
-     ৳3,500
+
+    <div class="product">
+
+      <div class="product-photo">
+        🎧
+      </div>
+
+      <div class="product-body">
+
+        <div class="product-title">
+          Wireless Headphone
+        </div>
+
+        <div>
+          ⭐ 4.6 • 89 reviews
+        </div>
+
+        <div class="product-price">
+          ৳2,000
+        </div>
+
+        <button
+          class="buy"
+          onclick="openProduct('Wireless Headphone','৳2,000')"
+        >
+          View & Buy
+        </button>
+
+      </div>
+
     </div>
 
-    <button
-     class="buy"
-     onclick="openProduct('Premium Smart Watch','৳3,500')"
-    >
-     View & Buy
-    </button>
 
-   </div>
+    <div class="product">
+
+      <div class="product-photo">
+        👟
+      </div>
+
+      <div class="product-body">
+
+        <div class="product-title">
+          Premium Sneakers
+        </div>
+
+        <div>
+          ⭐ 4.9 • 310 reviews
+        </div>
+
+        <div class="product-price">
+          ৳2,800
+        </div>
+
+        <button
+          class="buy"
+          onclick="openProduct('Premium Sneakers','৳2,800')"
+        >
+          View & Buy
+        </button>
+
+      </div>
+
+    </div>
 
   </div>
-
-
-  <div class="product">
-
-   <div class="product-photo">
-    🎧
-   </div>
-
-   <div class="product-body">
-
-    <div class="product-title">
-     Wireless Headphone
-    </div>
-
-    <div class="rating">
-     ⭐ 4.6 • 89 reviews
-    </div>
-
-    <div class="product-price">
-     ৳2,000
-    </div>
-
-    <button
-     class="buy"
-     onclick="openProduct('Wireless Headphone','৳2,000')"
-    >
-     View & Buy
-    </button>
-
-   </div>
-
-  </div>
-
-
-  <div class="product">
-
-   <div class="product-photo">
-    👟
-   </div>
-
-   <div class="product-body">
-
-    <div class="product-title">
-     Premium Sneakers
-    </div>
-
-    <div class="rating">
-     ⭐ 4.9 • 310 reviews
-    </div>
-
-    <div class="product-price">
-     ৳2,800
-    </div>
-
-    <button
-     class="buy"
-     onclick="openProduct('Premium Sneakers','৳2,800')"
-    >
-     View & Buy
-    </button>
-
-   </div>
-
-  </div>
-
- </div>
-
-
- <div class="card ai-card" style="margin-top:15px">
-
-  <div class="row">
-
-   <div class="ai-orb">🤖</div>
-
-   <div>
-
-    <h3 style="margin:0">
-     ShakibYS AI Shopping
-    </h3>
-
-    <small>
-     আপনার বাজেট অনুযায়ী পণ্য খুঁজুন
-    </small>
-
-   </div>
-
-  </div>
-
-
-  <div class="ai-input">
-
-   <input
-    id="aiMarketInput"
-    placeholder="যেমন: ৫০০০ টাকায় ফোন দেখাও"
-   >
-
-   <button onclick="askMarketAI()">
-    ➤
-   </button>
-
-  </div>
-
- </div>
 
 </section>
 
 
 <!-- PROFILE -->
 
-<section id="profile" class="page">
+<section
+  id="profile"
+  class="page"
+>
 
- <div class="card" style="padding:0;overflow:hidden">
+  <div
+    class="card"
+    style="padding:0;overflow:hidden"
+  >
 
-  <div class="cover"></div>
+    <div class="cover"></div>
 
-  <div class="profile-card">
+    <div class="profile-card">
 
-   <div class="profile-avatar" id="profileAvatar">
-    S
-   </div>
-
-   <div class="profile-name">
-
-    <span id="profileName">
-     Mohammad Nazmus Sakib
-    </span>
-
-    <span class="verified">✓</span>
-
-   </div>
-
-   <div class="profile-bio">
-
-    Founder of ShakibYS • Creator •
-    Social & Digital Marketplace
-
-   </div>
-
-   <button
-    class="secondary"
-    onclick="editProfile()"
-   >
-    ✏️ Edit Profile
-   </button>
+      <div
+        id="profileAvatar"
+        class="profile-avatar"
+      >
+        S
+      </div>
 
 
-   <div class="profile-stats">
+      <!-- এখানে শুধু ইউজারের নিজের নাম -->
 
-    <div>
-     <strong>1.2K</strong>
-     <span>Friends</span>
+      <div
+        id="profileName"
+        class="profile-name"
+      >
+        User
+      </div>
+
+
+      <div class="profile-bio">
+
+        আপনার নিজের About/Bio এখানে থাকবে।
+        Edit Profile থেকে পরিবর্তন করতে পারবেন।
+
+      </div>
+
+
+      <button
+        class="secondary"
+        onclick="editProfile()"
+      >
+        ✏️ Edit Profile
+      </button>
+
+
+      <div class="profile-stats">
+
+        <div>
+          <strong>0</strong>
+          <span>Friends</span>
+        </div>
+
+        <div>
+          <strong>0</strong>
+          <span>Followers</span>
+        </div>
+
+        <div>
+          <strong>0</strong>
+          <span>Following</span>
+        </div>
+
+        <div>
+          <strong>0</strong>
+          <span>Posts</span>
+        </div>
+
+      </div>
+
     </div>
-
-    <div>
-     <strong>8.4K</strong>
-     <span>Followers</span>
-    </div>
-
-    <div>
-     <strong>120</strong>
-     <span>Following</span>
-    </div>
-
-    <div>
-     <strong>86</strong>
-     <span>Posts</span>
-    </div>
-
-   </div>
 
   </div>
 
- </div>
+
+  <div class="section-head">
+
+    <h2>
+      Profile Menu
+    </h2>
+
+  </div>
 
 
- <div class="section-head">
+  <div class="profile-menu">
 
-  <h2>Profile Menu</h2>
+    <button onclick="toast('Posts')">
+      <i>📝</i>
+      Posts
+    </button>
 
- </div>
+    <button onclick="openPage('reels')">
+      <i>🎬</i>
+      Reels
+    </button>
 
+    <button onclick="toast('Saved')">
+      <i>🔖</i>
+      Saved
+    </button>
 
- <div class="profile-menu">
+    <button onclick="toast('Friends')">
+      <i>👥</i>
+      Friends
+    </button>
 
-  <button onclick="toast('Posts')">
-   <i>📝</i>
-   Posts
-  </button>
+    <button onclick="openPage('market')">
+      <i>🛒</i>
+      Products
+    </button>
 
-  <button onclick="openPage('reels')">
-   <i>🎬</i>
-   Reels
-  </button>
+    <button onclick="toast('Activity')">
+      <i>📊</i>
+      Activity
+    </button>
 
-  <button onclick="toast('Saved')">
-   <i>🔖</i>
-   Saved
-  </button>
+    <button onclick="openSettings()">
+      <i>⚙️</i>
+      Settings
+    </button>
 
-  <button onclick="toast('Friends')">
-   <i>👥</i>
-   Friends
-  </button>
+    <button onclick="openAbout()">
+      <i>ℹ️</i>
+      About
+    </button>
 
-  <button onclick="toast('Marketplace Products')">
-   <i>🛒</i>
-   Products
-  </button>
+    <button onclick="logout()">
+      <i>🚪</i>
+      Logout
+    </button>
 
-  <button onclick="toast('Activity')">
-   <i>📊</i>
-   Activity
-  </button>
-
-  <button onclick="openSettings()">
-   <i>⚙️</i>
-   Settings
-  </button>
-
-  <button onclick="openAbout()">
-   <i>ℹ️</i>
-   About
-  </button>
-
-  <button onclick="logout()">
-   <i>🚪</i>
-   Logout
-  </button>
-
- </div>
+  </div>
 
 </section>
 
 
 <!-- SEARCH -->
 
-<section id="search" class="page">
+<section
+  id="search"
+  class="page"
+>
 
- <div class="section-head">
+  <div class="section-head">
 
-  <h2>🔎 Search</h2>
+    <h2>
+      🔎 Search
+    </h2>
 
- </div>
+  </div>
 
- <div class="card">
+  <div class="card">
 
-  <input
-   id="searchInput"
-   class="login-input"
-   style="margin:0"
-   placeholder="People, Posts, Reels, Groups, Marketplace..."
-   oninput="globalSearch(this.value)"
-  >
+    <input
+      id="searchInput"
+      class="login-input"
+      placeholder="People, Posts, Reels, Products..."
+      oninput="globalSearch(this.value)"
+    >
 
- </div>
+  </div>
 
- <div id="searchResults"></div>
+  <div id="searchResults"></div>
 
 </section>
 
 </main>
 
 
-<!-- BOTTOM -->
+<!-- BOTTOM NAV -->
 
 <nav class="bottom-nav">
 
- <button
-  class="nav-btn active"
-  onclick="nav(this,'home')"
- >
-  <span class="nav-icon">⌂</span>
-  Home
- </button>
+  <button
+    class="nav-btn active"
+    onclick="nav(this,'home')"
+  >
+    <span class="nav-icon">⌂</span>
+    Home
+  </button>
 
- <button
-  class="nav-btn"
-  onclick="nav(this,'reels')"
- >
-  <span class="nav-icon">▶</span>
-  Reels
- </button>
+  <button
+    class="nav-btn"
+    onclick="nav(this,'reels')"
+  >
+    <span class="nav-icon">▶</span>
+    Reels
+  </button>
 
- <button
-  class="nav-btn"
-  onclick="nav(this,'messenger')"
- >
-  <span class="nav-icon">☵</span>
-  Messenger
- </button>
+  <button
+    class="nav-btn"
+    onclick="nav(this,'messenger')"
+  >
+    <span class="nav-icon">☵</span>
+    Messenger
+  </button>
 
- <button
-  class="nav-btn"
-  onclick="nav(this,'market')"
- >
-  <span class="nav-icon">🛍</span>
-  Market
- </button>
+  <button
+    class="nav-btn"
+    onclick="nav(this,'market')"
+  >
+    <span class="nav-icon">🛍</span>
+    Market
+  </button>
 
- <button
-  class="nav-btn"
-  onclick="nav(this,'profile')"
- >
-  <span class="nav-icon">◉</span>
-  Profile
- </button>
+  <button
+    class="nav-btn"
+    onclick="nav(this,'profile')"
+  >
+    <span class="nav-icon">◉</span>
+    Profile
+  </button>
 
 </nav>
 
@@ -2334,1353 +1991,1249 @@ main{
 
 <!-- MODAL -->
 
-<div id="modal" class="modal">
+<div
+  id="modal"
+  class="modal"
+  onclick="if(event.target===this)closeModal()"
+>
 
- <div class="sheet">
+  <div class="sheet">
 
-  <button
-   class="close"
-   onclick="closeModal()"
-  >
-   ×
-  </button>
+    <button
+      class="close"
+      onclick="closeModal()"
+    >
+      ×
+    </button>
 
-  <div id="modalContent"></div>
+    <div id="modalContent"></div>
 
- </div>
+  </div>
 
 </div>
 
 
-<div id="toast" class="toast"></div>
+<div
+  id="toast"
+  class="toast"
+></div>
 
-
-<script src="/socket.io/socket.io.js"></script>
 
 <script>
 
-let socket=null;
-let currentRoom=null;
+/* =========================
+   USER SYSTEM
+========================= */
 
-const savedUser=
- localStorage.getItem("shakibys_user");
+function login(){
 
-function boot(){
+  const input=
+    document.getElementById("loginName");
 
- if(savedUser){
+  const name=
+    input.value.trim();
+
+  if(!name){
+
+    toast("আপনার নাম লিখুন");
+
+    return;
+  }
+
+  localStorage.setItem(
+    "shakibys_user",
+    name
+  );
 
   showApp();
-
- }else{
-
-  document.getElementById("loginScreen").style.display="flex";
-
- }
-
 }
 
 
 function showApp(){
 
- document.getElementById("loginScreen").style.display="none";
+  document.getElementById("loginScreen").style.display="none";
 
- document.getElementById("app").style.display="block";
+  document.getElementById("app").style.display="block";
 
- const name=
-  localStorage.getItem("shakibys_user")||
-  "Shakib";
+  const name=
+    localStorage.getItem("shakibys_user") ||
+    "User";
 
- setUser(name);
-
- connectSocket();
-
-}
-
-
-function login(){
-
- const input=
-  document.getElementById("loginName");
-
- const name=input.value.trim();
-
- if(!name){
-
-  toast("আপনার নাম লিখুন");
-
-  return;
-
- }
-
- localStorage.setItem(
-  "shakibys_user",
-  name
- );
-
- showApp();
-
+  setUser(name);
 }
 
 
 function setUser(name){
 
- const first=
-  name.charAt(0).toUpperCase();
+  const first=
+    name.charAt(0).toUpperCase();
 
- document.getElementById("userAvatar").textContent=first;
+  /*
+    এখানে ShakibYS নয়।
+    যে নামে account খুলেছে,
+    সেই নামই ব্যবহার হবে।
+  */
 
- document.getElementById("profileAvatar").textContent=first;
+  document.getElementById("userAvatar").textContent=
+    first;
 
- document.getElementById("profileName").textContent=name;
+  document.getElementById("postAvatar").textContent=
+    first;
 
- document.getElementById("postAuthor").firstChild.textContent=name+" ";
+  document.getElementById("profileAvatar").textContent=
+    first;
 
- document.getElementById("welcomeText").textContent=
-  "স্বাগতম, "+name+" 👋";
+  document.getElementById("storyAvatar").textContent=
+    first;
 
+
+  document.getElementById("profileName").textContent=
+    name;
+
+  document.getElementById("postAuthor").textContent=
+    name;
+
+  document.getElementById("reelAuthor").textContent=
+    "@"+name;
+
+
+  document.getElementById("welcomeText").textContent=
+    "স্বাগতম, "+name+" 👋";
+
+
+  document.getElementById("storyName").textContent=
+    "Your Story";
 }
 
 
-function connectSocket(){
-
- try{
-
-  socket=io();
-
-  socket.on("connect",()=>{
-
-   socket.emit(
-    "user:online",
-    {
-     name:localStorage.getItem("shakibys_user")
-    }
-   );
-
-  });
-
-  socket.on("chat:message",(data)=>{
-
-   if(data.room===currentRoom){
-
-    addMessage(
-     data.sender,
-     data.text,
-     data.sender===localStorage.getItem("shakibys_user")
-    );
-
-   }
-
-  });
-
- }catch(e){
-
-  console.log(e);
-
- }
-
-}
-
+/* =========================
+   NAVIGATION
+========================= */
 
 function nav(button,page){
 
- playSound();
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach(btn=>{
+      btn.classList.remove("active");
+    });
 
- document
-  .querySelectorAll(".nav-btn")
-  .forEach(x=>x.classList.remove("active"));
+  button.classList.add("active");
 
- button.classList.add("active");
-
- openPage(page);
-
+  openPage(page);
 }
 
 
 function openPage(page){
 
- document
-  .querySelectorAll(".page")
-  .forEach(x=>x.classList.remove("active"));
+  document
+    .querySelectorAll(".page")
+    .forEach(p=>{
+      p.classList.remove("active");
+    });
 
- const target=document.getElementById(page);
+  const target=
+    document.getElementById(page);
 
- if(target){
+  if(target){
+    target.classList.add("active");
+  }
 
-  target.classList.add("active");
-
- }
-
- window.scrollTo({
-  top:0,
-  behavior:"smooth"
- });
-
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
 }
 
 
-function playSound(){
-
- try{
-
-  const AudioContext=
-   window.AudioContext||
-   window.webkitAudioContext;
-
-  const ctx=new AudioContext();
-
-  const oscillator=ctx.createOscillator();
-
-  const gain=ctx.createGain();
-
-  oscillator.type="sine";
-
-  oscillator.frequency.value=620;
-
-  gain.gain.value=.025;
-
-  oscillator.connect(gain);
-
-  gain.connect(ctx.destination);
-
-  oscillator.start();
-
-  oscillator.stop(
-   ctx.currentTime+.055
-  );
-
- }catch(e){}
-
-}
-
-
-function notificationSound(){
-
- playSound();
-
- setTimeout(
-  playSound,
-  80
- );
-
-}
-
+/* =========================
+   TOAST
+========================= */
 
 function toast(text){
 
- playSound();
+  const el=
+    document.getElementById("toast");
 
- const el=document.getElementById("toast");
+  el.textContent=text;
 
- el.textContent=text;
+  el.classList.add("show");
 
- el.classList.add("show");
+  clearTimeout(window.toastTimer);
 
- clearTimeout(window.toastTimer);
-
- window.toastTimer=setTimeout(
-  ()=>{
-   el.classList.remove("show");
-  },
-  1800
- );
-
+  window.toastTimer=
+    setTimeout(()=>{
+      el.classList.remove("show");
+    },1800);
 }
 
 
+/* =========================
+   MODAL
+========================= */
+
 function openModal(html){
 
- document.getElementById("modalContent").innerHTML=html;
+  document.getElementById(
+    "modalContent"
+  ).innerHTML=html;
 
- document
-  .getElementById("modal")
-  .classList.add("show");
-
+  document
+    .getElementById("modal")
+    .classList.add("show");
 }
 
 
 function closeModal(){
 
- document
-  .getElementById("modal")
-  .classList.remove("show");
-
+  document
+    .getElementById("modal")
+    .classList.remove("show");
 }
 
 
-/* POST */
+/* =========================
+   CREATE POST
+========================= */
 
 function createPost(){
 
- openModal(`
-
-  <h2>📝 Create Post</h2>
-
-  <div class="form">
-
-   <textarea
-    rows="5"
-    placeholder="আপনার মনের কথা লিখুন..."
-   ></textarea>
-
-   <input
-    type="file"
-    accept="image/*,video/*"
-   >
-
-   <input placeholder="#Hashtag">
-
-   <input placeholder="📍 Location">
-
-   <select>
-
-    <option>🌐 Public</option>
-    <option>👥 Friends</option>
-    <option>🔒 Only me</option>
-
-   </select>
-
-   <button
-    class="primary"
-    onclick="toast('Post published');closeModal()"
-   >
-    Publish Post
-   </button>
-
-  </div>
-
- `);
-
-}
-
-
-/* STORY */
-
-function createStory(){
-
- openModal(`
-
-  <h2>📖 Create Story</h2>
-
-  <div class="form">
-
-   <textarea
-    rows="4"
-    placeholder="Story লিখুন..."
-   ></textarea>
-
-   <input
-    type="file"
-    accept="image/*,video/*"
-   >
-
-   <input placeholder="🎵 Music">
-
-   <select>
-
-    <option>Everyone</option>
-    <option>Friends</option>
-    <option>Close Friends</option>
-
-   </select>
-
-   <button
-    class="primary"
-    onclick="toast('Story published • 24 hours');closeModal()"
-   >
-    Publish Story
-   </button>
-
-  </div>
-
- `);
-
-}
-
-
-/* POLL */
-
-function createPoll(){
-
- openModal(`
-
-  <h2>📊 Create Poll</h2>
-
-  <div class="form">
-
-   <input placeholder="Question">
-
-   <input placeholder="Option 1">
-
-   <input placeholder="Option 2">
-
-   <input placeholder="Option 3">
-
-   <button
-    class="primary"
-    onclick="toast('Poll published');closeModal()"
-   >
-    Create Poll
-   </button>
-
-  </div>
-
- `);
-
-}
-
-
-/* MUSIC */
-
-function createMusic(){
-
- openModal(`
-
-  <h2>🎵 Music Post</h2>
-
-  <div class="form">
-
-   <input
-    type="file"
-    accept="audio/*"
-   >
-
-   <button
-    class="primary"
-    onclick="toast('Music post published');closeModal()"
-   >
-    Publish
-   </button>
-
-  </div>
-
- `);
-
-}
-
-
-/* REEL */
-
-function createReel(){
-
- openModal(`
-
-  <h2>🎬 Create Reel</h2>
-
-  <div class="form">
-
-   <input
-    type="file"
-    accept="video/*"
-   >
-
-   <input placeholder="Caption">
-
-   <input placeholder="#Hashtags">
-
-   <button
-    class="primary"
-    onclick="toast('Reel published');closeModal()"
-   >
-    Publish Reel
-   </button>
-
-  </div>
-
- `);
-
-}
-
-
-/* LIKE */
-
-function like(button){
-
- playSound();
-
- button.textContent="❤️ Liked";
-
- toast("Liked ❤️");
-
-}
-
-
-/* COMMENT */
-
-function comment(){
-
- openModal(`
-
-  <h2>💬 Comments</h2>
-
-  <div class="card">
-
-   <b>Alex</b>
-
-   <p>দারুণ পোস্ট! 🔥</p>
-
-  </div>
-
-  <div class="form">
-
-   <input placeholder="Write a comment...">
-
-   <button
-    class="primary"
-    onclick="toast('Comment added');closeModal()"
-   >
-    Comment
-   </button>
-
-  </div>
-
- `);
-
-}
-
-
-/* SHARE */
-
-function sharePost(){
-
- if(navigator.share){
-
-  navigator.share({
-   title:"ShakibYS",
-   text:"Check this on ShakibYS"
-  });
-
- }else{
-
-  toast("Share link copied");
-
- }
-
-}
-
-
-/* SAVE */
-
-function savePost(button){
-
- button.textContent="🔖 Saved";
-
- toast("Saved");
-
-}
-
-
-/* CHAT */
-
-function openChat(room){
-
- currentRoom=room;
-
- openPage("messenger");
-
- const html=`
-
-  <div class="chat-page">
-
-   <div class="card" style="margin:0">
-
-    <div class="row">
-
-     <button
-      class="secondary"
-      onclick="renderMessenger()"
-     >
-      ←
-     </button>
-
-     <div class="avatar">💬</div>
-
-     <div>
-
-      <b>${room}</b>
-
-      <div class="small">
-       🟢 Online • End-to-end style UI
-      </div>
-
-     </div>
+  openModal(`
+
+    <h2>📝 Create Post</h2>
+
+    <div class="form">
+
+      <textarea
+        rows="5"
+        placeholder="আপনার মনের কথা লিখুন..."
+      ></textarea>
+
+      <input
+        type="file"
+        accept="image/*,video/*"
+      >
+
+      <input
+        placeholder="#Hashtag"
+      >
+
+      <input
+        placeholder="📍 Location"
+      >
+
+      <select>
+        <option>🌐 Public</option>
+        <option>👥 Friends</option>
+        <option>🔒 Only me</option>
+      </select>
+
+      <button
+        class="primary"
+        onclick="toast('Post published');closeModal()"
+      >
+        Publish Post
+      </button>
 
     </div>
 
-   </div>
-
-   <div
-    id="messages"
-    class="messages"
-   ></div>
-
-   <div class="chat-compose">
-
-    <button
-     class="secondary"
-     onclick="toast('Emoji')"
-    >
-     😊
-    </button>
-
-    <input
-     id="messageInput"
-     placeholder="Message..."
-     onkeydown="if(event.key==='Enter')sendMessage()"
-    >
-
-    <button
-     class="send"
-     onclick="sendMessage()"
-    >
-     ➤
-    </button>
-
-   </div>
-
-  </div>
-
- `;
-
- document.getElementById("messenger").innerHTML=html;
-
+  `);
 }
 
 
-function renderMessenger(){
+/* =========================
+   STORY
+========================= */
 
- location.reload();
+function createStory(){
 
+  openModal(`
+
+    <h2>📖 Create Story</h2>
+
+    <div class="form">
+
+      <textarea
+        rows="4"
+        placeholder="Story লিখুন..."
+      ></textarea>
+
+      <input
+        type="file"
+        accept="image/*,video/*"
+      >
+
+      <input
+        placeholder="🎵 Music"
+      >
+
+      <button
+        class="primary"
+        onclick="toast('Story published');closeModal()"
+      >
+        Publish Story
+      </button>
+
+    </div>
+
+  `);
+}
+
+
+/* =========================
+   POLL
+========================= */
+
+function createPoll(){
+
+  openModal(`
+
+    <h2>📊 Create Poll</h2>
+
+    <div class="form">
+
+      <input placeholder="Question">
+
+      <input placeholder="Option 1">
+
+      <input placeholder="Option 2">
+
+      <input placeholder="Option 3">
+
+      <button
+        class="primary"
+        onclick="toast('Poll published');closeModal()"
+      >
+        Create Poll
+      </button>
+
+    </div>
+
+  `);
+}
+
+
+/* =========================
+   MUSIC
+========================= */
+
+function createMusic(){
+
+  openModal(`
+
+    <h2>🎵 Music Post</h2>
+
+    <div class="form">
+
+      <input
+        type="file"
+        accept="audio/*"
+      >
+
+      <button
+        class="primary"
+        onclick="toast('Music post published');closeModal()"
+      >
+        Publish
+      </button>
+
+    </div>
+
+  `);
+}
+
+
+/* =========================
+   REEL
+========================= */
+
+function createReel(){
+
+  openModal(`
+
+    <h2>🎬 Create Reel</h2>
+
+    <div class="form">
+
+      <input
+        type="file"
+        accept="video/*"
+      >
+
+      <input
+        placeholder="Caption"
+      >
+
+      <input
+        placeholder="#Hashtags"
+      >
+
+      <button
+        class="primary"
+        onclick="toast('Reel published');closeModal()"
+      >
+        Publish Reel
+      </button>
+
+    </div>
+
+  `);
+}
+
+
+/* =========================
+   LIKE
+========================= */
+
+function like(button){
+
+  button.textContent="❤️ Liked";
+
+  toast("Liked ❤️");
+}
+
+
+/* =========================
+   COMMENT
+========================= */
+
+function comment(){
+
+  openModal(`
+
+    <h2>💬 Comments</h2>
+
+    <div class="card">
+
+      <b>Alex</b>
+
+      <p>
+        দারুণ পোস্ট! 🔥
+      </p>
+
+    </div>
+
+    <div class="form">
+
+      <input
+        placeholder="Write a comment..."
+      >
+
+      <button
+        class="primary"
+        onclick="toast('Comment added');closeModal()"
+      >
+        Comment
+      </button>
+
+    </div>
+
+  `);
+}
+
+
+/* =========================
+   SHARE
+========================= */
+
+function sharePost(){
+
+  if(navigator.share){
+
+    navigator.share({
+      title:"ShakibYS",
+      text:"Check this on ShakibYS"
+    });
+
+  }else{
+
+    toast("Share link copied");
+
+  }
+}
+
+
+/* =========================
+   SAVE
+========================= */
+
+function savePost(button){
+
+  button.textContent="🔖 Saved";
+
+  toast("Saved");
+}
+
+
+/* =========================
+   CHAT
+========================= */
+
+function openChat(room){
+
+  const messenger=
+    document.getElementById("messenger");
+
+  messenger.innerHTML=`
+
+    <div class="section-head">
+
+      <button
+        class="secondary"
+        onclick="location.reload()"
+      >
+        ← Back
+      </button>
+
+      <h2>
+        💬 ${room}
+      </h2>
+
+    </div>
+
+    <div
+      id="messages"
+      class="messages"
+    ></div>
+
+    <div class="chat-compose">
+
+      <input
+        id="messageInput"
+        placeholder="Message..."
+        onkeydown="if(event.key==='Enter')sendMessage()"
+      >
+
+      <button
+        class="send"
+        onclick="sendMessage()"
+      >
+        ➤
+      </button>
+
+    </div>
+
+  `;
 }
 
 
 function sendMessage(){
 
- const input=
-  document.getElementById("messageInput");
+  const input=
+    document.getElementById("messageInput");
 
- if(!input)return;
+  if(!input)return;
 
- const text=input.value.trim();
+  const text=
+    input.value.trim();
 
- if(!text)return;
+  if(!text)return;
 
- const name=
-  localStorage.getItem("shakibys_user")||
-  "Shakib";
+  const name=
+    localStorage.getItem("shakibys_user") ||
+    "User";
 
- if(socket){
-
-  socket.emit(
-   "chat:join",
-   currentRoom
+  addMessage(
+    name,
+    text,
+    true
   );
 
-  socket.emit(
-   "chat:message",
-   {
-    room:currentRoom,
-    sender:name,
-    text:text
-   }
-  );
-
- }
-
- addMessage(name,text,true);
-
- input.value="";
-
- notificationSound();
-
+  input.value="";
 }
 
 
 function addMessage(sender,text,mine){
 
- const box=
-  document.getElementById("messages");
+  const box=
+    document.getElementById("messages");
 
- if(!box)return;
+  if(!box)return;
 
- const message=
-  document.createElement("div");
+  const message=
+    document.createElement("div");
 
- message.className=
-  "message"+(mine?" mine":"");
+  message.className=
+    "message"+(mine?" mine":"");
 
- message.textContent=
-  sender+": "+text;
+  message.textContent=
+    sender+": "+text;
 
- box.appendChild(message);
+  box.appendChild(message);
 
- box.scrollTop=box.scrollHeight;
-
+  box.scrollTop=
+    box.scrollHeight;
 }
 
 
-/* MARKET */
-
-function openProduct(name,price){
-
- openModal(`
-
-  <h2>🛒 ${name}</h2>
-
-  <div class="card">
-
-   <div class="product-photo">
-    🛍️
-   </div>
-
-   <h3>${name}</h3>
-
-   <div class="product-price">
-    ${price}
-   </div>
-
-   ⭐ 4.8 • Verified Seller
-
-  </div>
-
-  <div class="form">
-
-   <input
-    type="number"
-    value="1"
-    min="1"
-    placeholder="Quantity"
-   >
-
-   <textarea
-    rows="3"
-    placeholder="Delivery Address"
-   ></textarea>
-
-   <select>
-
-    <option>Cash on Delivery</option>
-    <option>Payment Gateway</option>
-    <option>Card / Mobile Payment</option>
-
-   </select>
-
-   <button
-    class="secondary"
-    onclick="toast('Added to Cart 🛒')"
-   >
-    🛒 Add to Cart
-   </button>
-
-   <button
-    class="primary"
-    onclick="toast('Order created');closeModal()"
-   >
-    💳 Buy Now
-   </button>
-
-  </div>
-
- `);
-
-}
-
+/* =========================
+   MARKET
+========================= */
 
 function filterProducts(query){
 
- const cards=
-  document.querySelectorAll(".product");
+  document
+    .querySelectorAll(".product")
+    .forEach(card=>{
 
- cards.forEach(card=>{
+      const text=
+        card.innerText.toLowerCase();
 
-  const text=
-   card.innerText.toLowerCase();
+      card.style.display=
+        text.includes(
+          query.toLowerCase()
+        )
+        ? "block"
+        : "none";
 
-  card.style.display=
-   text.includes(query.toLowerCase())
-   ?"block"
-   :"none";
-
- });
-
+    });
 }
 
 
-/* AI */
+function openProduct(name,price){
+
+  openModal(`
+
+    <h2>
+      🛒 ${name}
+    </h2>
+
+    <div class="card">
+
+      <div class="product-photo">
+        🛍️
+      </div>
+
+      <h3>
+        ${name}
+      </h3>
+
+      <div class="product-price">
+        ${price}
+      </div>
+
+      ⭐ 4.8 • Verified Seller
+
+    </div>
+
+    <div class="form">
+
+      <input
+        type="number"
+        value="1"
+        min="1"
+        placeholder="Quantity"
+      >
+
+      <textarea
+        rows="3"
+        placeholder="Delivery Address"
+      ></textarea>
+
+      <select>
+        <option>
+          Cash on Delivery
+        </option>
+
+        <option>
+          Payment Gateway
+        </option>
+
+        <option>
+          Card / Mobile Payment
+        </option>
+      </select>
+
+      <button
+        class="secondary"
+        onclick="toast('Added to Cart 🛒')"
+      >
+        🛒 Add to Cart
+      </button>
+
+      <button
+        class="primary"
+        onclick="toast('Order created');closeModal()"
+      >
+        💳 Buy Now
+      </button>
+
+    </div>
+
+  `);
+}
+
+
+/* =========================
+   AI
+========================= */
 
 function openAI(){
 
- openModal(`
+  openModal(`
 
-  <div class="ai-card" style="padding:20px;border-radius:20px">
+    <div class="ai-card">
 
-   <div class="row">
+      <h2>
+        🤖 ShakibYS AI
+      </h2>
 
-    <div class="ai-orb">
-     🤖
+      <p>
+        Your intelligent assistant
+      </p>
+
+      <div class="ai-input">
+
+        <input
+          id="aiInput"
+          placeholder="কী জানতে চান?"
+        >
+
+        <button onclick="askAI()">
+          ➤
+        </button>
+
+      </div>
+
+      <div
+        id="aiAnswer"
+        style="margin-top:15px"
+      ></div>
+
     </div>
 
-    <div>
-
-     <h2 style="margin:0">
-      ShakibYS AI
-     </h2>
-
-     <small>
-      Your intelligent assistant
-     </small>
-
-    </div>
-
-   </div>
-
-   <div class="ai-input">
-
-    <input
-     id="aiInput"
-     placeholder="কী জানতে চান?"
-    >
-
-    <button onclick="askAI()">
-     ➤
-    </button>
-
-   </div>
-
-   <div
-    id="aiAnswer"
-    style="margin-top:15px"
-   ></div>
-
-  </div>
-
- `);
-
+  `);
 }
 
 
 function askAI(){
 
- const input=
-  document.getElementById("aiInput");
+  const input=
+    document.getElementById("aiInput");
 
- const answer=
-  document.getElementById("aiAnswer");
+  const answer=
+    document.getElementById("aiAnswer");
 
- if(!input.value.trim()){
+  if(!input.value.trim()){
 
-  toast("প্রশ্ন লিখুন");
+    toast("প্রশ্ন লিখুন");
 
-  return;
+    return;
+  }
 
- }
-
- answer.innerHTML=
-  "<b>🤖 ShakibYS AI</b><br><br>"+
-  "আপনার প্রশ্নটি পেয়েছি। Real AI response-এর জন্য একটি AI API/backend সংযুক্ত করতে হবে।";
-
+  answer.innerHTML=
+    "<b>🤖 ShakibYS AI</b><br><br>"+
+    "আপনার প্রশ্ন পাওয়া গেছে। "+
+    "Real AI চালাতে AI API/backend যুক্ত করতে হবে।";
 }
 
 
-function askMarketAI(){
-
- const input=
-  document.getElementById("aiMarketInput");
-
- if(!input.value.trim()){
-
-  toast("আপনার বাজেট বা প্রয়োজন লিখুন");
-
-  return;
-
- }
-
- toast(
-  "AI Marketplace Assistant: "+
-  input.value
- );
-
-}
-
-
-/* SEARCH */
+/* =========================
+   SEARCH
+========================= */
 
 function globalSearch(query){
 
- if(!query.trim())return;
+  if(!query.trim())return;
 
- openPage("search");
+  openPage("search");
 
- const results=
-  document.getElementById("searchResults");
+  const results=
+    document.getElementById("searchResults");
 
- results.innerHTML=`
+  results.innerHTML=`
 
-  <div class="card">
+    <div class="card">
 
-   <b>🔎 Results for:</b>
-   ${escapeHTML(query)}
+      <b>
+        🔎 Results for:
+      </b>
 
-  </div>
+      ${escapeHTML(query)}
 
-  <div class="card">
-   👤 People
-   <br>
-   <small>Matching users</small>
-  </div>
+    </div>
 
-  <div class="card">
-   📝 Posts
-   <br>
-   <small>Matching posts</small>
-  </div>
+    <div class="card">
+      👤 People
+      <br>
+      <small>
+        Matching users
+      </small>
+    </div>
 
-  <div class="card">
-   🎬 Reels
-   <br>
-   <small>Matching reels</small>
-  </div>
+    <div class="card">
+      📝 Posts
+      <br>
+      <small>
+        Matching posts
+      </small>
+    </div>
 
-  <div class="card">
-   👥 Groups
-   <br>
-   <small>Matching groups</small>
-  </div>
+    <div class="card">
+      🎬 Reels
+      <br>
+      <small>
+        Matching reels
+      </small>
+    </div>
 
-  <div class="card">
-   🛒 Marketplace
-   <br>
-   <small>Matching products</small>
-  </div>
+    <div class="card">
+      🛒 Marketplace
+      <br>
+      <small>
+        Matching products
+      </small>
+    </div>
 
- `;
-
+  `;
 }
 
 
-/* SETTINGS */
+/* =========================
+   SETTINGS
+========================= */
 
 function openSettings(){
 
- openModal(`
+  openModal(`
 
-  <h2>⚙️ Settings</h2>
+    <h2>
+      ⚙️ Settings
+    </h2>
 
-  <div class="menu-grid">
+    <div class="profile-menu">
 
-   <button onclick="toast('Account Settings')">
-    <b>👤</b>
-    Account
-   </button>
+      <button onclick="toast('Account Settings')">
+        <i>👤</i>
+        Account
+      </button>
 
-   <button onclick="toast('Privacy Settings')">
-    <b>🔐</b>
-    Privacy
-   </button>
+      <button onclick="toast('Privacy Settings')">
+        <i>🔐</i>
+        Privacy
+      </button>
 
-   <button onclick="toast('Security Settings')">
-    <b>🛡️</b>
-    Security
-   </button>
+      <button onclick="toast('Security Settings')">
+        <i>🛡️</i>
+        Security
+      </button>
 
-   <button onclick="forgotPassword()">
-    <b>🔑</b>
-    Password
-   </button>
+      <button onclick="toggleDark()">
+        <i>🌙</i>
+        Dark Mode
+      </button>
 
-   <button onclick="toast('Phone & Email')">
-    <b>📱</b>
-    Phone / Email
-   </button>
+      <button onclick="openAbout()">
+        <i>ℹ️</i>
+        About
+      </button>
 
-   <button onclick="toast('Two Factor Authentication')">
-    <b>🔒</b>
-    2FA
-   </button>
+      <button onclick="logout()">
+        <i>🚪</i>
+        Logout
+      </button>
 
-   <button onclick="toast('Notification Settings')">
-    <b>🔔</b>
-    Notifications
-   </button>
+    </div>
 
-   <button onclick="toggleDark()">
-    <b>🌙</b>
-    Dark Mode
-   </button>
-
-   <button onclick="toast('Language')">
-    <b>🌐</b>
-    Language
-   </button>
-
-   <button onclick="toast('Data Saver')">
-    <b>📶</b>
-    Data Saver
-   </button>
-
-   <button onclick="toast('Storage')">
-    <b>💾</b>
-    Storage
-   </button>
-
-   <button onclick="openAbout()">
-    <b>ℹ️</b>
-    App পরিচিতি
-   </button>
-
-  </div>
-
-  <button
-   class="primary"
-   style="width:100%;margin-top:12px"
-   onclick="logout()"
-  >
-   🚪 Logout
-  </button>
-
- `);
-
+  `);
 }
 
+
+/* =========================
+   NOTIFICATIONS
+========================= */
 
 function openNotifications(){
 
- notificationSound();
+  openModal(`
 
- openModal(`
+    <h2>
+      🔔 Notifications
+    </h2>
 
-  <h2>🔔 Notifications</h2>
+    <div class="card">
+      ❤️ Someone liked your post
+      <br>
+      <small>
+        2 minutes ago
+      </small>
+    </div>
 
-  <div class="card">
-   ❤️ Someone liked your post
-   <small>2 minutes ago</small>
-  </div>
+    <div class="card">
+      💬 New Messenger message
+      <br>
+      <small>
+        5 minutes ago
+      </small>
+    </div>
 
-  <div class="card">
-   💬 New Messenger message
-   <small>5 minutes ago</small>
-  </div>
+    <div class="card">
+      👥 New friend request
+      <br>
+      <small>
+        10 minutes ago
+      </small>
+    </div>
 
-  <div class="card">
-   👥 New friend request
-   <small>10 minutes ago</small>
-  </div>
-
-  <div class="card">
-   🛒 Marketplace order update
-   <small>1 hour ago</small>
-  </div>
-
- `);
-
+  `);
 }
 
 
-/* SELLER */
+/* =========================
+   SELLER
+========================= */
 
 function openSeller(){
 
- openModal(`
+  openModal(`
 
-  <h2>🏪 Seller Dashboard</h2>
+    <h2>
+      🏪 Seller Dashboard
+    </h2>
 
-  <div class="menu-grid">
+    <div class="profile-menu">
 
-   <button onclick="toast('Add Product')">
-    <b>➕</b>
-    Add Product
-   </button>
+      <button onclick="toast('Add Product')">
+        <i>➕</i>
+        Add Product
+      </button>
 
-   <button onclick="toast('Products')">
-    <b>📦</b>
-    Products
-   </button>
+      <button onclick="toast('Products')">
+        <i>📦</i>
+        Products
+      </button>
 
-   <button onclick="toast('Orders')">
-    <b>🧾</b>
-    Orders
-   </button>
+      <button onclick="toast('Orders')">
+        <i>🧾</i>
+        Orders
+      </button>
 
-   <button onclick="toast('Sales')">
-    <b>💰</b>
-    Sales
-   </button>
+      <button onclick="toast('Sales')">
+        <i>💰</i>
+        Sales
+      </button>
 
-   <button onclick="toast('Stock')">
-    <b>📊</b>
-    Stock
-   </button>
+    </div>
 
-   <button onclick="toast('Reviews')">
-    <b>⭐</b>
-    Reviews
-   </button>
-
-  </div>
-
- `);
-
+  `);
 }
 
 
-/* GROUP */
+/* =========================
+   GROUP
+========================= */
 
 function createGroup(){
 
- openModal(`
+  openModal(`
 
-  <h2>👥 Create Group</h2>
+    <h2>
+      👥 Create Group
+    </h2>
 
-  <div class="form">
+    <div class="form">
 
-   <input
-    id="groupName"
-    placeholder="Group Name"
-   >
+      <input
+        id="groupName"
+        placeholder="Group Name"
+      >
 
-   <input
-    placeholder="Add members"
-   >
+      <button
+        class="primary"
+        onclick="submitGroup()"
+      >
+        Create Group
+      </button>
 
-   <select>
+    </div>
 
-    <option>Public Group</option>
-    <option>Private Group</option>
-
-   </select>
-
-   <button
-    class="primary"
-    onclick="submitGroup()"
-   >
-    Create Group
-   </button>
-
-  </div>
-
- `);
-
+  `);
 }
 
 
 function submitGroup(){
 
- const name=
-  document.getElementById("groupName").value.trim();
+  const name=
+    document
+      .getElementById("groupName")
+      .value
+      .trim();
 
- if(!name){
+  if(!name){
 
-  toast("Group name দিন");
+    toast("Group name দিন");
 
-  return;
+    return;
+  }
 
- }
-
- if(socket){
-
-  socket.emit(
-   "group:create",
-   {
-    name:name,
-    creator:
-     localStorage.getItem("shakibys_user")
-   }
+  toast(
+    "Group created: "+name
   );
 
- }
-
- toast("Group created: "+name);
-
- closeModal();
-
+  closeModal();
 }
 
 
-/* PROFILE */
+/* =========================
+   EDIT PROFILE
+========================= */
 
 function editProfile(){
 
- openModal(`
+  const currentName=
+    localStorage.getItem("shakibys_user") ||
+    "";
 
-  <h2>✏️ Edit Profile</h2>
+  openModal(`
 
-  <div class="form">
+    <h2>
+      ✏️ Edit Profile
+    </h2>
 
-   <input
-    value="${escapeHTML(
-     localStorage.getItem("shakibys_user")||""
-    )}"
-    placeholder="Name"
-   >
+    <div class="form">
 
-   <textarea
-    rows="3"
-    placeholder="Bio"
-   >Founder of ShakibYS</textarea>
+      <input
+        id="editName"
+        value="${escapeHTML(currentName)}"
+        placeholder="Name"
+      >
 
-   <input
-    type="file"
-    accept="image/*"
-   >
+      <textarea
+        id="editBio"
+        rows="3"
+        placeholder="About / Bio"
+      >আপনার নিজের সম্পর্কে লিখুন</textarea>
 
-   <button
-    class="primary"
-    onclick="toast('Profile updated');closeModal()"
-   >
-    Save Changes
-   </button>
+      <button
+        class="primary"
+        onclick="saveProfile()"
+      >
+        Save Changes
+      </button>
 
-  </div>
+    </div>
 
- `);
-
+  `);
 }
 
 
-/* ABOUT */
+function saveProfile(){
+
+  const input=
+    document.getElementById("editName");
+
+  const name=
+    input.value.trim();
+
+  if(!name){
+
+    toast("নাম লিখুন");
+
+    return;
+  }
+
+  localStorage.setItem(
+    "shakibys_user",
+    name
+  );
+
+  setUser(name);
+
+  toast("Profile updated");
+
+  closeModal();
+}
+
+
+/* =========================
+   ABOUT
+========================= */
 
 function openAbout(){
 
- openModal(`
+  openModal(`
 
-  <h2>ℹ️ ShakibYS পরিচিতি</h2>
+    <h2>
+      ℹ️ ShakibYS সম্পর্কে
+    </h2>
 
-  <div class="card">
+    <div class="card">
 
-   <h3>ShakibYS Premium</h3>
+      <h3>
+        ShakibYS Premium
+      </h3>
 
-   <p>
-    ShakibYS একটি সামাজিক যোগাযোগ ও
-    ডিজিটাল মার্কেটপ্লেস প্ল্যাটফর্ম।
-   </p>
+      <p>
+        ShakibYS একটি Premium Social Super App,
+        যেখানে Social Network, Messenger, Stories,
+        Reels, Marketplace এবং AI Assistant
+        এক প্ল্যাটফর্মে দেওয়ার লক্ষ্য রয়েছে।
+      </p>
 
-   <p>
-    <b>প্রতিষ্ঠাতা:</b>
-    মোহাম্মদ নাজমুজ সাকিব
-   </p>
+      <h3>
+        ✨ প্রধান সুবিধা
+      </h3>
 
-   <hr>
+      <p>
+        🏠 Home Feed<br>
+        🎬 Reels<br>
+        📖 Stories<br>
+        💬 Messenger<br>
+        👥 Friends & Groups<br>
+        🛒 Marketplace<br>
+        🤖 ShakibYS AI<br>
+        🔔 Notifications<br>
+        🔎 Global Search
+      </p>
 
-   <p>📱 App Version: 2.0 Premium</p>
-   <p>👨‍💻 Developer: Mohammad Nazmus Sakib</p>
-   <p>📜 Terms & Conditions</p>
-   <p>🔐 Privacy Policy</p>
-   <p>👥 Community Guidelines</p>
-   <p>📞 Contact</p>
-   <p>❓ Help Center</p>
+      <h3>
+        🔐 Privacy Policy
+      </h3>
 
-  </div>
+      <p>
+        ব্যবহারকারীর ব্যক্তিগত তথ্য নিরাপদ রাখার
+        চেষ্টা করা হবে। অনুমতি ছাড়া ব্যক্তিগত
+        তথ্য প্রকাশ করা উচিত নয়।
+      </p>
 
- `);
+      <h3>
+        🛡️ Community Guidelines
+      </h3>
 
+      <p>
+        প্রতারণা, হয়রানি, হুমকি, ঘৃণামূলক কনটেন্ট,
+        বেআইনি কার্যকলাপ এবং অন্যের ব্যক্তিগত
+        তথ্য প্রকাশ নিষিদ্ধ।
+      </p>
+
+      <h3>
+        🛒 Marketplace Policy
+      </h3>
+
+      <p>
+        বিক্রেতাকে পণ্যের সঠিক তথ্য দিতে হবে।
+        নিষিদ্ধ বা বেআইনি পণ্য বিক্রি করা যাবে না।
+      </p>
+
+      <h3>
+        🤖 AI Policy
+      </h3>
+
+      <p>
+        ShakibYS AI সহায়ক তথ্য দেওয়ার জন্য তৈরি।
+        গুরুত্বপূর্ণ সিদ্ধান্তের আগে তথ্য যাচাই করুন।
+      </p>
+
+      <h3>
+        ©️ Copyright
+      </h3>
+
+      <p>
+        অন্যের কপিরাইটযুক্ত ছবি, ভিডিও, গান বা
+        অন্যান্য কনটেন্ট অনুমতি ছাড়া ব্যবহার করা
+        উচিত নয়।
+      </p>
+
+      <hr>
+
+      <p>
+        <b>App:</b> ShakibYS Premium
+        <br>
+        <b>Version:</b> 1.0.0
+        <br>
+        <b>Developer:</b> ShakibYS
+      </p>
+
+    </div>
+
+  `);
 }
 
 
-/* FORGOT PASSWORD */
-
-function forgotPassword(){
-
- openModal(`
-
-  <h2>🔐 Forgot Password</h2>
-
-  <div class="form">
-
-   <input
-    placeholder="Phone number"
-    type="tel"
-   >
-
-   <button
-    class="primary"
-    onclick="toast('OTP system-এর জন্য SMS provider প্রয়োজন')"
-   >
-    Send OTP
-   </button>
-
-   <input
-    placeholder="OTP code"
-   >
-
-   <input
-    type="password"
-    placeholder="New password"
-   >
-
-   <button
-    class="secondary"
-    onclick="toast('Real password reset backend-এ যুক্ত করতে হবে')"
-   >
-    Reset Password
-   </button>
-
-  </div>
-
- `);
-
-}
-
-
-/* DARK */
+/* =========================
+   DARK MODE
+========================= */
 
 function toggleDark(){
 
- document.body.classList.toggle("dark");
+  document.body.classList.toggle("dark");
 
- localStorage.setItem(
-  "shakibys_dark",
-  document.body.classList.contains("dark")
- );
+  localStorage.setItem(
+    "shakibys_dark",
+    document.body.classList.contains("dark")
+  );
 
- toast(
-  document.body.classList.contains("dark")
-  ?"Dark Mode ON"
-  :"Light Mode ON"
- );
-
+  toast(
+    document.body.classList.contains("dark")
+      ? "Dark Mode ON"
+      : "Light Mode ON"
+  );
 }
 
 
-/* LOGOUT */
+/* =========================
+   LOGOUT
+========================= */
 
 function logout(){
 
- localStorage.removeItem("shakibys_user");
+  localStorage.removeItem(
+    "shakibys_user"
+  );
 
- location.reload();
-
+  location.reload();
 }
 
 
-/* ESCAPE */
+/* =========================
+   SECURITY
+========================= */
 
 function escapeHTML(text){
 
- return String(text)
-  .replace(/&/g,"&amp;")
-  .replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;")
-  .replace(/"/g,"&quot;")
-  .replace(/'/g,"&#039;");
-
+  return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
 
-/* SAVED DARK */
+/* =========================
+   DARK MODE LOAD
+========================= */
 
 if(
- localStorage.getItem("shakibys_dark")==="true"
+  localStorage.getItem("shakibys_dark")
+  === "true"
 ){
 
- document.body.classList.add("dark");
-
+  document.body.classList.add("dark");
 }
 
 
-/* START */
+/* =========================
+   START APP
+========================= */
 
-boot();
+const savedUser=
+  localStorage.getItem(
+    "shakibys_user"
+  );
+
+if(savedUser){
+
+  showApp();
+
+}else{
+
+  document.getElementById(
+    "loginScreen"
+  ).style.display="flex";
+}
 
 </script>
 
 </body>
-   </html>
+	  </html>
