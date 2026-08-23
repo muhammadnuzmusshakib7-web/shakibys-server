@@ -1,13 +1,181 @@
-{
-  "name": "shakibys-server",
-  "version": "1.0.0",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^5.1.0",
-    "socket.io": "^4.8.1",
-    "cors": "^2.8.5"
-  }
-}
+const express = require("express");
+const path = require("path");
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
+
+const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+const PORT = process.env.PORT || 10000;
+
+app.use(cors());
+app.use(express.json());
+
+// ===============================
+// SHAKIBYS WEBSITE
+// ===============================
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// ===============================
+// SERVER STATUS
+// ===============================
+
+app.get("/api/status", (req, res) => {
+    res.json({
+        app: "ShakibYS",
+        status: "online",
+        message: "ShakibYS real-time server is running!",
+        socket: "enabled"
+    });
+});
+
+// ===============================
+// ONLINE USERS
+// ===============================
+
+const users = new Map();
+
+// ===============================
+// SOCKET.IO REAL-TIME MESSENGER
+// ===============================
+
+io.on("connection", (socket) => {
+
+    console.log("User connected:", socket.id);
+
+    // User joins
+    socket.on("user:join", (user) => {
+
+        if (!user || !user.name) return;
+
+        users.set(socket.id, {
+            socketId: socket.id,
+            name: user.name,
+            joinedAt: Date.now()
+        });
+
+        socket.username = user.name;
+
+        // সবাইকে updated online list পাঠানো
+        io.emit("users:update", Array.from(users.values()));
+
+        // User নিজে connected notification পাবে
+        socket.emit("system:message", {
+            message: "ShakibYS Messenger-এ আপনাকে স্বাগতম!"
+        });
+
+        console.log(`${user.name} joined ShakibYS`);
+    });
+
+    // ===============================
+    // PRIVATE MESSAGE
+    // ===============================
+
+    socket.on("private:message", (data) => {
+
+        if (!data) return;
+
+        const receiverId = data.receiverId;
+        const text = String(data.text || "").trim();
+
+        if (!receiverId || !text) return;
+
+        const message = {
+            id: Date.now().toString(),
+            senderId: socket.id,
+            senderName: socket.username || "Unknown",
+            receiverId: receiverId,
+            text: text,
+            time: new Date().toISOString()
+        };
+
+        // Sender
+        socket.emit("private:message", message);
+
+        // Receiver
+        io.to(receiverId).emit("private:message", message);
+    });
+
+    // ===============================
+    // TYPING
+    // ===============================
+
+    socket.on("typing", (data) => {
+
+        if (!data || !data.receiverId) return;
+
+        io.to(data.receiverId).emit("typing", {
+            senderId: socket.id,
+            senderName: socket.username || "Someone"
+        });
+    });
+
+    socket.on("stop:typing", (data) => {
+
+        if (!data || !data.receiverId) return;
+
+        io.to(data.receiverId).emit("stop:typing", {
+            senderId: socket.id
+        });
+    });
+
+    // ===============================
+    // MESSAGE SEEN
+    // ===============================
+
+    socket.on("message:seen", (data) => {
+
+        if (!data || !data.senderId) return;
+
+        io.to(data.senderId).emit("message:seen", {
+            messageId: data.messageId,
+            seenBy: socket.id
+        });
+    });
+
+    // ===============================
+    // DISCONNECT
+    // ===============================
+
+    socket.on("disconnect", () => {
+
+        const user = users.get(socket.id);
+
+        if (user) {
+            console.log(`${user.name} disconnected`);
+
+            users.delete(socket.id);
+
+            io.emit("users:update", Array.from(users.values()));
+
+            // Last seen event
+            io.emit("user:lastSeen", {
+                socketId: socket.id,
+                name: user.name,
+                lastSeen: new Date().toISOString()
+            });
+        }
+
+        console.log("Disconnected:", socket.id);
+    });
+});
+
+// ===============================
+// START SERVER
+// ===============================
+
+server.listen(PORT, "0.0.0.0", () => {
+    console.log(`ShakibYS server running on port ${PORT}`);
+    console.log(`Real-time Messenger enabled`);
+});
