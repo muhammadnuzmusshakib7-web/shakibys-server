@@ -1,646 +1,741 @@
 const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
 const path = require("path");
+const Database = require("better-sqlite3");
+const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json({ limit: "20mb" }));
-app.use(express.urlencoded({ extended: true, limit: "20mb" }));
-app.use(express.static(path.join(__dirname, "public")));
+const db = new Database(
+  process.env.DB_PATH || "shakibys.db"
+);
 
-/* =========================
-   DEMO DATABASE
-========================= */
+app.use(express.json({limit:"10mb"}));
+app.use(express.urlencoded({extended:true}));
 
-const users = [];
-const posts = [];
-const messages = [];
-const notifications = [];
-const friendRequests = [];
-const follows = [];
+app.use(express.static(path.join(__dirname)));
 
-let userId = 1;
-let postId = 1;
+db.pragma("journal_mode = WAL");
 
-/* =========================
-   HELPERS
-========================= */
 
-function findUser(id) {
-  return users.find(u => String(u.id) === String(id));
+/* ================= DATABASE ================= */
+
+db.exec(`
+
+CREATE TABLE IF NOT EXISTS users(
+
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+  name TEXT NOT NULL,
+
+  username TEXT NOT NULL UNIQUE,
+
+  phone TEXT NOT NULL UNIQUE,
+
+  password_hash TEXT NOT NULL,
+
+  bio TEXT DEFAULT '',
+
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+);
+
+CREATE TABLE IF NOT EXISTS sessions(
+
+  token TEXT PRIMARY KEY,
+
+  user_id INTEGER NOT NULL,
+
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+);
+
+CREATE TABLE IF NOT EXISTS posts(
+
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+  user_id INTEGER NOT NULL,
+
+  content TEXT DEFAULT '',
+
+  image TEXT DEFAULT '',
+
+  likes INTEGER DEFAULT 0,
+
+  comments INTEGER DEFAULT 0,
+
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+);
+
+CREATE TABLE IF NOT EXISTS reactions(
+
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+  post_id INTEGER NOT NULL,
+
+  user_id INTEGER NOT NULL,
+
+  UNIQUE(post_id,user_id)
+
+);
+
+CREATE TABLE IF NOT EXISTS post_comments(
+
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+  post_id INTEGER NOT NULL,
+
+  user_id INTEGER NOT NULL,
+
+  text TEXT NOT NULL,
+
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+);
+
+CREATE TABLE IF NOT EXISTS friend_requests(
+
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+  sender_id INTEGER NOT NULL,
+
+  receiver_id INTEGER NOT NULL,
+
+  status TEXT DEFAULT 'pending',
+
+  UNIQUE(sender_id,receiver_id)
+
+);
+
+CREATE TABLE IF NOT EXISTS messages(
+
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+  sender_id INTEGER NOT NULL,
+
+  receiver_name TEXT NOT NULL,
+
+  text TEXT NOT NULL,
+
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+);
+
+`);
+
+
+/* ================= HELPERS ================= */
+
+function clean(value){
+
+  return String(value || "").trim();
 }
 
-function publicUser(user) {
-  if (!user) return null;
 
-  return {
-    id: user.id,
-    name: user.name,
-    username: user.username,
-    phone: user.phone,
-    bio: user.bio,
-    avatar: user.avatar,
-    cover: user.cover,
-    online: user.online,
-    friends: user.friends.length,
-    followers: follows.filter(x => x.followingId === user.id).length,
-    following: follows.filter(x => x.followerId === user.id).length,
-    createdAt: user.createdAt
-  };
+function createToken(){
+
+  return crypto.randomBytes(48).toString("hex");
 }
 
-/* =========================
-   AUTH
-========================= */
 
-app.post("/api/auth/register", (req, res) => {
-  const { name, phone, password } = req.body;
+function getUserFromRequest(req){
 
-  if (!name || !phone) {
-    return res.json({
-      success: false,
-      message: "নাম ও মোবাইল নাম্বার দিন"
+  const token =
+    req.headers.authorization?.replace("Bearer ","");
+
+  if(!token) return null;
+
+  const session =
+    db.prepare(`
+      SELECT *
+      FROM sessions
+      WHERE token = ?
+    `).get(token);
+
+  if(!session) return null;
+
+  return db.prepare(`
+    SELECT *
+    FROM users
+    WHERE id = ?
+  `).get(session.user_id);
+}
+
+
+function requireAuth(req,res,next){
+
+  const user =
+    getUserFromRequest(req);
+
+  if(!user){
+
+    return res.status(401).json({
+      error:"Authentication required"
     });
   }
 
-  if (users.some(u => u.phone === phone)) {
-    return res.json({
-      success: false,
-      message: "এই নাম্বার আগে ব্যবহার করা হয়েছে"
-    });
-  }
+  req.user = user;
 
-  const user = {
-    id: String(userId++),
-    name,
-    username: "user" + Date.now(),
-    phone,
-    password: password || "",
-    bio: "",
-    avatar: "",
-    cover: "",
-    online: true,
-    friends: [],
-    createdAt: new Date().toISOString()
-  };
+  next();
+}
 
-  users.push(user);
 
-  res.json({
-    success: true,
-    user: publicUser(user)
-  });
-});
+/* ================= AUTH ================= */
 
-app.post("/api/auth/login", (req, res) => {
-  const { phone, password } = req.body;
+app.post("/api/auth/register",async(req,res)=>{
 
-  const user = users.find(u => u.phone === phone);
+  try{
 
-  if (!user) {
-    return res.json({
-      success: false,
-      message: "Account পাওয়া যায়নি"
-    });
-  }
+    const name = clean(req.body.name);
+    const username = clean(req.body.username).toLowerCase();
+    const phone = clean(req.body.phone);
+    const password = String(req.body.password || "");
 
-  if (user.password && user.password !== password) {
-    return res.json({
-      success: false,
-      message: "Password ভুল"
-    });
-  }
+    if(!name || !username || !phone || !password){
 
-  user.online = true;
-
-  res.json({
-    success: true,
-    user: publicUser(user)
-  });
-});
-
-app.post("/api/auth/logout", (req, res) => {
-  const user = findUser(req.body.userId);
-
-  if (user) user.online = false;
-
-  res.json({ success: true });
-});
-
-/* =========================
-   USERS
-========================= */
-
-app.get("/api/users", (req, res) => {
-  const q = String(req.query.q || "").toLowerCase();
-
-  const result = users
-    .filter(u =>
-      !q ||
-      u.name.toLowerCase().includes(q) ||
-      u.phone.includes(q) ||
-      u.username.toLowerCase().includes(q)
-    )
-    .map(publicUser);
-
-  res.json({ success: true, users: result });
-});
-
-app.get("/api/users/:id", (req, res) => {
-  const user = findUser(req.params.id);
-
-  if (!user) {
-    return res.json({
-      success: false,
-      message: "User পাওয়া যায়নি"
-    });
-  }
-
-  res.json({
-    success: true,
-    user: publicUser(user)
-  });
-});
-
-app.put("/api/users/:id", (req, res) => {
-  const user = findUser(req.params.id);
-
-  if (!user) {
-    return res.json({
-      success: false,
-      message: "User পাওয়া যায়নি"
-    });
-  }
-
-  if (req.body.name !== undefined) user.name = req.body.name;
-  if (req.body.bio !== undefined) user.bio = req.body.bio;
-  if (req.body.avatar !== undefined) user.avatar = req.body.avatar;
-  if (req.body.cover !== undefined) user.cover = req.body.cover;
-
-  res.json({
-    success: true,
-    user: publicUser(user)
-  });
-});
-
-/* =========================
-   POSTS
-========================= */
-
-app.get("/api/posts", (req, res) => {
-  const result = [...posts].reverse();
-
-  res.json({
-    success: true,
-    posts: result
-  });
-});
-
-app.post("/api/posts", (req, res) => {
-  const {
-    authorId,
-    content,
-    media,
-    type,
-    title,
-    hashtag,
-    location,
-    privacy
-  } = req.body;
-
-  const user = findUser(authorId);
-
-  if (!user) {
-    return res.json({
-      success: false,
-      message: "User পাওয়া যায়নি"
-    });
-  }
-
-  if (!content && !media) {
-    return res.json({
-      success: false,
-      message: "Post-এর content বা media দিন"
-    });
-  }
-
-  const post = {
-    id: String(postId++),
-    authorId: user.id,
-    author: user.name,
-    authorAvatar: user.avatar || "",
-    content: content || "",
-    media: media || "",
-    type: type || "text",
-    title: title || "",
-    hashtag: hashtag || "",
-    location: location || "",
-    privacy: privacy || "public",
-    likes: [],
-    comments: [],
-    shares: 0,
-    saves: [],
-    views: 0,
-    createdAt: new Date().toISOString()
-  };
-
-  posts.push(post);
-
-  io.emit("post:new", post);
-
-  res.json({
-    success: true,
-    post
-  });
-});
-
-app.post("/api/posts/:id/react", (req, res) => {
-  const post = posts.find(p => p.id === req.params.id);
-
-  if (!post) {
-    return res.json({
-      success: false,
-      message: "Post পাওয়া যায়নি"
-    });
-  }
-
-  const userId = String(req.body.userId);
-
-  if (post.likes.includes(userId)) {
-    post.likes = post.likes.filter(id => id !== userId);
-  } else {
-    post.likes.push(userId);
-  }
-
-  io.emit("post:updated", post);
-
-  res.json({
-    success: true,
-    likes: post.likes.length
-  });
-});
-
-app.post("/api/posts/:id/comment", (req, res) => {
-  const post = posts.find(p => p.id === req.params.id);
-
-  if (!post) {
-    return res.json({
-      success: false,
-      message: "Post পাওয়া যায়নি"
-    });
-  }
-
-  const user = findUser(req.body.userId);
-
-  if (!user || !req.body.text) {
-    return res.json({
-      success: false,
-      message: "Comment লিখুন"
-    });
-  }
-
-  const comment = {
-    id: Date.now().toString(),
-    userId: user.id,
-    userName: user.name,
-    text: req.body.text,
-    createdAt: new Date().toISOString()
-  };
-
-  post.comments.push(comment);
-
-  io.emit("comment:new", {
-    postId: post.id,
-    comment
-  });
-
-  res.json({
-    success: true,
-    comment
-  });
-});
-
-app.post("/api/posts/:id/share", (req, res) => {
-  const post = posts.find(p => p.id === req.params.id);
-
-  if (!post) {
-    return res.json({
-      success: false
-    });
-  }
-
-  post.shares++;
-
-  res.json({
-    success: true,
-    shares: post.shares
-  });
-});
-
-app.post("/api/posts/:id/save", (req, res) => {
-  const post = posts.find(p => p.id === req.params.id);
-
-  if (!post) {
-    return res.json({
-      success: false
-    });
-  }
-
-  const userId = String(req.body.userId);
-
-  if (post.saves.includes(userId)) {
-    post.saves = post.saves.filter(id => id !== userId);
-  } else {
-    post.saves.push(userId);
-  }
-
-  res.json({
-    success: true,
-    saved: post.saves.includes(userId)
-  });
-});
-
-/* =========================
-   FRIEND
-========================= */
-
-app.post("/api/friends/request", (req, res) => {
-  const { fromId, toId } = req.body;
-
-  const from = findUser(fromId);
-  const to = findUser(toId);
-
-  if (!from || !to) {
-    return res.json({
-      success: false,
-      message: "User পাওয়া যায়নি"
-    });
-  }
-
-  if (from.friends.includes(to.id)) {
-    return res.json({
-      success: false,
-      message: "Already friends"
-    });
-  }
-
-  friendRequests.push({
-    id: Date.now().toString(),
-    fromId: from.id,
-    toId: to.id,
-    status: "pending",
-    createdAt: new Date().toISOString()
-  });
-
-  notifications.push({
-    id: Date.now().toString(),
-    userId: to.id,
-    fromUserName: from.name,
-    type: "friend_request",
-    createdAt: new Date().toISOString()
-  });
-
-  io.to("user_" + to.id).emit("notification:new");
-
-  res.json({
-    success: true,
-    message: "Friend request sent"
-  });
-});
-
-app.post("/api/friends/accept", (req, res) => {
-  const request = friendRequests.find(
-    r =>
-      r.id === req.body.requestId &&
-      r.status === "pending"
-  );
-
-  if (!request) {
-    return res.json({
-      success: false,
-      message: "Request পাওয়া যায়নি"
-    });
-  }
-
-  const a = findUser(request.fromId);
-  const b = findUser(request.toId);
-
-  if (!a || !b) {
-    return res.json({ success: false });
-  }
-
-  if (!a.friends.includes(b.id)) {
-    a.friends.push(b.id);
-  }
-
-  if (!b.friends.includes(a.id)) {
-    b.friends.push(a.id);
-  }
-
-  request.status = "accepted";
-
-  res.json({
-    success: true
-  });
-});
-
-/* =========================
-   FOLLOW
-========================= */
-
-app.post("/api/follow", (req, res) => {
-  const { followerId, followingId } = req.body;
-
-  if (
-    !findUser(followerId) ||
-    !findUser(followingId)
-  ) {
-    return res.json({
-      success: false
-    });
-  }
-
-  const exists = follows.some(
-    f =>
-      f.followerId === String(followerId) &&
-      f.followingId === String(followingId)
-  );
-
-  if (exists) {
-    return res.json({
-      success: true,
-      following: false
-    });
-  }
-
-  follows.push({
-    followerId: String(followerId),
-    followingId: String(followingId)
-  });
-
-  res.json({
-    success: true,
-    following: true
-  });
-});
-
-/* =========================
-   MESSAGES
-========================= */
-
-app.get("/api/messages/:a/:b", (req, res) => {
-  const a = String(req.params.a);
-  const b = String(req.params.b);
-
-  const result = messages.filter(
-    m =>
-      (m.senderId === a && m.receiverId === b) ||
-      (m.senderId === b && m.receiverId === a)
-  );
-
-  res.json({
-    success: true,
-    messages: result
-  });
-});
-
-app.post("/api/messages", (req, res) => {
-  const message = {
-    id: Date.now().toString(),
-    senderId: String(req.body.senderId),
-    receiverId: String(req.body.receiverId),
-    text: req.body.text || "",
-    type: req.body.type || "text",
-    seen: false,
-    createdAt: new Date().toISOString()
-  };
-
-  messages.push(message);
-
-  io.to("user_" + message.receiverId)
-    .emit("message:new", message);
-
-  io.to("user_" + message.senderId)
-    .emit("message:new", message);
-
-  res.json({
-    success: true,
-    message
-  });
-});
-
-/* =========================
-   NOTIFICATIONS
-========================= */
-
-app.get("/api/notifications/:id", (req, res) => {
-  res.json({
-    success: true,
-    notifications: notifications.filter(
-      n => String(n.userId) === String(req.params.id)
-    )
-  });
-});
-
-/* =========================
-   SOCKET.IO
-========================= */
-
-io.on("connection", socket => {
-
-  socket.on("user:online", data => {
-    socket.join("user_" + data.userId);
-
-    const user = findUser(data.userId);
-
-    if (user) {
-      user.online = true;
-
-      io.emit("user:status", {
-        userId: user.id,
-        online: true
+      return res.status(400).json({
+        error:"সব তথ্য পূরণ করুন।"
       });
     }
-  });
 
-  socket.on("disconnect", () => {
-    // Production version will maintain
-    // multi-device presence here.
-  });
+    if(password.length < 6){
 
-  socket.on("message:send", data => {
-    const message = {
-      id: Date.now().toString(),
-      senderId: String(data.senderId),
-      receiverId: String(data.receiverId),
-      text: data.text || "",
-      type: data.type || "text",
-      seen: false,
-      createdAt: new Date().toISOString()
-    };
-
-    messages.push(message);
-
-    io.to("user_" + message.receiverId)
-      .emit("message:new", message);
-
-    io.to("user_" + message.senderId)
-      .emit("message:new", message);
-  });
-
-  socket.on("typing:start", data => {
-    io.to("user_" + data.receiverId)
-      .emit("typing:start", {
-        senderName: data.senderName
+      return res.status(400).json({
+        error:"Password কমপক্ষে 6 characters হতে হবে।"
       });
-  });
+    }
 
-  socket.on("typing:stop", data => {
-    io.to("user_" + data.receiverId)
-      .emit("typing:stop");
-  });
+    const existing =
+      db.prepare(`
+        SELECT id
+        FROM users
+        WHERE username = ?
+           OR phone = ?
+      `).get(username,phone);
 
-  socket.on("call:offer", data => {
-    io.to("user_" + data.receiverId)
-      .emit("call:offer", data);
-  });
+    if(existing){
 
-  socket.on("call:answer", data => {
-    io.to("user_" + data.callerId)
-      .emit("call:answer", data);
-  });
+      return res.status(409).json({
+        error:"Username অথবা Phone আগে থেকেই ব্যবহার হয়েছে।"
+      });
+    }
 
-  socket.on("call:ice", data => {
-    io.to("user_" + data.targetUserId)
-      .emit("call:ice", data);
-  });
+    const hash =
+      await bcrypt.hash(password,12);
 
-  socket.on("call:end", data => {
-    io.to("user_" + data.targetUserId)
-      .emit("call:ended");
-  });
+    const result =
+      db.prepare(`
+        INSERT INTO users
+        (name,username,phone,password_hash)
+        VALUES (?,?,?,?)
+      `).run(
+        name,
+        username,
+        phone,
+        hash
+      );
 
-  socket.on("call:reject", data => {
-    io.to("user_" + data.callerId)
-      .emit("call:rejected");
+    res.json({
+      success:true,
+      userId:result.lastInsertRowid
+    });
+
+  }catch(error){
+
+    console.error(error);
+
+    res.status(500).json({
+      error:"Registration failed"
+    });
+  }
+});
+
+
+app.post("/api/auth/login",async(req,res)=>{
+
+  try{
+
+    const phone = clean(req.body.phone);
+    const password = String(req.body.password || "");
+
+    const user =
+      db.prepare(`
+        SELECT *
+        FROM users
+        WHERE phone = ?
+      `).get(phone);
+
+    if(!user){
+
+      return res.status(401).json({
+        error:"Invalid phone or password"
+      });
+    }
+
+    const valid =
+      await bcrypt.compare(
+        password,
+        user.password_hash
+      );
+
+    if(!valid){
+
+      return res.status(401).json({
+        error:"Invalid phone or password"
+      });
+    }
+
+    const token = createToken();
+
+    db.prepare(`
+      INSERT INTO sessions(token,user_id)
+      VALUES (?,?)
+    `).run(token,user.id);
+
+    res.json({
+
+      success:true,
+
+      token,
+
+      user:{
+        id:user.id,
+        name:user.name,
+        username:user.username,
+        phone:user.phone,
+        bio:user.bio
+      }
+
+    });
+
+  }catch(error){
+
+    console.error(error);
+
+    res.status(500).json({
+      error:"Login failed"
+    });
+  }
+});
+
+
+app.post("/api/auth/logout",requireAuth,(req,res)=>{
+
+  const token =
+    req.headers.authorization?.replace("Bearer ","");
+
+  if(token){
+
+    db.prepare(`
+      DELETE FROM sessions
+      WHERE token = ?
+    `).run(token);
+
+  }
+
+  res.json({
+    success:true
   });
 });
 
-/* =========================
-   FRONTEND FALLBACK
-========================= */
 
-app.get("*", (req, res) => {
+/* ================= USERS ================= */
+
+app.get("/api/users",requireAuth,(req,res)=>{
+
+  const users =
+    db.prepare(`
+      SELECT id,name,username,bio
+      FROM users
+      ORDER BY id DESC
+    `).all();
+
+  res.json({users});
+});
+
+
+app.get("/api/users/:id",requireAuth,(req,res)=>{
+
+  const user =
+    db.prepare(`
+      SELECT
+        u.id,
+        u.name,
+        u.username,
+        u.phone,
+        u.bio,
+        u.created_at,
+        COUNT(p.id) AS post_count
+      FROM users u
+      LEFT JOIN posts p
+        ON p.user_id = u.id
+      WHERE u.id = ?
+      GROUP BY u.id
+    `).get(req.params.id);
+
+  if(!user){
+
+    return res.status(404).json({
+      error:"User not found"
+    });
+  }
+
+  res.json({user});
+});
+
+
+/* ================= FEED ================= */
+
+app.get("/api/feed",requireAuth,(req,res)=>{
+
+  const posts =
+    db.prepare(`
+      SELECT
+        p.*,
+        u.name,
+        u.username
+      FROM posts p
+      JOIN users u
+        ON u.id = p.user_id
+      ORDER BY p.id DESC
+      LIMIT 100
+    `).all();
+
+  res.json({posts});
+});
+
+
+/* ================= POSTS ================= */
+
+app.post("/api/posts",requireAuth,(req,res)=>{
+
+  const content =
+    clean(req.body.content);
+
+  const image =
+    clean(req.body.image);
+
+  if(!content && !image){
+
+    return res.status(400).json({
+      error:"Post cannot be empty"
+    });
+  }
+
+  const result =
+    db.prepare(`
+      INSERT INTO posts
+      (user_id,content,image)
+      VALUES (?,?,?)
+    `).run(
+      req.user.id,
+      content,
+      image
+    );
+
+  res.json({
+    success:true,
+    postId:result.lastInsertRowid
+  });
+});
+
+
+app.post("/api/posts/:id/react",requireAuth,(req,res)=>{
+
+  const postId =
+    Number(req.params.id);
+
+  const exists =
+    db.prepare(`
+      SELECT id
+      FROM reactions
+      WHERE post_id = ?
+      AND user_id = ?
+    `).get(
+      postId,
+      req.user.id
+    );
+
+  if(exists){
+
+    db.prepare(`
+      DELETE FROM reactions
+      WHERE post_id = ?
+      AND user_id = ?
+    `).run(
+      postId,
+      req.user.id
+    );
+
+    db.prepare(`
+      UPDATE posts
+      SET likes = MAX(likes - 1,0)
+      WHERE id = ?
+    `).run(postId);
+
+  }else{
+
+    db.prepare(`
+      INSERT INTO reactions
+      (post_id,user_id)
+      VALUES (?,?)
+    `).run(
+      postId,
+      req.user.id
+    );
+
+    db.prepare(`
+      UPDATE posts
+      SET likes = likes + 1
+      WHERE id = ?
+    `).run(postId);
+  }
+
+  res.json({
+    success:true
+  });
+});
+
+
+app.post("/api/posts/:id/comment",requireAuth,(req,res)=>{
+
+  const text =
+    clean(req.body.text);
+
+  if(!text){
+
+    return res.status(400).json({
+      error:"Comment empty"
+    });
+  }
+
+  const postId =
+    Number(req.params.id);
+
+  db.prepare(`
+    INSERT INTO post_comments
+    (post_id,user_id,text)
+    VALUES (?,?,?)
+  `).run(
+    postId,
+    req.user.id,
+    text
+  );
+
+  db.prepare(`
+    UPDATE posts
+    SET comments = comments + 1
+    WHERE id = ?
+  `).run(postId);
+
+  res.json({
+    success:true
+  });
+});
+
+
+/* ================= FRIENDS ================= */
+
+app.post("/api/friends/request",requireAuth,(req,res)=>{
+
+  const receiver =
+    Number(req.body.userId);
+
+  if(!receiver){
+
+    return res.status(400).json({
+      error:"Invalid user"
+    });
+  }
+
+  if(receiver === req.user.id){
+
+    return res.status(400).json({
+      error:"নিজেকে friend request পাঠানো যাবে না।"
+    });
+  }
+
+  try{
+
+    db.prepare(`
+      INSERT INTO friend_requests
+      (sender_id,receiver_id)
+      VALUES (?,?)
+    `).run(
+      req.user.id,
+      receiver
+    );
+
+    res.json({
+      success:true,
+      message:"Friend request sent."
+    });
+
+  }catch(e){
+
+    res.status(409).json({
+      error:"Request already exists."
+    });
+  }
+});
+
+
+/* ================= MESSAGES ================= */
+
+app.get("/api/messages",requireAuth,(req,res)=>{
+
+  const withName =
+    clean(req.query.with);
+
+  const messages =
+    db.prepare(`
+      SELECT
+        m.id,
+        m.text,
+        m.created_at,
+        u.username AS sender
+      FROM messages m
+      JOIN users u
+        ON u.id = m.sender_id
+      WHERE
+        (
+          m.sender_id = ?
+          AND m.receiver_name = ?
+        )
+        OR
+        (
+          m.sender_id IN (
+            SELECT id
+            FROM users
+            WHERE username = ?
+          )
+          AND m.receiver_name = ?
+        )
+      ORDER BY m.id ASC
+    `).all(
+      req.user.id,
+      withName,
+      withName,
+      req.user.username
+    );
+
+  res.json({messages});
+});
+
+
+app.post("/api/messages",requireAuth,(req,res)=>{
+
+  const receiver =
+    clean(req.body.receiver);
+
+  const text =
+    clean(req.body.text);
+
+  if(!receiver || !text){
+
+    return res.status(400).json({
+      error:"Receiver এবং message required"
+    });
+  }
+
+  const result =
+    db.prepare(`
+      INSERT INTO messages
+      (sender_id,receiver_name,text)
+      VALUES (?,?,?)
+    `).run(
+      req.user.id,
+      receiver,
+      text
+    );
+
+  res.json({
+    success:true,
+    messageId:result.lastInsertRowid
+  });
+});
+
+
+/* ================= MARKETPLACE ================= */
+
+app.get("/api/marketplace",requireAuth,(req,res)=>{
+
+  /*
+   * Product database পরে আলাদা products table-এ যাবে।
+   * Step-1-এ marketplace endpoint structure রাখা হলো।
+   */
+
+  res.json({
+    products:[
+      {
+        id:1,
+        title:"Smart Phone",
+        price:15000,
+        image:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=700",
+        description:"Smart phone marketplace listing."
+      },
+      {
+        id:2,
+        title:"Premium Watch",
+        price:1000,
+        image:"https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=700",
+        description:"Premium watch listing."
+      }
+    ]
+  });
+});
+
+
+/* ================= SEARCH ================= */
+
+app.get("/api/search",requireAuth,(req,res)=>{
+
+  const q =
+    `%${clean(req.query.q)}%`;
+
+  const users =
+    db.prepare(`
+      SELECT id,name,username,bio
+      FROM users
+      WHERE name LIKE ?
+         OR username LIKE ?
+      LIMIT 50
+    `).all(q,q);
+
+  res.json({users});
+});
+
+
+/* ================= HEALTH ================= */
+
+app.get("/api/health",(req,res)=>{
+
+  res.json({
+    status:"online",
+    app:"ShakibYS",
+    database:"connected",
+    time:new Date().toISOString()
+  });
+});
+
+
+/* ================= FRONTEND ================= */
+
+app.get("*",(req,res)=>{
+
   res.sendFile(
-    path.join(__dirname, "public", "index.html")
+    path.join(__dirname,"index.html")
   );
 });
 
-server.listen(PORT, () => {
-  console.log(`ShakibYS running on port ${PORT}`);
+
+app.listen(PORT,()=>{
+
+  console.log(
+    `ShakibYS running on port ${PORT}`
+  );
+
 });
