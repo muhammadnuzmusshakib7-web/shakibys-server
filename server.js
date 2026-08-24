@@ -1,71 +1,38 @@
 const express = require("express");
 const http = require("http");
-const path = require("path");
-const cors = require("cors");
 const { Server } = require("socket.io");
+const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
+const io = new Server(server);
 
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: "*" }));
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname));
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
+app.use(express.static(path.join(__dirname, "public")));
 
-/* =========================================================
-   IN-MEMORY DATABASE
-========================================================= */
+/* =========================
+   DEMO DATABASE
+========================= */
 
 const users = [];
 const posts = [];
 const messages = [];
+const notifications = [];
 const friendRequests = [];
 const follows = [];
-const notifications = [];
 
-let nextUserId = 1;
-let nextPostId = 1;
-let nextMessageId = 1;
-let nextRequestId = 1;
-let nextNotificationId = 1;
+let userId = 1;
+let postId = 1;
 
-/* =========================================================
-   ONLINE USERS
-========================================================= */
-
-const socketUsers = new Map(); // socket.id -> userId
-const userSockets = new Map(); // userId -> socket.id
-
-/* =========================================================
+/* =========================
    HELPERS
-========================================================= */
+========================= */
 
-function clean(value, fallback = "") {
-  return String(value ?? fallback).trim();
-}
-
-function now() {
-  return new Date().toISOString();
-}
-
-function makeId(prefix, number) {
-  return `${prefix}_${number}`;
-}
-
-function getUser(id) {
+function findUser(id) {
   return users.find(u => String(u.id) === String(id));
-}
-
-function getUserByPhone(phone) {
-  return users.find(u => u.phone === clean(phone));
 }
 
 function publicUser(user) {
@@ -74,150 +41,82 @@ function publicUser(user) {
   return {
     id: user.id,
     name: user.name,
+    username: user.username,
     phone: user.phone,
-    avatar: user.avatar || "",
-    bio: user.bio || "",
-    online: !!user.online,
-    lastSeen: user.lastSeen || null,
-    followers: user.followers || 0,
-    following: user.following || 0,
-    friends: user.friends || 0,
+    bio: user.bio,
+    avatar: user.avatar,
+    cover: user.cover,
+    online: user.online,
+    friends: user.friends.length,
+    followers: follows.filter(x => x.followingId === user.id).length,
+    following: follows.filter(x => x.followerId === user.id).length,
     createdAt: user.createdAt
   };
 }
 
-function sendToUser(userId, event, data) {
-  const socketId = userSockets.get(String(userId));
-
-  if (!socketId) return false;
-
-  io.to(socketId).emit(event, data);
-  return true;
-}
-
-function conversationId(a, b) {
-  return [String(a), String(b)].sort().join("_");
-}
-
-function addNotification(userId, type, fromUser, extra = {}) {
-  const notification = {
-    id: makeId("notification", nextNotificationId++),
-    userId: String(userId),
-    type,
-    fromUserId: String(fromUser.id),
-    fromUserName: fromUser.name,
-    ...extra,
-    read: false,
-    createdAt: now()
-  };
-
-  notifications.push(notification);
-
-  sendToUser(
-    userId,
-    "notification:new",
-    notification
-  );
-
-  return notification;
-}
-
-/* =========================================================
-   DEMO USER
-   ========================================================= */
-
-if (users.length === 0) {
-  users.push({
-    id: String(nextUserId++),
-    name: "Shakib",
-    phone: "01339828709",
-    avatar: "",
-    bio: "Welcome to ShakibYS",
-    online: false,
-    lastSeen: now(),
-    followers: 0,
-    following: 0,
-    friends: 0,
-    createdAt: now()
-  });
-}
-
-/* =========================================================
-   AUTH — REGISTER
-========================================================= */
+/* =========================
+   AUTH
+========================= */
 
 app.post("/api/auth/register", (req, res) => {
-  const name = clean(req.body?.name);
-  const phone = clean(req.body?.phone);
+  const { name, phone, password } = req.body;
 
   if (!name || !phone) {
-    return res.status(400).json({
+    return res.json({
       success: false,
       message: "নাম ও মোবাইল নাম্বার দিন"
     });
   }
 
-  if (!/^\d{5,15}$/.test(phone)) {
-    return res.status(400).json({
-      success: false,
-      message: "সঠিক মোবাইল নাম্বার দিন"
-    });
-  }
-
-  const existing = getUserByPhone(phone);
-
-  if (existing) {
+  if (users.some(u => u.phone === phone)) {
     return res.json({
-      success: true,
-      user: publicUser(existing),
-      message: "এই নাম্বারে আগে থেকেই অ্যাকাউন্ট আছে"
+      success: false,
+      message: "এই নাম্বার আগে ব্যবহার করা হয়েছে"
     });
   }
 
   const user = {
-    id: String(nextUserId++),
+    id: String(userId++),
     name,
+    username: "user" + Date.now(),
     phone,
-    avatar: "",
+    password: password || "",
     bio: "",
-    online: false,
-    lastSeen: now(),
-    followers: 0,
-    following: 0,
-    friends: 0,
-    createdAt: now()
+    avatar: "",
+    cover: "",
+    online: true,
+    friends: [],
+    createdAt: new Date().toISOString()
   };
 
   users.push(user);
 
-  res.status(201).json({
+  res.json({
     success: true,
     user: publicUser(user)
   });
 });
-
-/* =========================================================
-   AUTH — LOGIN
-========================================================= */
 
 app.post("/api/auth/login", (req, res) => {
-  const phone = clean(req.body?.phone);
+  const { phone, password } = req.body;
 
-  if (!phone) {
-    return res.status(400).json({
-      success: false,
-      message: "মোবাইল নাম্বার দিন"
-    });
-  }
-
-  const user = getUserByPhone(phone);
+  const user = users.find(u => u.phone === phone);
 
   if (!user) {
-    return res.status(404).json({
+    return res.json({
       success: false,
-      message: "এই নাম্বারে কোনো অ্যাকাউন্ট পাওয়া যায়নি"
+      message: "Account পাওয়া যায়নি"
     });
   }
+
+  if (user.password && user.password !== password) {
+    return res.json({
+      success: false,
+      message: "Password ভুল"
+    });
+  }
+
+  user.online = true;
 
   res.json({
     success: true,
@@ -225,47 +124,40 @@ app.post("/api/auth/login", (req, res) => {
   });
 });
 
-/* =========================================================
-   USERS — SEARCH
-========================================================= */
+app.post("/api/auth/logout", (req, res) => {
+  const user = findUser(req.body.userId);
+
+  if (user) user.online = false;
+
+  res.json({ success: true });
+});
+
+/* =========================
+   USERS
+========================= */
 
 app.get("/api/users", (req, res) => {
-  const q = clean(req.query.q).toLowerCase();
-
-  if (!q) {
-    return res.json({
-      success: true,
-      users: users.slice(0, 50).map(publicUser)
-    });
-  }
+  const q = String(req.query.q || "").toLowerCase();
 
   const result = users
-    .filter(user => {
-      return (
-        user.name.toLowerCase().includes(q) ||
-        user.phone.includes(q)
-      );
-    })
-    .slice(0, 50)
+    .filter(u =>
+      !q ||
+      u.name.toLowerCase().includes(q) ||
+      u.phone.includes(q) ||
+      u.username.toLowerCase().includes(q)
+    )
     .map(publicUser);
 
-  res.json({
-    success: true,
-    users: result
-  });
+  res.json({ success: true, users: result });
 });
 
-/* =========================================================
-   USER PROFILE
-========================================================= */
-
 app.get("/api/users/:id", (req, res) => {
-  const user = getUser(req.params.id);
+  const user = findUser(req.params.id);
 
   if (!user) {
-    return res.status(404).json({
+    return res.json({
       success: false,
-      message: "User পাওয়া যায়নি"
+      message: "User পাওয়া যায়নি"
     });
   }
 
@@ -275,17 +167,33 @@ app.get("/api/users/:id", (req, res) => {
   });
 });
 
-/* =========================================================
-   POSTS — GET
-========================================================= */
+app.put("/api/users/:id", (req, res) => {
+  const user = findUser(req.params.id);
+
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "User পাওয়া যায়নি"
+    });
+  }
+
+  if (req.body.name !== undefined) user.name = req.body.name;
+  if (req.body.bio !== undefined) user.bio = req.body.bio;
+  if (req.body.avatar !== undefined) user.avatar = req.body.avatar;
+  if (req.body.cover !== undefined) user.cover = req.body.cover;
+
+  res.json({
+    success: true,
+    user: publicUser(user)
+  });
+});
+
+/* =========================
+   POSTS
+========================= */
 
 app.get("/api/posts", (req, res) => {
-  const result = posts
-    .filter(post => post.privacy === "public")
-    .sort((a, b) =>
-      new Date(b.createdAt) - new Date(a.createdAt)
-    )
-    .slice(0, 100);
+  const result = [...posts].reverse();
 
   res.json({
     success: true,
@@ -293,265 +201,306 @@ app.get("/api/posts", (req, res) => {
   });
 });
 
-/* =========================================================
-   POSTS — CREATE
-========================================================= */
-
 app.post("/api/posts", (req, res) => {
-  const authorId = clean(req.body?.authorId);
-  const author = clean(req.body?.author, "Shakib");
-  const content = clean(req.body?.content);
-  const type = clean(req.body?.type, "text");
-  const media = clean(req.body?.media);
-  const privacy = clean(req.body?.privacy, "public");
+  const {
+    authorId,
+    content,
+    media,
+    type,
+    title,
+    hashtag,
+    location,
+    privacy
+  } = req.body;
+
+  const user = findUser(authorId);
+
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "User পাওয়া যায়নি"
+    });
+  }
 
   if (!content && !media) {
-    return res.status(400).json({
+    return res.json({
       success: false,
-      message: "Post লিখুন বা ছবি/ভিডিও দিন"
+      message: "Post-এর content বা media দিন"
     });
   }
 
   const post = {
-    id: String(nextPostId++),
-    authorId,
-    author,
-    type,
-    content,
-    media,
-    privacy,
+    id: String(postId++),
+    authorId: user.id,
+    author: user.name,
+    authorAvatar: user.avatar || "",
+    content: content || "",
+    media: media || "",
+    type: type || "text",
+    title: title || "",
+    hashtag: hashtag || "",
+    location: location || "",
+    privacy: privacy || "public",
     likes: [],
     comments: [],
     shares: 0,
-    createdAt: now()
+    saves: [],
+    views: 0,
+    createdAt: new Date().toISOString()
   };
 
-  posts.unshift(post);
+  posts.push(post);
 
-  io.emit("post:created", post);
+  io.emit("post:new", post);
 
-  res.status(201).json({
+  res.json({
     success: true,
     post
   });
 });
 
-/* =========================================================
-   POSTS — DELETE
-========================================================= */
+app.post("/api/posts/:id/react", (req, res) => {
+  const post = posts.find(p => p.id === req.params.id);
 
-app.delete("/api/posts/:id", (req, res) => {
-  const index = posts.findIndex(
-    p => String(p.id) === String(req.params.id)
-  );
-
-  if (index === -1) {
-    return res.status(404).json({
+  if (!post) {
+    return res.json({
       success: false,
-      message: "Post পাওয়া যায়নি"
+      message: "Post পাওয়া যায়নি"
     });
   }
 
-  const removed = posts.splice(index, 1)[0];
+  const userId = String(req.body.userId);
 
-  io.emit("post:deleted", {
-    id: removed.id
+  if (post.likes.includes(userId)) {
+    post.likes = post.likes.filter(id => id !== userId);
+  } else {
+    post.likes.push(userId);
+  }
+
+  io.emit("post:updated", post);
+
+  res.json({
+    success: true,
+    likes: post.likes.length
   });
+});
+
+app.post("/api/posts/:id/comment", (req, res) => {
+  const post = posts.find(p => p.id === req.params.id);
+
+  if (!post) {
+    return res.json({
+      success: false,
+      message: "Post পাওয়া যায়নি"
+    });
+  }
+
+  const user = findUser(req.body.userId);
+
+  if (!user || !req.body.text) {
+    return res.json({
+      success: false,
+      message: "Comment লিখুন"
+    });
+  }
+
+  const comment = {
+    id: Date.now().toString(),
+    userId: user.id,
+    userName: user.name,
+    text: req.body.text,
+    createdAt: new Date().toISOString()
+  };
+
+  post.comments.push(comment);
+
+  io.emit("comment:new", {
+    postId: post.id,
+    comment
+  });
+
+  res.json({
+    success: true,
+    comment
+  });
+});
+
+app.post("/api/posts/:id/share", (req, res) => {
+  const post = posts.find(p => p.id === req.params.id);
+
+  if (!post) {
+    return res.json({
+      success: false
+    });
+  }
+
+  post.shares++;
+
+  res.json({
+    success: true,
+    shares: post.shares
+  });
+});
+
+app.post("/api/posts/:id/save", (req, res) => {
+  const post = posts.find(p => p.id === req.params.id);
+
+  if (!post) {
+    return res.json({
+      success: false
+    });
+  }
+
+  const userId = String(req.body.userId);
+
+  if (post.saves.includes(userId)) {
+    post.saves = post.saves.filter(id => id !== userId);
+  } else {
+    post.saves.push(userId);
+  }
+
+  res.json({
+    success: true,
+    saved: post.saves.includes(userId)
+  });
+});
+
+/* =========================
+   FRIEND
+========================= */
+
+app.post("/api/friends/request", (req, res) => {
+  const { fromId, toId } = req.body;
+
+  const from = findUser(fromId);
+  const to = findUser(toId);
+
+  if (!from || !to) {
+    return res.json({
+      success: false,
+      message: "User পাওয়া যায়নি"
+    });
+  }
+
+  if (from.friends.includes(to.id)) {
+    return res.json({
+      success: false,
+      message: "Already friends"
+    });
+  }
+
+  friendRequests.push({
+    id: Date.now().toString(),
+    fromId: from.id,
+    toId: to.id,
+    status: "pending",
+    createdAt: new Date().toISOString()
+  });
+
+  notifications.push({
+    id: Date.now().toString(),
+    userId: to.id,
+    fromUserName: from.name,
+    type: "friend_request",
+    createdAt: new Date().toISOString()
+  });
+
+  io.to("user_" + to.id).emit("notification:new");
+
+  res.json({
+    success: true,
+    message: "Friend request sent"
+  });
+});
+
+app.post("/api/friends/accept", (req, res) => {
+  const request = friendRequests.find(
+    r =>
+      r.id === req.body.requestId &&
+      r.status === "pending"
+  );
+
+  if (!request) {
+    return res.json({
+      success: false,
+      message: "Request পাওয়া যায়নি"
+    });
+  }
+
+  const a = findUser(request.fromId);
+  const b = findUser(request.toId);
+
+  if (!a || !b) {
+    return res.json({ success: false });
+  }
+
+  if (!a.friends.includes(b.id)) {
+    a.friends.push(b.id);
+  }
+
+  if (!b.friends.includes(a.id)) {
+    b.friends.push(a.id);
+  }
+
+  request.status = "accepted";
 
   res.json({
     success: true
   });
 });
 
-/* =========================================================
-   FRIEND REQUEST
-========================================================= */
-
-app.post("/api/friends/request", (req, res) => {
-  const fromId = clean(req.body?.fromId);
-  const toId = clean(req.body?.toId);
-
-  const from = getUser(fromId);
-  const to = getUser(toId);
-
-  if (!from || !to) {
-    return res.status(404).json({
-      success: false,
-      message: "User পাওয়া যায়নি"
-    });
-  }
-
-  if (from.id === to.id) {
-    return res.status(400).json({
-      success: false,
-      message: "নিজেকে friend request দেওয়া যাবে না"
-    });
-  }
-
-  const existing = friendRequests.find(r =>
-    r.fromId === fromId &&
-    r.toId === toId &&
-    r.status === "pending"
-  );
-
-  if (existing) {
-    return res.json({
-      success: true,
-      request: existing
-    });
-  }
-
-  const request = {
-    id: String(nextRequestId++),
-    fromId,
-    toId,
-    status: "pending",
-    createdAt: now()
-  };
-
-  friendRequests.push(request);
-
-  addNotification(
-    toId,
-    "friend_request",
-    from,
-    {
-      requestId: request.id
-    }
-  );
-
-  sendToUser(
-    toId,
-    "friend:request",
-    request
-  );
-
-  res.json({
-    success: true,
-    request
-  });
-});
-
-/* =========================================================
-   FRIEND REQUEST — ACCEPT
-========================================================= */
-
-app.post("/api/friends/accept", (req, res) => {
-  const requestId = clean(req.body?.requestId);
-
-  const request = friendRequests.find(
-    r => String(r.id) === requestId
-  );
-
-  if (!request) {
-    return res.status(404).json({
-      success: false,
-      message: "Request পাওয়া যায়নি"
-    });
-  }
-
-  request.status = "accepted";
-
-  const a = getUser(request.fromId);
-  const b = getUser(request.toId);
-
-  if (a && b) {
-    a.friends = (a.friends || 0) + 1;
-    b.friends = (b.friends || 0) + 1;
-
-    addNotification(
-      a.id,
-      "friend_accepted",
-      b
-    );
-  }
-
-  sendToUser(
-    request.fromId,
-    "friend:accepted",
-    request
-  );
-
-  sendToUser(
-    request.toId,
-    "friend:accepted",
-    request
-  );
-
-  res.json({
-    success: true,
-    request
-  });
-});
-
-/* =========================================================
+/* =========================
    FOLLOW
-========================================================= */
+========================= */
 
 app.post("/api/follow", (req, res) => {
-  const followerId = clean(req.body?.followerId);
-  const followingId = clean(req.body?.followingId);
+  const { followerId, followingId } = req.body;
 
-  const follower = getUser(followerId);
-  const following = getUser(followingId);
-
-  if (!follower || !following) {
-    return res.status(404).json({
-      success: false,
-      message: "User পাওয়া যায়নি"
-    });
-  }
-
-  if (followerId === followingId) {
-    return res.status(400).json({
-      success: false,
-      message: "নিজেকে follow করা যাবে না"
+  if (
+    !findUser(followerId) ||
+    !findUser(followingId)
+  ) {
+    return res.json({
+      success: false
     });
   }
 
   const exists = follows.some(
     f =>
-      f.followerId === followerId &&
-      f.followingId === followingId
+      f.followerId === String(followerId) &&
+      f.followingId === String(followingId)
   );
 
-  if (!exists) {
-    follows.push({
-      followerId,
-      followingId,
-      createdAt: now()
+  if (exists) {
+    return res.json({
+      success: true,
+      following: false
     });
-
-    follower.following =
-      (follower.following || 0) + 1;
-
-    following.followers =
-      (following.followers || 0) + 1;
-
-    addNotification(
-      followingId,
-      "follow",
-      follower
-    );
   }
 
+  follows.push({
+    followerId: String(followerId),
+    followingId: String(followingId)
+  });
+
   res.json({
-    success: true
+    success: true,
+    following: true
   });
 });
 
-/* =========================================================
-   MESSAGES — HISTORY
-========================================================= */
+/* =========================
+   MESSAGES
+========================= */
 
-app.get("/api/messages/:userA/:userB", (req, res) => {
-  const cid = conversationId(
-    req.params.userA,
-    req.params.userB
-  );
+app.get("/api/messages/:a/:b", (req, res) => {
+  const a = String(req.params.a);
+  const b = String(req.params.b);
 
   const result = messages.filter(
-    m => m.conversationId === cid
+    m =>
+      (m.senderId === a && m.receiverId === b) ||
+      (m.senderId === b && m.receiverId === a)
   );
 
   res.json({
@@ -560,357 +509,138 @@ app.get("/api/messages/:userA/:userB", (req, res) => {
   });
 });
 
-/* =========================================================
-   NOTIFICATIONS
-========================================================= */
+app.post("/api/messages", (req, res) => {
+  const message = {
+    id: Date.now().toString(),
+    senderId: String(req.body.senderId),
+    receiverId: String(req.body.receiverId),
+    text: req.body.text || "",
+    type: req.body.type || "text",
+    seen: false,
+    createdAt: new Date().toISOString()
+  };
 
-app.get("/api/notifications/:userId", (req, res) => {
-  const result = notifications
-    .filter(
-      n => n.userId === String(req.params.userId)
-    )
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt) -
-        new Date(a.createdAt)
-    )
-    .slice(0, 100);
+  messages.push(message);
+
+  io.to("user_" + message.receiverId)
+    .emit("message:new", message);
+
+  io.to("user_" + message.senderId)
+    .emit("message:new", message);
 
   res.json({
     success: true,
-    notifications: result
+    message
   });
 });
 
-/* =========================================================
+/* =========================
+   NOTIFICATIONS
+========================= */
+
+app.get("/api/notifications/:id", (req, res) => {
+  res.json({
+    success: true,
+    notifications: notifications.filter(
+      n => String(n.userId) === String(req.params.id)
+    )
+  });
+});
+
+/* =========================
    SOCKET.IO
-========================================================= */
+========================= */
 
 io.on("connection", socket => {
-  console.log("🟢 Connected:", socket.id);
-
-  /* USER ONLINE */
 
   socket.on("user:online", data => {
-    const userId = clean(data?.userId);
-    const name = clean(data?.name, "Shakib");
-    const phone = clean(data?.phone);
+    socket.join("user_" + data.userId);
 
-    if (!userId) return;
-
-    socketUsers.set(socket.id, userId);
-    userSockets.set(userId, socket.id);
-
-    const user = getUser(userId);
+    const user = findUser(data.userId);
 
     if (user) {
       user.online = true;
-      user.lastSeen = now();
 
-      if (name) user.name = name;
-      if (phone) user.phone = phone;
+      io.emit("user:status", {
+        userId: user.id,
+        online: true
+      });
     }
-
-    io.emit("user:status", {
-      userId,
-      online: true
-    });
   });
 
-  /* INITIAL FEED */
-
-  socket.emit(
-    "posts:init",
-    posts
-      .filter(p => p.privacy === "public")
-      .slice(0, 100)
-  );
-
-  /* SEND MESSAGE */
+  socket.on("disconnect", () => {
+    // Production version will maintain
+    // multi-device presence here.
+  });
 
   socket.on("message:send", data => {
-    const senderId = clean(data?.senderId);
-    const receiverId = clean(data?.receiverId);
-    const senderName = clean(
-      data?.senderName,
-      "Shakib"
-    );
-    const text = clean(data?.text);
-    const type = clean(data?.type, "text");
-
-    if (
-      !senderId ||
-      !receiverId ||
-      !text
-    ) {
-      socket.emit("message:error", {
-        message: "Message data অসম্পূর্ণ"
-      });
-      return;
-    }
-
     const message = {
-      id: String(nextMessageId++),
-      conversationId:
-        conversationId(senderId, receiverId),
-      senderId,
-      senderName,
-      receiverId,
-      text,
-      type,
-      createdAt: now()
+      id: Date.now().toString(),
+      senderId: String(data.senderId),
+      receiverId: String(data.receiverId),
+      text: data.text || "",
+      type: data.type || "text",
+      seen: false,
+      createdAt: new Date().toISOString()
     };
 
     messages.push(message);
 
-    socket.emit(
-      "message:new",
-      message
-    );
+    io.to("user_" + message.receiverId)
+      .emit("message:new", message);
 
-    sendToUser(
-      receiverId,
-      "message:new",
-      message
-    );
+    io.to("user_" + message.senderId)
+      .emit("message:new", message);
   });
-
-  /* CHAT HISTORY */
-
-  socket.on("message:history", data => {
-    const userA = clean(data?.userA);
-    const userB = clean(data?.userB);
-
-    if (!userA || !userB) return;
-
-    const cid = conversationId(
-      userA,
-      userB
-    );
-
-    socket.emit(
-      "message:history",
-      messages.filter(
-        m => m.conversationId === cid
-      )
-    );
-  });
-
-  /* TYPING */
 
   socket.on("typing:start", data => {
-    sendToUser(
-      clean(data?.receiverId),
-      "typing:start",
-      {
-        senderName: clean(
-          data?.senderName,
-          "Someone"
-        )
-      }
-    );
+    io.to("user_" + data.receiverId)
+      .emit("typing:start", {
+        senderName: data.senderName
+      });
   });
 
   socket.on("typing:stop", data => {
-    sendToUser(
-      clean(data?.receiverId),
-      "typing:stop",
-      {}
-    );
+    io.to("user_" + data.receiverId)
+      .emit("typing:stop");
   });
 
-  /* VOICE / VIDEO CALL */
-
   socket.on("call:offer", data => {
-    sendToUser(
-      clean(data?.receiverId),
-      "call:offer",
-      {
-        callerId: clean(data?.callerId),
-        callerName: clean(
-          data?.callerName,
-          "Shakib"
-        ),
-        callType: clean(
-          data?.callType,
-          "voice"
-        ),
-        offer: data?.offer
-      }
-    );
+    io.to("user_" + data.receiverId)
+      .emit("call:offer", data);
   });
 
   socket.on("call:answer", data => {
-    sendToUser(
-      clean(data?.callerId),
-      "call:answer",
-      {
-        receiverId: clean(
-          data?.receiverId
-        ),
-        answer: data?.answer
-      }
-    );
+    io.to("user_" + data.callerId)
+      .emit("call:answer", data);
   });
 
   socket.on("call:ice", data => {
-    sendToUser(
-      clean(data?.targetUserId),
-      "call:ice",
-      {
-        candidate: data?.candidate
-      }
-    );
-  });
-
-  socket.on("call:reject", data => {
-    sendToUser(
-      clean(data?.callerId),
-      "call:rejected",
-      {
-        receiverId: clean(
-          data?.receiverId
-        )
-      }
-    );
+    io.to("user_" + data.targetUserId)
+      .emit("call:ice", data);
   });
 
   socket.on("call:end", data => {
-    sendToUser(
-      clean(data?.targetUserId),
-      "call:ended",
-      {
-        from: clean(data?.from)
-      }
-    );
+    io.to("user_" + data.targetUserId)
+      .emit("call:ended");
   });
 
-  /* DISCONNECT */
-
-  socket.on("disconnect", () => {
-    const userId =
-      socketUsers.get(socket.id);
-
-    socketUsers.delete(socket.id);
-
-    if (userId) {
-      userSockets.delete(userId);
-
-      const user = getUser(userId);
-
-      if (user) {
-        user.online = false;
-        user.lastSeen = now();
-      }
-
-      io.emit("user:status", {
-        userId,
-        online: false
-      });
-    }
-
-    console.log(
-      "🔴 Disconnected:",
-      socket.id
-    );
+  socket.on("call:reject", data => {
+    io.to("user_" + data.callerId)
+      .emit("call:rejected");
   });
 });
 
-/* =========================================================
-   HEALTH
-========================================================= */
+/* =========================
+   FRONTEND FALLBACK
+========================= */
 
-app.get("/api/health", (req, res) => {
-  res.json({
-    success: true,
-    app: "ShakibYS",
-    server: "online",
-    newsFeed: true,
-    messenger: true,
-    voiceCall: true,
-    videoCall: true,
-    friendRequest: true,
-    follow: true,
-    notifications: true,
-    users: users.length,
-    posts: posts.length,
-    messages: messages.length,
-    time: now()
-  });
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "public", "index.html")
+  );
 });
 
-/* =========================================================
-   FRONTEND
-   Express 5 এ app.get("*") ব্যবহার করা যাবে না।
-========================================================= */
-
-app.use((req, res, next) => {
-  if (
-    req.method === "GET" &&
-    !req.path.startsWith("/api/")
-  ) {
-    return res.sendFile(
-      path.join(__dirname, "index.html")
-    );
-  }
-
-  next();
+server.listen(PORT, () => {
+  console.log(`ShakibYS running on port ${PORT}`);
 });
-
-/* =========================================================
-   START
-========================================================= */
-
-server.listen(
-  PORT,
-  "0.0.0.0",
-  () => {
-    console.log("");
-    console.log(
-      "================================="
-    );
-    console.log(
-      "🚀 SHAKIBYS SERVER ONLINE"
-    );
-    console.log(
-      "================================="
-    );
-    console.log(
-      "👤 Login/Register : ON"
-    );
-    console.log(
-      "🔎 User Search    : ON"
-    );
-    console.log(
-      "📰 News Feed      : ON"
-    );
-    console.log(
-      "💬 Messenger      : ON"
-    );
-    console.log(
-      "📞 Voice Call     : ON"
-    );
-    console.log(
-      "🎥 Video Call     : ON"
-    );
-    console.log(
-      "👥 Friend Request : ON"
-    );
-    console.log(
-      "➕ Follow         : ON"
-    );
-    console.log(
-      "🔔 Notifications  : ON"
-    );
-    console.log(
-      "🔌 Socket.IO      : ON"
-    );
-    console.log(
-      "🌐 PORT           :",
-      PORT
-    );
-    console.log(
-      "================================="
-    );
-  }
-);
