@@ -1,485 +1,1223 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-  <meta name="theme-color" content="#ff4fa3">
-  <title>ShakibYS</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShakibYS - VIP Super App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --app-red: #ff2a5f;
+            --app-red-hover: #e01b4d;
+            --page-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-gray: #64748b;
+            --border-color: #e2e8f0;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--page-bg);
+            color: var(--text-main);
+        }
+
+        /* Authentication VIP */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--border-color);
+        }
+        .auth-card.active { display: block; }
+        .auth-title { color: var(--app-red); font-size: 32px; font-weight: 800; margin-bottom: 25px; letter-spacing: 1px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { font-size: 11px; color: var(--text-gray); margin-bottom: 6px; display: block; text-transform: uppercase; font-weight: 700; }
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 15px;
+            background: #f8fafc;
+            color: var(--text-main);
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--app-red); box-shadow: 0 0 10px rgba(255, 42, 95, 0.15); background: white; }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ff2a5f 0%, #e01b4d 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(255, 42, 95, 0.3);
+            transition: 0.3s;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .link { color: var(--app-red); text-decoration: none; cursor: pointer; font-weight: 600; font-size: 14px; }
+
+        /* Main App Container */
+        #app-container { display: none; }
+        #app-container.active { display: block; }
+
+        /* Header / Navbar VIP - Fixed layout to prevent cutting */
+        .header {
+            background: var(--card-bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        .logo-text { color: var(--app-red); font-size: 24px; font-weight: 900; cursor: pointer; letter-spacing: 0.5px; }
+        .top-icons { display: flex; align-items: center; gap: 10px; }
+        .top-icons i {
+            font-size: 18px;
+            background: rgba(255, 42, 95, 0.1);
+            color: var(--app-red);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .top-icons i:hover { background: var(--app-red); color: white; }
+
+        /* Nav Tabs */
+        .nav-tabs { display: flex; justify-content: space-around; background: var(--card-bg); border-top: 1px solid var(--border-color); }
+        .nav-tab { width: 100%; padding: 14px 0; text-align: center; color: var(--text-gray); cursor: pointer; font-size: 18px; border-bottom: 3px solid transparent; transition: 0.3s; }
+        .nav-tab.active { color: var(--app-red); border-bottom: 3px solid var(--app-red); background: rgba(255, 42, 95, 0.03); }
+
+        /* Sections */
+        .section { display: none; padding: 20px; max-width: 650px; margin: 0 auto; }
+        .section.active { display: block; }
+
+        /* Story Section */
+        .stories-container {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+        }
+        .stories-container::-webkit-scrollbar { display: none; }
+        .story-card {
+            min-width: 80px;
+            height: 130px;
+            background: #cbd5e1;
+            border-radius: 16px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border: 2px solid var(--app-red);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 8px;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            background-size: cover;
+            background-position: center;
+        }
+        .story-card.add-story {
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 2px dashed var(--app-red);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Post & General Cards */
+        .create-post, .gen-card {
+            background: var(--card-bg);
+            padding: 18px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+        }
+        .create-post input {
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 12px 18px;
+            border-radius: 30px;
+            font-size: 15px;
+            outline: none;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+        .post-media-preview {
+            width: 100%;
+            max-height: 320px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-top: 10px;
+            display: none;
+        }
+        .post {
+            background: var(--card-bg);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            padding: 18px;
+            border: 1px solid var(--border-color);
+        }
+        .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .post-author { font-weight: bold; font-size: 15px; color: var(--text-main); }
+        .post-time { font-size: 12px; color: var(--text-gray); }
+        .post-actions { border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding-top: 12px; margin-top: 12px; }
+        .action-btn { color: var(--text-gray); cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+        .action-btn:hover, .action-btn.liked { color: var(--app-red); }
+
+        /* Marketplace */
+        .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .product-card:hover { transform: translateY(-3px); border-color: var(--app-red); box-shadow: 0 5px 15px rgba(255,42,95,0.1); }
+        .product-img { width: 100%; height: 150px; background: #f1f5f9; display: flex; justify-content: center; align-items: center; color: var(--text-gray); font-size: 14px; background-size: cover; background-position: center; }
+        .product-body { padding: 12px; text-align: left; }
+        .product-title { font-size: 14px; font-weight: bold; margin-bottom: 6px; color: var(--text-main); }
+        .product-price { color: var(--app-red); font-weight: bold; font-size: 16px; margin-bottom: 10px; }
+        .market-btn {
+            width: 100%;
+            background: var(--app-red);
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px;
+        }
+        .modal-card {
+            background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-color);
+            max-width: 500px; width: 100%; padding: 25px; text-align: left; position: relative; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--text-gray); cursor: pointer; }
+        .modal-close:hover { color: var(--app-red); }
+
+        /* Messenger */
+        .chat-layout { display: flex; height: 75vh; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; }
+        .chat-sidebar { width: 35%; border-right: 1px solid var(--border-color); overflow-y: auto; display: flex; flex-direction: column; }
+        .chat-sidebar-header { padding: 12px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold; }
+        .chat-item { padding: 14px; border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; gap: 10px; position: relative; }
+        .chat-item:hover { background: rgba(255, 42, 95, 0.03); }
+        .active-dot { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; position: absolute; bottom: 14px; left: 34px; border: 2px solid var(--card-bg); }
+        .active-dot.offline { background: #94a3b8; }
+        .chat-window { width: 65%; display: flex; flex-direction: column; justify-content: space-between; background: #f8fafc; }
+        .messages-box { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg-bubble { padding: 12px 16px; border-radius: 14px; max-width: 80%; font-size: 13px; }
+        .msg-incoming { background: #e2e8f0; color: var(--text-main); align-self: flex-start; }
+        .msg-outgoing { background: var(--app-red); color: white; align-self: flex-end; }
+        .chat-input-area { padding: 12px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+
+        /* AI Chatbot */
+        .ai-container { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); height: 78vh; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
+        .ai-messages { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding-bottom: 10px; }
+        .ai-bubble { padding: 14px 18px; border-radius: 14px; max-width: 85%; font-size: 14px; line-height: 1.5; }
+        .ai-user { background: #f1f5f9; color: var(--text-main); align-self: flex-end; }
+        .ai-bot { background: rgba(255, 42, 95, 0.08); color: var(--text-main); align-self: flex-start; border: 1px solid rgba(255, 42, 95, 0.2); }
+        .ai-input-box { display: flex; align-items: center; background: #f8fafc; border-radius: 30px; padding: 6px 16px; border: 1px solid var(--border-color); }
+        .ai-input-box input { flex-grow: 1; border: none; background: transparent; padding: 8px; outline: none; font-size: 14px; color: var(--text-main); }
+        .ai-send-btn { background: var(--app-red); color: white; border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+
+        /* Profile Section */
+        .profile-cover { height: 160px; background: #cbd5e1; border-radius: 12px; position: relative; background-size: cover; background-position: center; }
+        .profile-avatar { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--card-bg); background: #94a3b8; position: absolute; bottom: -45px; left: 20px; background-size: cover; background-position: center; }
+        .profile-info { margin-top: 50px; text-align: left; }
+        .stats-box { display: flex; gap: 25px; margin: 15px 0; font-size: 14px; font-weight: bold; color: var(--text-gray); }
+        .stats-box strong { color: var(--text-main); }
+        .dashboard-box { background: rgba(255, 42, 95, 0.04); border: 1px solid rgba(255, 42, 95, 0.15); padding: 15px; border-radius: 12px; margin-top: 15px; }
+
+        .profile-control-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .profile-control-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .profile-control-card:hover { border-color: var(--app-red); background: rgba(255, 42, 95, 0.03); }
+        .profile-control-card i { font-size: 24px; color: var(--app-red); margin-bottom: 8px; display: block; }
+        .profile-control-card span { font-size: 13px; font-weight: bold; color: var(--text-main); display: block; }
+
+        .btn-small { background: var(--app-red); color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
+        
+        .settings-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .settings-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 15px; background: #f8fafc; border: 1px solid var(--border-color);
+            border-radius: 10px; cursor: pointer; transition: 0.2s; font-size: 14px; font-weight: 600;
+        }
+        .settings-item:hover { border-color: var(--app-red); color: var(--app-red); }
+
+        /* Reels Feed Styling - Fixed to keep Red theme & correct audio/video box */
+        .reels-feed { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .reel-item {
+            background: #000;
+            width: 100%;
+            max-width: 360px;
+            height: 520px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .reel-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .reel-overlay {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            width: 100%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            text-align: left;
+        }
+
+        /* ALERT MODAL */
+        #custom-alert-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); z-index: 9999; justify-content: center; align-items: center; padding: 20px;
+        }
+        .custom-alert-card {
+            background: linear-gradient(135deg, #ff2a5f 0%, #e01b4d 100%); 
+            color: #ffffff; 
+            border: 2px solid #ffffff;
+            border-radius: 20px; 
+            padding: 25px; 
+            max-width: 360px; 
+            width: 100%; 
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(255, 42, 95, 0.4);
+            animation: fadeInModal 0.25s ease;
+        }
+        @keyframes fadeInModal {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .custom-alert-title { color: #ffffff; font-size: 22px; font-weight: 900; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .custom-alert-msg { font-size: 15px; line-height: 1.6; margin-bottom: 22px; color: #ffffff; font-weight: 600; }
+        .custom-alert-btn {
+            background: #ffffff;
+            color: var(--app-red); 
+            border: none; 
+            padding: 10px 28px; 
+            border-radius: 10px; 
+            font-weight: 900;
+            cursor: pointer; 
+            font-size: 14px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.2s;
+        }
+        .custom-alert-btn:hover { background: #f1f5f9; }
+    </style>
+</head>
 <body>
 
-<div id="app">
+    <!-- ALERT MODAL -->
+    <div id="custom-alert-modal">
+        <div class="custom-alert-card">
+            <div class="custom-alert-title" id="custom-alert-header">✨ ShakibYS নোটিফিকেশন</div>
+            <div class="custom-alert-msg" id="custom-alert-text">মেসেজ এখানে থাকবে...</div>
+            <button class="custom-alert-btn" onclick="closeCustomAlert()">ঠিক আছে ✨</button>
+        </div>
+    </div>
 
-  <!-- AUTH -->
-  <section id="authScreen" class="screen auth-screen">
-    <div class="auth-card">
+    <!-- Hidden File Inputs -->
+    <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+    <input type="file" id="cover-file-input" accept="image/*" style="display:none;" onchange="handleCoverUpload(event)">
+    <input type="file" id="story-file-input" accept="image/*" style="display:none;" onchange="handleStoryUpload(event)">
+    <input type="file" id="post-media-input" accept="image/*,video/*" style="display:none;" onchange="handlePostMediaUpload(event)">
+    <input type="file" id="reel-file-input" accept="video/*" style="display:none;" onchange="handleReelUpload(event)">
 
-      <div class="logo">Shakib<span>YS</span></div>
-      <p class="tagline">Connect • Share • Chat • Enjoy</p>
+    <!-- AUTHENTICATION -->
+    <div class="auth-container" id="auth-wrapper">
+        <div id="login-card" class="auth-card active">
+            <div class="auth-title">ShakibYS</div>
+            <div class="input-group"><label>মোবাইল নম্বর</label><input type="text" id="login-phone" placeholder="নম্বর দিন"></div>
+            <div class="input-group"><label>পাসওয়ার্ড</label><input type="password" id="login-password" placeholder="পাসওয়ার্ড দিন"></div>
+            <button class="btn-primary" onclick="login()">লগইন করুন</button>
+            <div style="margin-top: 20px;"><span class="link" onclick="showAuth('signup-card')">নতুন অ্যাকাউন্ট তৈরি করুন</span></div>
+        </div>
 
-      <!-- LOGIN -->
-      <div id="loginBox" class="auth-box">
-        <h1>Welcome Back 💗</h1>
-        <p>আপনার Account-এ Login করুন</p>
+        <div id="signup-card" class="auth-card">
+            <div class="auth-title">ShakibYS</div>
+            <h2 style="margin-bottom: 15px; color: var(--text-main); font-size: 20px;">সাইন আপ</h2>
+            <div class="input-group"><label>আপনার নাম</label><input type="text" id="signup-name" placeholder="নাম লিখুন"></div>
+            <div class="input-group"><label>নম্বর</label><input type="text" id="signup-phone" placeholder="মোবাইল নম্বর"></div>
+            <div class="input-group"><label>পাসওয়ার্ড</label><input type="password" id="signup-password" placeholder="পাসওয়ার্ড"></div>
+            <button class="btn-primary" onclick="signup()">সাইন আপ করুন</button>
+            <div style="margin-top: 20px;"><span class="link" onclick="showAuth('login-card')">লগইন পেজে যান</span></div>
+        </div>
+    </div>
 
-        <input id="loginPhone" type="text" placeholder="Phone Number">
-        <input id="loginPassword" type="password" placeholder="Password">
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-container">
+        <div class="header">
+            <div class="top-bar">
+                <div class="logo-text" onclick="switchTab('home-section', document.getElementById('default-tab'))">ShakibYS</div>
+                <div class="top-icons">
+                    <i class="fa-solid fa-smile-beam" onclick="switchTab('ai-section', null)" title="AI চ্যাটবট"></i>
+                    <i class="fa-solid fa-comments" onclick="switchTab('messenger-section', null)" title="মেসেঞ্জার"></i>
+                    <i class="fa-solid fa-user-shield" onclick="switchTab('profile-section', null)" title="প্রোফাইল"></i>
+                    <i class="fa-solid fa-power-off" onclick="logout()" title="লগআউট"></i>
+                </div>
+            </div>
+            <div class="nav-tabs">
+                <div class="nav-tab active" id="default-tab" onclick="switchTab('home-section', this)"><i class="fa-solid fa-house"></i></div>
+                <div class="nav-tab" onclick="switchTab('video-section', this)"><i class="fa-solid fa-clapperboard"></i></div>
+                <div class="nav-tab" onclick="switchTab('friends-section', this)"><i class="fa-solid fa-user-plus"></i></div>
+                <div class="nav-tab" onclick="switchTab('noti-section', this)"><i class="fa-solid fa-bell"></i></div>
+                <div class="nav-tab" onclick="switchTab('market-section', this)"><i class="fa-solid fa-store"></i></div>
+            </div>
+        </div>
 
-        <button class="pink-btn" onclick="login()">
-          🔐 Login
-        </button>
+        <!-- ১. হোম স্ক্রিন -->
+        <div id="home-section" class="section">
+            <div class="stories-container" id="story-list">
+                <div class="story-card add-story" onclick="triggerStoryGallery()">
+                    <i class="fa-solid fa-plus" style="font-size: 22px; color: var(--app-red); margin-bottom: 4px;"></i>
+                    <span style="font-size: 10px;">স্টোরি দিন</span>
+                </div>
+                <div class="story-card" style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.7)), url('https://picsum.photos/100/150?random=1');" onclick="openStoryViewer('রহিম', 'https://picsum.photos/100/150?random=1')">
+                    <span>রহিম</span>
+                </div>
+            </div>
 
-        <button class="text-btn" onclick="showAuth('forgot')">
-          Forgot Password?
-        </button>
+            <div class="create-post">
+                <input type="text" id="post-input" placeholder="আপনার মনে কি আছে?">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                    <div style="display: flex; gap: 15px; color: var(--app-red); cursor: pointer;" onclick="triggerPostMedia()">
+                        <i class="fa-solid fa-photo-film" style="font-size: 18px;"></i> <span style="font-size: 13px; font-weight: bold;">ফটো/ভিডিও যুক্ত করুন</span>
+                    </div>
+                    <button class="btn-small" style="padding: 6px 16px;" onclick="submitPost()">পোস্ট</button>
+                </div>
+                <img id="post-media-preview-box" class="post-media-preview" alt="Preview">
+                <video id="post-video-preview-box" class="post-media-preview" controls style="display:none;"></video>
+            </div>
+            
+            <div id="feed-container">
+                <div class="post">
+                    <div class="post-header">
+                        <div>
+                            <div class="post-author" id="display-post-name">ইউজার</div>
+                            <div class="post-time">এইমাত্র</div>
+                        </div>
+                    </div>
+                    <div class="post-content">ShakibYS অ্যাপে সফলভাবে প্রবেশ করেছি! গ্যালারি থেকে ছবি ও ভিডিও আপলোড ফিচার এখন যুক্ত হয়েছে। 🚀✨</div>
+                    <div class="post-actions">
+                        <div class="action-btn" onclick="toggleLike(this)"><i class="fa-regular fa-thumbs-up"></i> লাইক (<span class="like-count">0</span>)</div>
+                        <div class="action-btn" onclick="showAlert('কমেন্ট বক্স ওপেন হয়েছে!')"><i class="fa-regular fa-comment"></i> কমেন্ট</div>
+                        <div class="action-btn" onclick="showAlert('পোস্টটি সফলভাবে শেয়ার করা হয়েছে!')"><i class="fa-solid fa-share"></i> শেয়ার</div>
+                        <div class="action-btn" onclick="recordVoiceComment(this)" style="color: var(--app-red);"><i class="fa-solid fa-microphone"></i> ভয়েস কমেন্ট</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="divider">OR</div>
+        <!-- ২. রিলস -->
+        <div id="video-section" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="color: var(--text-main);">শর্ট রিলস ফিড</h3>
+                <button class="btn-small" onclick="triggerReelGallery()"><i class="fa-solid fa-plus"></i> রিলস আপলোড</button>
+            </div>
+            
+            <div class="reels-feed" id="reels-container">
+                <div class="reel-item">
+                    <video class="reel-video" src="https://www.w3schools.com/html/mov_bbb.mp4" controls autoplay loop playsinline></video>
+                    <div class="reel-overlay">
+                        <h4 style="margin-bottom: 5px;">প্রকৃতির সৌন্দর্য 🌿</h4>
+                        <p style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">রিলস ক্রিয়েটর: শাকিল</p>
+                        <p class="reel-caption-text" style="font-size: 13px; font-weight: 600; color: #fff;">#Nature #Beauty #ShakibYS</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <button class="pink-outline" onclick="showAuth('register')">
-          👤 Create New Account
-        </button>
-      </div>
+        <!-- ৩. ফ্রেন্ড রিকোয়েস্ট -->
+        <div id="friends-section" class="section">
+            <h3 style="margin-bottom: 15px; text-align: left;">ফ্রেন্ড রিকোয়েস্ট</h3>
+            <div class="gen-card" style="display: flex; align-items: center; justify-content: space-between;">
+                <span><b>রহিম আহমেদ</b></span>
+                <div>
+                    <button class="btn-small" onclick="showAlert('ফ্রেন্ড রিকোয়েস্ট সফলভাবে গ্রহণ করা হয়েছে!')">কনফার্ম</button>
+                    <button class="btn-small" style="background: #cbd5e1; color: var(--text-main);" onclick="showAlert('ফ্রেন্ড রিকোয়েস্ট মুছে ফেলা হয়েছে!')">ডিলিট</button>
+                </div>
+            </div>
+        </div>
 
-      <!-- REGISTER -->
-      <div id="registerBox" class="auth-box hidden">
-        <h1>Create Account</h1>
+        <!-- ৪. নোটিফিকেশন -->
+        <div id="noti-section" class="section">
+            <h3 style="margin-bottom: 15px; text-align: left;">নোটিফিকেশন</h3>
+            <div id="notification-list">
+                <div class="gen-card" style="text-align: left;">🔔 ShakibYS অ্যাকাউন্টে সফলভাবে লগইন হয়েছে।</div>
+            </div>
+        </div>
 
-        <input id="regName" type="text" placeholder="Full Name">
-        <input id="regUsername" type="text" placeholder="Username">
-        <input id="regPhone" type="text" placeholder="Phone Number">
-        <input id="regPassword" type="password" placeholder="Password">
-        <input id="regConfirm" type="password" placeholder="Confirm Password">
+        <!-- ৫. মার্কেটপ্লেস -->
+        <div id="market-section" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="color: var(--text-main);">ShakibYS মার্কেটপ্লেস</h3>
+                <button class="btn-small" onclick="showAddProductModal()"><i class="fa-solid fa-plus"></i> সেল করুন</button>
+            </div>
+            
+            <div class="market-grid" id="market-product-grid">
+                <div class="product-card" onclick="openProductModal('স্মার্ট ওয়াচ আল্ট্রা', '1450', 'এই স্মার্ট ওয়াচটিতে রয়েছে ফুল টাচ ডিসপ্লে, ব্লুটুথ কলিং এবং হেলথ ট্র্যাকিং ফিচার।', '১ বছর ব্র্যান্ড ওয়ারেন্টি', '১০০% গ্যারান্টি', 'স্টকে আছে', 'https://picsum.photos/200/200?random=10')">
+                    <div class="product-img" style="background-image: url('https://picsum.photos/200/200?random=10');"></div>
+                    <div class="product-body">
+                        <div class="product-title">স্মার্ট ওয়াচ আল্ট্রা</div>
+                        <div class="product-price">৳ ১,৪৫০</div>
+                        <button class="market-btn">বিস্তারিত দেখুন</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <button class="pink-btn" onclick="register()">
-          ✨ Create Account
-        </button>
+        <!-- প্রোডাক্ট ডিটেইলস মোডাল -->
+        <div class="modal-overlay" id="product-modal">
+            <div class="modal-card">
+                <span class="modal-close" onclick="closeProductModal()">&times;</span>
+                <div id="modal-p-img" style="width: 100%; height: 180px; background: #f1f5f9; background-size: cover; background-position: center; border-radius: 12px; margin-bottom: 12px;"></div>
+                <h2 id="modal-p-title" style="margin-bottom: 6px; color: var(--text-main);"></h2>
+                <h3 id="modal-p-price" style="color: var(--app-red); margin-bottom: 10px; font-size: 18px;"></h3>
+                <p id="modal-p-desc" style="font-size: 12px; color: var(--text-gray); margin-bottom: 8px;"></p>
+                <div style="font-size: 12px; margin-bottom: 4px;">🛡️ <strong id="modal-p-warranty"></strong></div>
+                <div style="font-size: 12px; margin-bottom: 4px;">✨ <strong id="modal-p-guarantee"></strong></div>
+                <div style="font-size: 12px; margin-bottom: 12px; color: #2ecc71;">📦 <strong id="modal-p-stock"></strong></div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary" style="background: #334155; flex:1;" onclick="addToCartFromModal()">অ্যাড টু কার্ট</button>
+                    <button class="btn-primary" style="flex:1;" onclick="proceedToCheckout()">সরাসরি অর্ডার করুন</button>
+                </div>
+            </div>
+        </div>
 
-        <button class="text-btn" onclick="showAuth('login')">
-          Already have an account? Login
-        </button>
-      </div>
+        <!-- চেকআউট মোডাল -->
+        <div class="modal-overlay" id="checkout-modal">
+            <div class="modal-card">
+                <span class="modal-close" onclick="closeCheckoutModal()">&times;</span>
+                <h2 style="color: var(--app-red); margin-bottom: 15px;"><i class="fa-solid fa-bag-shopping"></i> অর্ডার চেকআউট</h2>
+                
+                <div class="input-group">
+                    <label>আপনার সম্পূর্ণ ঠিকানা দিন</label>
+                    <textarea id="order-address" rows="3" placeholder="বাসা নং, রোড, এলাকা, জেলা..."></textarea>
+                </div>
 
-      <!-- FORGOT -->
-      <div id="forgotBox" class="auth-box hidden">
-        <h1>Forgot Password?</h1>
-        <p>আপনার ফোন নম্বর দিন</p>
+                <div class="input-group">
+                    <label>পেমেন্ট মেথড সিলেক্ট করুন</label>
+                    <select id="payment-method" onchange="handlePaymentChange(this.value)">
+                        <option value="cod">ক্যাশ অন ডেলিভারি (Cash on Delivery)</option>
+                        <option value="bkash">বিকাশ পেমেন্ট (bKash)</option>
+                        <option value="bank">ব্যাংক ট্রান্সফার (Bank Transfer)</option>
+                    </select>
+                </div>
 
-        <input id="forgotPhone" type="text" placeholder="Phone Number">
+                <div id="cod-warning" style="background: rgba(255,42,95,0.06); border: 1px solid rgba(255,42,95,0.2); padding: 12px; border-radius: 10px; font-size: 13px; color: var(--app-red); margin-bottom: 15px; font-weight: bold;">
+                    ⚠️ ক্যাশ অন ডেলিভারি সিলেক্ট করার কারণে অর্ডার কনফার্ম করতে **১২০ টাকা অগ্রিম পেমেন্ট** করতে হবে! বাকি টাকা প্রোডাক্ট হাতে পেয়ে পরিশোধ করবেন।
+                </div>
 
-        <button class="pink-btn" onclick="forgotPassword()">
-          📱 Send Reset Request
-        </button>
+                <button class="btn-primary" onclick="submitFinalOrder()">অর্ডার কনফার্ম করুন</button>
+            </div>
+        </div>
 
-        <button class="text-btn" onclick="showAuth('login')">
-          ← Back to Login
-        </button>
-      </div>
+        <!-- স্টোরি ভিউয়ার মোডাল -->
+        <div class="modal-overlay" id="story-modal">
+            <div class="modal-card" style="text-align: center; max-width: 380px;">
+                <span class="modal-close" onclick="closeStoryModal()">&times;</span>
+                <h3 id="story-author-name" style="margin-bottom: 10px; color: var(--text-main);"></h3>
+                <div id="story-img-container" style="width: 100%; height: 320px; background: #000; border-radius: 12px; background-size: cover; background-position: center; margin-bottom: 15px;"></div>
+                
+                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 15px;">👁️ মোট ভিউ হয়েছে: <strong id="story-view-count">২৪ জন</strong></div>
+                
+                <div style="display: flex; justify-content: center; gap: 15px; font-size: 24px;">
+                    <span style="cursor: pointer;" onclick="reactStory('❤️')">❤️</span>
+                    <span style="cursor: pointer;" onclick="reactStory('🔥')">🔥</span>
+                    <span style="cursor: pointer;" onclick="reactStory('😂')">😂</span>
+                    <span style="cursor: pointer;" onclick="reactStory('👏')">👏</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- মেসেঞ্জার -->
+        <div id="messenger-section" class="section">
+            <h3 style="margin-bottom: 12px; text-align: left;"><i class="fa-solid fa-comments" style="color: var(--app-red);"></i> মেসেঞ্জার</h3>
+            <div class="chat-layout">
+                <div class="chat-sidebar">
+                    <div class="chat-sidebar-header">
+                        <span>অ্যাক্টিভ স্ট্যাটাস</span>
+                        <input type="checkbox" id="active-status-toggle" checked onchange="toggleMessengerStatus(this)">
+                    </div>
+                    <div class="chat-item" style="flex-grow:1; align-items:flex-start; flex-direction:column; justify-content:center;">
+                        <div style="display:flex; align-items:center; gap:8px; width:100%;">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: #e2e8f0; display:flex; align-items:center; justify-content:center; font-weight:bold;">র</div>
+                            <div class="active-dot" id="rahim-status-dot"></div>
+                            <div style="text-align: left; margin-left: 6px;">
+                                <div style="font-weight: bold; font-size: 13px;">রহিম আহমেদ</div>
+                                <div style="font-size: 10px; color: #2ecc71; font-weight: bold;" id="rahim-sub-status">সক্রিয় আছেন</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-window">
+                    <div class="messages-box" id="chat-messages">
+                        <div class="msg-bubble msg-incoming">হ্যালো কেমন আছো?</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-msg-input" placeholder="মেসেজ লিখুন..." style="flex-grow:1; border: 1px solid var(--border-color); padding: 9px 14px; border-radius: 20px; outline: none; font-size: 13px; background:#ffffff; color:var(--text-main);" onkeypress="handleChatKey(event)">
+                        <button class="btn-small" style="border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- এআই চ্যাটবট -->
+        <div id="ai-section" class="section">
+            <div class="ai-container">
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 24px;">😁</span>
+                        <h3 id="ai-title-mode" style="font-size: 16px; color: var(--text-main);">ShakibYS AI (জেনারেল মোড)</h3>
+                    </div>
+                    <select id="ai-mode-select" onchange="changeAIMode(this.value)" style="padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #f8fafc; font-size: 12px; outline: none; font-weight: bold; color: var(--app-red);">
+                        <option value="general">জেনারেল মোড</option>
+                        <option value="funny">😂 ফানি চ্যাটবট</option>
+                        <option value="serious">🧐 সিরিয়াস এক্সপার্ট</option>
+                        <option value="romantic">💖 রোমান্টিক মোড</option>
+                        <option value="motivation">🚀 মোটিভেশনাল গুরু</option>
+                    </select>
+                </div>
+                <div class="ai-messages" id="ai-chat-box">
+                    <div class="ai-bubble ai-bot">হ্যালো! আমি ShakibYS এআই অ্যাসিস্ট্যান্ট। আপনাকে কীভাবে সাহায্য করতে পারি?</div>
+                </div>
+                <div class="ai-input-box">
+                    <input type="text" id="ai-input" placeholder="এআই কে কিছু জিজ্ঞেস করুন..." onkeypress="handleAIKey(event)">
+                    <button class="ai-send-btn" onclick="sendAI()"><i class="fa-solid fa-arrow-up"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- প্রোফাইল সেকশন -->
+        <div id="profile-section" class="section">
+            <div class="gen-card" style="text-align: left;">
+                <div class="profile-cover" id="p-cover-preview">
+                    <div class="profile-avatar" id="p-avatar-preview"></div>
+                </div>
+                <div class="profile-info">
+                    <h2 id="p-name-display" style="display:inline-block;">ইউজার</h2> <span id="p-verified-badge" style="color: var(--app-red); display:none;" title="Verified"><i class="fa-solid fa-circle-check"></i></span>
+                    <p id="p-bio-display" style="font-size: 13px; color: var(--text-gray); margin-top: 4px;">ShakibYS অ্যাপের গর্বিত ইউজার...</p>
+                    
+                    <div class="stats-box">
+                        <span>ফলোয়ার: <strong id="follower-count">১.৫k</strong></span>
+                        <span>ফলোয়িং: <strong id="following-count">১২০</strong></span>
+                    </div>
+
+                    <div class="dashboard-box">
+                        <h4 style="color: var(--app-red); margin-bottom: 6px; font-size: 14px;"><i class="fa-solid fa-chart-line"></i> ক্রিয়েটর ড্যাশবোর্ড</h4>
+                        <div style="font-size: 13px; display: flex; justify-content: space-between;">
+                            <span>পোস্ট রিচ (Reach):</span><strong>৬,২০০ জন</strong>
+                        </div>
+                        <div style="font-size: 13px; display: flex; justify-content: space-between; margin-top: 4px;">
+                            <span>এনগেজমেন্ট (Engagement):</span><strong>৯৫%</strong>
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 20px 0 10px 0; font-size: 15px; color: var(--text-main);">প্রোফাইল কন্ট্রোল প্যানেল</h4>
+                    
+                    <div class="profile-control-grid">
+                        <div class="profile-control-card" onclick="promptEditName()">
+                            <i class="fa-solid fa-user-pen"></i>
+                            <span>নাম পরিবর্তন</span>
+                        </div>
+                        <div class="profile-control-card" onclick="triggerAvatarGallery()">
+                            <i class="fa-solid fa-image"></i>
+                            <span>প্রোফাইল পিক (গ্যালারি)</span>
+                        </div>
+                        <div class="profile-control-card" onclick="triggerCoverGallery()">
+                            <i class="fa-solid fa-panorama"></i>
+                            <span>কভার ফটো (গ্যালারি)</span>
+                        </div>
+                        <div class="profile-control-card" onclick="promptEditBio()">
+                            <i class="fa-solid fa-address-card"></i>
+                            <span>বায়ো আপডেট</span>
+                        </div>
+                        <div class="profile-control-card" onclick="toggleVerificationBadge()">
+                            <i class="fa-solid fa-badge-check"></i>
+                            <span>ভেরিফাইড ব্যাজ</span>
+                        </div>
+                        <div class="profile-control-card" onclick="openSettingsModal()">
+                            <i class="fa-solid fa-gear"></i>
+                            <span>সেটিংস ও পলিসি</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
-  </section>
 
-
-  <!-- MAIN APP -->
-  <section id="mainApp" class="hidden">
-
-    <!-- TOP BAR -->
-    <header class="topbar">
-      <button class="icon-btn" onclick="openPage('home')">⌂</button>
-
-      <div class="top-logo">Shakib<span>YS</span></div>
-
-      <div class="top-actions">
-        <button class="icon-btn" onclick="openPage('search')">⌕</button>
-        <button class="icon-btn" onclick="openPage('notifications')">♡</button>
-        <button class="avatar-btn" onclick="openPage('profile')">
-          <span id="topAvatar">S</span>
-        </button>
-      </div>
-    </header>
-
-
-    <!-- PAGE CONTAINER -->
-    <main id="pageContainer">
-
-      <!-- HOME -->
-      <section id="page-home" class="page">
-
-        <div class="welcome-card">
-          <div class="big-avatar" id="homeAvatar">S</div>
-          <div>
-            <h2 id="homeName">Shakib</h2>
-            <p>What's on your mind?</p>
-          </div>
-        </div>
-
-        <div class="quick-create">
-          <button onclick="openCreate('post')">📝 Post</button>
-          <button onclick="openCreate('photo')">📷 Photo</button>
-          <button onclick="openCreate('reel')">🎬 Reel</button>
-          <button onclick="openCreate('story')">⭕ Story</button>
-        </div>
-
-        <div class="feature-grid">
-
-          <button onclick="openPage('reels')">
-            <span>🎬</span>
-            <b>Reels</b>
-            <small>Watch videos</small>
-          </button>
-
-          <button onclick="openPage('marketplace')">
-            <span>🛍️</span>
-            <b>Marketplace</b>
-            <small>Buy & sell</small>
-          </button>
-
-          <button onclick="openPage('friends')">
-            <span>👥</span>
-            <b>Friends</b>
-            <small>Find friends</small>
-          </button>
-
-          <button onclick="openPage('groups')">
-            <span>👨‍👩‍👧‍👦</span>
-            <b>Groups</b>
-            <small>Join groups</small>
-          </button>
-
-          <button onclick="openPage('messenger')">
-            <span>💬</span>
-            <b>Messenger</b>
-            <small>Chat</small>
-          </button>
-
-          <button onclick="openPage('profile')">
-            <span>👤</span>
-            <b>Profile</b>
-            <small>Your account</small>
-          </button>
-
-        </div>
-
-        <div class="section-title">
-          <h2>News Feed</h2>
-          <button onclick="loadFeed()">↻</button>
-        </div>
-
-        <div id="feed"></div>
-
-      </section>
-
-
-      <!-- REELS -->
-      <section id="page-reels" class="page hidden">
-        <button class="back-btn" onclick="goBack()">← Back</button>
-        <div class="page-header">
-          <h1>🎬 Reels</h1>
-          <p>Short videos</p>
-        </div>
-
-        <div class="empty-state">
-          <div>🎬</div>
-          <h2>Reels</h2>
-          <p>Reel upload system will connect to the media backend.</p>
-          <button class="pink-btn" onclick="openCreate('reel')">＋ Create Reel</button>
-        </div>
-      </section>
-
-
-      <!-- MARKETPLACE -->
-      <section id="page-marketplace" class="page hidden">
-
-        <button class="back-btn" onclick="goBack()">← Back</button>
-
-        <div class="page-header">
-          <h1>🛍️ Marketplace</h1>
-          <p>Buy and sell products</p>
-        </div>
-
-        <input class="search-input" id="productSearch"
-               placeholder="Search products..."
-               oninput="filterProducts()">
-
-        <div id="products" class="product-grid"></div>
-
-      </section>
-
-
-      <!-- FRIENDS -->
-      <section id="page-friends" class="page hidden">
-
-        <button class="back-btn" onclick="goBack()">← Back</button>
-
-        <div class="page-header">
-          <h1>👥 Friends</h1>
-          <p>People you may know</p>
-        </div>
-
-        <div id="friendsList"></div>
-
-      </section>
-
-
-      <!-- GROUPS -->
-      <section id="page-groups" class="page hidden">
-
-        <button class="back-btn" onclick="goBack()">← Back</button>
-
-        <div class="page-header">
-          <h1>👨‍👩‍👧‍👦 Groups</h1>
-        </div>
-
-        <div class="empty-state">
-          <div>👥</div>
-          <h2>Groups</h2>
-          <p>Group creation and membership API will be added in the next module.</p>
-          <button class="pink-btn">＋ Create Group</button>
-        </div>
-
-      </section>
-
-
-      <!-- MESSENGER -->
-      <section id="page-messenger" class="page hidden">
-
-        <button class="back-btn" onclick="goBack()">← Back</button>
-
-        <div class="page-header">
-          <h1>💬 Messenger</h1>
-          <p>Messages</p>
-        </div>
-
-        <input class="search-input" placeholder="Search Messenger...">
-
-        <div class="chat-list">
-
-          <button class="chat-user" onclick="openChat('Rahim')">
-            <div class="chat-avatar">R</div>
-            <div>
-              <b>Rahim</b>
-              <small>Online</small>
+    <!-- সেটিংস মোডাল -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-card">
+            <span class="modal-close" onclick="closeSettingsModal()">&times;</span>
+            <h2 style="color: var(--app-red); margin-bottom: 15px;"><i class="fa-solid fa-gear"></i> সেটিংস ও পলিসি সেন্টার</h2>
+            <div class="settings-list">
+                <div class="settings-item" onclick="showAlert('অ্যাকাউন্ট সিকিউরিটি ও পাসওয়ার্ড সুরক্ষিত আছে।')">
+                    <span><i class="fa-solid fa-shield-halved" style="color:var(--app-red); margin-right:8px;"></i> অ্যাকাউন্ট সিকিউরিটি</span>
+                    <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-gray);"></i>
+                </div>
+                <div class="settings-item" onclick="showAlert('প্রাইভেসি কন্ট্রোল আপডেট করা হয়েছে।')">
+                    <span><i class="fa-solid fa-lock" style="color:var(--app-red); margin-right:8px;"></i> প্রাইভেসি পলিসি</span>
+                    <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-gray);"></i>
+                </div>
+                <div class="settings-item" onclick="showAlert('নোটিফিকেশন ও অ্যালার্ট সেটিংস চালু আছে।')">
+                    <span><i class="fa-solid fa-bell" style="color:var(--app-red); margin-right:8px;"></i> নোটিফিকেশন সেটিংস</span>
+                    <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-gray);"></i>
+                </div>
             </div>
-            <span>›</span>
-          </button>
-
-          <button class="chat-user" onclick="openChat('Alif')">
-            <div class="chat-avatar">A</div>
-            <div>
-              <b>Alif</b>
-              <small>Active recently</small>
-            </div>
-            <span>›</span>
-          </button>
-
         </div>
-
-      </section>
-
-
-      <!-- CHAT -->
-      <section id="page-chat" class="page hidden">
-
-        <button class="back-btn" onclick="openPage('messenger')">← Messenger</button>
-
-        <div class="chat-header">
-          <div class="chat-avatar" id="chatAvatar">R</div>
-          <div>
-            <b id="chatName">Rahim</b>
-            <small>Online</small>
-          </div>
-
-          <div class="chat-call-actions">
-            <button onclick="alert('Voice calling requires WebRTC setup.')">☎</button>
-            <button onclick="alert('Video calling requires WebRTC setup.')">🎥</button>
-          </div>
-        </div>
-
-        <div id="messages" class="messages"></div>
-
-        <div class="message-input">
-          <input id="messageText" placeholder="Message..."
-                 onkeydown="if(event.key==='Enter') sendMessage()">
-          <button onclick="sendMessage()">➤</button>
-        </div>
-
-      </section>
-
-
-      <!-- PROFILE -->
-      <section id="page-profile" class="page hidden">
-
-        <button class="back-btn" onclick="goBack()">← Back</button>
-
-        <div class="profile-cover"></div>
-
-        <div class="profile-card">
-          <div class="profile-avatar" id="profileAvatar">S</div>
-          <h1 id="profileName">Shakib</h1>
-          <p id="profileUsername">@shakib</p>
-          <p id="profileBio">Welcome to my ShakibYS profile 💗</p>
-
-          <div class="profile-stats">
-            <div><b id="postCount">0</b><small>Posts</small></div>
-            <div><b>0</b><small>Followers</small></div>
-            <div><b>0</b><small>Following</small></div>
-          </div>
-
-          <button class="pink-btn" onclick="openPage('settings')">
-            ⚙️ Edit Profile / Settings
-          </button>
-        </div>
-
-        <div class="profile-tabs">
-          <button>Posts</button>
-          <button>Photos</button>
-          <button>Videos</button>
-          <button>About</button>
-        </div>
-
-      </section>
-
-
-      <!-- SEARCH -->
-      <section id="page-search" class="page hidden">
-
-        <button class="back-btn" onclick="goBack()">← Back</button>
-
-        <div class="page-header">
-          <h1>⌕ Search</h1>
-        </div>
-
-        <input class="search-input"
-               id="globalSearch"
-               placeholder="Search people, posts..."
-               onkeydown="if(event.key==='Enter') doSearch()">
-
-        <div id="searchResults"></div>
-
-      </section>
-
-
-      <!-- NOTIFICATIONS -->
-      <section id="page-notifications" class="page hidden">
-
-        <button class="back-btn" onclick="goBack()">← Back</button>
-
-        <div class="page-header">
-          <h1>♡ Notifications</h1>
-        </div>
-
-        <div class="notification">
-          ❤️ <b>Rahim</b> liked your post.
-        </div>
-
-        <div class="notification">
-          👤 <b>Alif</b> sent you a friend request.
-        </div>
-
-      </section>
-
-
-      <!-- SETTINGS -->
-      <section id="page-settings" class="page hidden">
-
-        <button class="back-btn" onclick="goBack()">← Back</button>
-
-        <div class="page-header">
-          <h1>⚙️ Settings</h1>
-          <p>Manage your ShakibYS account</p>
-        </div>
-
-        <div class="settings-list">
-
-          <button onclick="settingInfo('Account')">
-            👤 <span>Account</span><b>›</b>
-          </button>
-
-          <button onclick="settingInfo('Privacy')">
-            🔒 <span>Privacy</span><b>›</b>
-          </button>
-
-          <button onclick="settingInfo('Security')">
-            🛡️ <span>Security</span><b>›</b>
-          </button>
-
-          <button onclick="settingInfo('Notifications')">
-            🔔 <span>Notifications</span><b>›</b>
-          </button>
-
-          <button onclick="settingInfo('Language')">
-            🌐 <span>Language</span><b>›</b>
-          </button>
-
-          <button onclick="logout()">
-            🚪 <span>Logout</span><b>›</b>
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- CREATE -->
-      <section id="page-create" class="page hidden">
-
-        <button class="back-btn" onclick="goBack()">← Back</button>
-
-        <div class="page-header">
-          <h1 id="createTitle">Create Post</h1>
-        </div>
-
-        <textarea id="postContent"
-                  placeholder="What's on your mind?"
-                  rows="7"></textarea>
-
-        <input id="postImage"
-               type="url"
-               placeholder="Image URL (optional)">
-
-        <button class="pink-btn" onclick="publishPost()">
-          🚀 Publish
-        </button>
-
-      </section>
-
-    </main>
-
-
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav">
-
-      <button onclick="openPage('home')">
-        <span>⌂</span>
-        <small>Home</small>
-      </button>
-
-      <button onclick="openPage('reels')">
-        <span>🎬</span>
-        <small>Reels</small>
-      </button>
-
-      <button class="create-main" onclick="openCreate('post')">
-        ＋
-      </button>
-
-      <button onclick="openPage('messenger')">
-        <span>💬</span>
-        <small>Chat</small>
-      </button>
-
-      <button onclick="openPage('profile')">
-        <span>👤</span>
-        <small>Profile</small>
-      </button>
-
-    </nav>
-
-  </section>
-
-</div>
-
-<script src="app.js"></script>
+    </div>
+
+    <script>
+        let audioCtx = null;
+        let tempPostMediaUrl = null;
+        let tempPostMediaType = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playTouchSound() {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(580, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
+
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + 0.08);
+            } catch (e) {
+                console.log("Audio not allowed");
+            }
+        }
+
+        function playUniqueNotificationTone() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'triangle';
+                osc1.frequency.setValueAtTime(659.25, now);
+                gain1.gain.setValueAtTime(0.15, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.15);
+
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(987.77, now + 0.12);
+                gain2.gain.setValueAtTime(0.18, now + 0.12);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(now + 0.12);
+                osc2.stop(now + 0.35);
+            } catch (e) {
+                console.log("Notification sound blocked");
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('button, .nav-tab, .story-card, .product-card, .action-btn, .profile-control-card, .settings-item, .logo-text, i');
+            if (target) {
+                playTouchSound();
+            }
+        });
+
+        function showAlert(msg) {
+            playUniqueNotificationTone();
+            const currentUserName = localStorage.getItem('ys_user_name') || 'ইউজার';
+            document.getElementById('custom-alert-header').innerText = `✨ ShakibYS (${currentUserName})`;
+            document.getElementById('custom-alert-text').innerText = `${currentUserName}, ${msg}`;
+            document.getElementById('custom-alert-modal').style.display = 'flex';
+        }
+
+        function closeCustomAlert() {
+            playTouchSound();
+            document.getElementById('custom-alert-modal').style.display = 'none';
+        }
+
+        function showAuth(id) {
+            document.querySelectorAll('.auth-card').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function signup() {
+            const name = document.getElementById('signup-name').value.trim();
+            if(!name) {
+                alert('দয়া করে আপনার নাম লিখুন!');
+                return;
+            }
+            localStorage.setItem('ys_user_name', name);
+            localStorage.setItem('ys_logged_in', 'true');
+            updateUIProfileName(name);
+            showAlert('আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
+            checkLogin();
+        }
+
+        function login() {
+            const existingName = localStorage.getItem('ys_user_name') || 'সাকিব';
+            localStorage.setItem('ys_user_name', existingName);
+            localStorage.setItem('ys_logged_in', 'true');
+            updateUIProfileName(existingName);
+            showAlert('সফলভাবে লগইন সম্পন্ন হয়েছে!');
+            checkLogin();
+        }
+
+        function logout() {
+            localStorage.removeItem('ys_logged_in');
+            showAlert('সফলভাবে লগআউট করা হয়েছে!');
+            checkLogin();
+        }
+
+        function updateUIProfileName(name) {
+            document.getElementById('p-name-display').innerText = name;
+            document.getElementById('display-post-name').innerText = name;
+        }
+
+        function checkLogin() {
+            const isLoggedIn = localStorage.getItem('ys_logged_in');
+            const savedName = localStorage.getItem('ys_user_name') || 'ইউজার';
+            if(isLoggedIn === 'true') {
+                document.getElementById('auth-wrapper').style.display = 'none';
+                document.getElementById('app-container').classList.add('active');
+                updateUIProfileName(savedName);
+            } else {
+                document.getElementById('auth-wrapper').style.display = 'flex';
+                document.getElementById('app-container').classList.remove('active');
+                showAuth('login-card');
+            }
+        }
+
+        function switchTab(sectionId, tabElement) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            if(tabElement && tabElement.classList.contains('nav-tab')) {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tabElement.classList.add('active');
+            }
+        }
+
+        function triggerAvatarGallery() { document.getElementById('avatar-file-input').click(); }
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('p-avatar-preview').style.backgroundImage = `url('${e.target.result}')`;
+                    showAlert('প্রোফাইল পিকচার গ্যালারি থেকে আপডেট হয়েছে!');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function triggerCoverGallery() { document.getElementById('cover-file-input').click(); }
+        function handleCoverUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('p-cover-preview').style.backgroundImage = `url('${e.target.result}')`;
+                    showAlert('কভার ফটো গ্যালারি থেকে আপডেট হয়েছে!');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function triggerStoryGallery() { document.getElementById('story-file-input').click(); }
+        function handleStoryUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const list = document.getElementById('story-list');
+                    const newStory = document.createElement('div');
+                    newStory.className = 'story-card';
+                    newStory.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.7)), url('${e.target.result}')`;
+                    const currentName = localStorage.getItem('ys_user_name') || 'আপনি';
+                    newStory.innerHTML = `<span>${currentName}</span>`;
+                    newStory.onclick = () => openStoryViewer(currentName, e.target.result);
+                    list.appendChild(newStory);
+                    showAlert('গ্যালারি থেকে স্টোরি সফলভাবে যোগ করা হয়েছে!');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function triggerPostMedia() { document.getElementById('post-media-input').click(); }
+        function handlePostMediaUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempPostMediaUrl = e.target.result;
+                    const imgPreview = document.getElementById('post-media-preview-box');
+                    const vidPreview = document.getElementById('post-video-preview-box');
+                    
+                    if(file.type.startsWith('video')) {
+                        tempPostMediaType = 'video';
+                        imgPreview.style.display = 'none';
+                        vidPreview.src = tempPostMediaUrl;
+                        vidPreview.style.display = 'block';
+                    } else {
+                        tempPostMediaType = 'image';
+                        vidPreview.style.display = 'none';
+                        imgPreview.src = tempPostMediaUrl;
+                        imgPreview.style.display = 'block';
+                    }
+                    showAlert('ফটো/ভিডিও সিলেক্ট করা হয়েছে, এখন পোস্ট করুন!');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function submitPost() {
+            const textInput = document.getElementById('post-input');
+            const text = textInput.value.trim();
+            
+            if(!text && !tempPostMediaUrl) {
+                showAlert('দয়া করে কিছু লিখুন অথবা ছবি/ভিডিও যুক্ত করুন!');
+                return;
+            }
+
+            const feed = document.getElementById('feed-container');
+            const authorName = localStorage.getItem('ys_user_name') || 'ইউজার';
+            
+            let mediaHTML = '';
+            if(tempPostMediaType === 'image' && tempPostMediaUrl) {
+                mediaHTML = `<img src="${tempPostMediaUrl}" style="width:100%; max-height:320px; border-radius:12px; object-fit:cover; margin-top:10px;">`;
+            } else if(tempPostMediaType === 'video' && tempPostMediaUrl) {
+                mediaHTML = `<video src="${tempPostMediaUrl}" controls style="width:100%; max-height:320px; border-radius:12px; object-fit:cover; margin-top:10px;"></video>`;
+            }
+
+            const html = `
+            <div class="post">
+                <div class="post-header">
+                    <div>
+                        <div class="post-author">${authorName}</div>
+                        <div class="post-time">এইমাত্র</div>
+                    </div>
+                </div>
+                ${text ? `<div class="post-content">${text}</div>` : ''}
+                ${mediaHTML}
+                <div class="post-actions">
+                    <div class="action-btn" onclick="toggleLike(this)"><i class="fa-regular fa-thumbs-up"></i> লাইক (<span class="like-count">0</span>)</div>
+                    <div class="action-btn" onclick="showAlert('কমেন্ট বক্স ওপেন হয়েছে')"><i class="fa-regular fa-comment"></i> কমেন্ট</div>
+                    <div class="action-btn" onclick="showAlert('পোস্ট শেয়ার করা হয়েছে!')"><i class="fa-solid fa-share"></i> শেয়ার</div>
+                    <div class="action-btn" onclick="recordVoiceComment(this)" style="color: var(--app-red);"><i class="fa-solid fa-microphone"></i> ভয়েস কমেন্ট</div>
+                </div>
+            </div>`;
+            
+            feed.insertAdjacentHTML('afterbegin', html);
+            textInput.value = '';
+            document.getElementById('post-media-preview-box').style.display = 'none';
+            document.getElementById('post-video-preview-box').style.display = 'none';
+            tempPostMediaUrl = null;
+            tempPostMediaType = null;
+            showAlert('আপনার নতুন পোস্ট সফলভাবে পাবলিশ হয়েছে!');
+        }
+
+        function triggerReelGallery() { document.getElementById('reel-file-input').click(); }
+        function handleReelUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const caption = prompt('আপনার রিলসের জন্য একটি সুন্দর ক্যাপশন এবং হ্যাশট্যাগ দিন:', '✨ অসাধারণ একটি মুহূর্ত #ShakibYS #Reels #Trending');
+                if (caption === null) return;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const reelsContainer = document.getElementById('reels-container');
+                    const currentName = localStorage.getItem('ys_user_name') || 'ইউজার';
+                    const reelHTML = `
+                    <div class="reel-item">
+                        <video class="reel-video" src="${e.target.result}" controls autoplay loop playsinline></video>
+                        <div class="reel-overlay">
+                            <h4 style="margin-bottom: 5px;">নতুন রিলস ভিডিও ✨</h4>
+                            <p style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">রিলস ক্রিয়েটর: ${currentName}</p>
+                            <p class="reel-caption-text" style="font-size: 13px; font-weight: 600; color: #fff;">${caption}</p>
+                        </div>
+                    </div>`;
+                    reelsContainer.insertAdjacentHTML('afterbegin', reelHTML);
+                    showAlert('গ্যালারি থেকে সাউন্ড ও ক্যাপশনসহ রিলস সফলভাবে আপলোড হয়েছে!');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openStoryViewer(author, imgUrl) {
+            document.getElementById('story-author-name').innerText = author + '-এর স্টোরি';
+            document.getElementById('story-img-container').style.backgroundImage = `url('${imgUrl}')`;
+            document.getElementById('story-modal').style.display = 'flex';
+        }
+        function closeStoryModal() { document.getElementById('story-modal').style.display = 'none'; }
+        function reactStory(emoji) {
+            showAlert(`স্টোরিতে ${emoji} রিয়্যাক্ট দিয়েছেন!`);
+            closeStoryModal();
+        }
+
+        function recordVoiceComment(btn) {
+            showAlert('ভয়েস রেকর্ডিং শুরু হয়েছে...');
+            setTimeout(() => {
+                showAlert('ভয়েস কমেন্ট সফলভাবে পোস্ট হয়েছে!');
+            }, 1500);
+        }
+
+        function toggleLike(btn) {
+            const countSpan = btn.querySelector('.like-count');
+            let count = parseInt(countSpan.innerText);
+            if(btn.classList.contains('liked')) {
+                btn.classList.remove('liked');
+                countSpan.innerText = count - 1;
+            } else {
+                btn.classList.add('liked');
+                countSpan.innerText = count + 1;
+                showAlert('পোস্টে লাইক দিয়েছেন!');
+            }
+        }
+
+        let selectedProduct = null;
+        function openProductModal(title, price, desc, warranty, guarantee, stock, imgUrl) {
+            selectedProduct = { title, price, desc };
+            document.getElementById('modal-p-title').innerText = title;
+            document.getElementById('modal-p-price').innerText = '৳ ' + price;
+            document.getElementById('modal-p-desc').innerText = desc;
+            document.getElementById('modal-p-warranty').innerText = warranty;
+            document.getElementById('modal-p-guarantee').innerText = guarantee;
+            document.getElementById('modal-p-stock').innerText = stock;
+            document.getElementById('modal-p-img').style.backgroundImage = `url('${imgUrl}')`;
+            document.getElementById('product-modal').style.display = 'flex';
+        }
+        function closeProductModal() { document.getElementById('product-modal').style.display = 'none'; }
+        function addToCartFromModal() {
+            showAlert(`"${selectedProduct.title}" কার্টে যোগ করা হয়েছে!`);
+            closeProductModal();
+        }
+        function proceedToCheckout() {
+            closeProductModal();
+            document.getElementById('checkout-modal').style.display = 'flex';
+        }
+        function closeCheckoutModal() { document.getElementById('checkout-modal').style.display = 'none'; }
+        
+        function handlePaymentChange(method) {
+            const warningBox = document.getElementById('cod-warning');
+            if(method === 'cod') {
+                warningBox.style.display = 'block';
+                warningBox.innerHTML = '⚠️ ক্যাশ অন ডেলিভারি সিলেক্ট করার কারণে অর্ডার কনফার্ম করতে **১২০ টাকা অগ্রিম পেমেন্ট** করতে হবে!';
+            } else {
+                warningBox.style.display = 'block';
+                warningBox.innerHTML = 'পেমেন্ট মেথড আপডেট করা হয়েছে।';
+            }
+        }
+
+        function submitFinalOrder() {
+            const address = document.getElementById('order-address').value.trim();
+            if(!address) {
+                showAlert('দয়া করে আপনার সম্পূর্ণ ঠিকানা লিখুন!');
+                return;
+            }
+            showAlert('আপনার অর্ডার সফলভাবে প্লেস হয়েছে!');
+            closeCheckoutModal();
+        }
+
+        function showAddProductModal() {
+            const pName = prompt('প্রোডাক্টের নাম লিখুন:');
+            if(!pName) return;
+            const pPrice = prompt('দাম (টাকা) লিখুন:');
+            if(!pPrice) return;
+            const pDesc = prompt('বিবরণ লিখুন:');
+
+            const grid = document.getElementById('market-product-grid');
+            const prodHTML = `
+            <div class="product-card" onclick="openProductModal('${pName}', '${pPrice}', '${pDesc || "বিবরণ নেই"}', '১ বছর ওয়ারেন্টি', '১০০% গ্যারান্টি', 'স্টকে আছে', 'https://picsum.photos/200/200?random=15')">
+                <div class="product-img" style="background-image: url('https://picsum.photos/200/200?random=15');"></div>
+                <div class="product-body">
+                    <div class="product-title">${pName}</div>
+                    <div class="product-price">৳ ${pPrice}</div>
+                    <button class="market-btn">বিস্তারিত দেখুন</button>
+                </div>
+            </div>`;
+            grid.insertAdjacentHTML('afterbegin', prodHTML);
+            showAlert('প্রোডাক্ট সফলভাবে লিস্ট করা হয়েছে!');
+        }
+
+        function promptEditName() {
+            const name = prompt('নতুন নাম লিখুন:');
+            if(name) {
+                localStorage.setItem('ys_user_name', name);
+                updateUIProfileName(name);
+                showAlert('প্রোফাইল নাম আপডেট হয়েছে!');
+            }
+        }
+
+        function promptEditBio() {
+            const bio = prompt('আপনার বায়ো (Bio) লিখুন:');
+            if(bio) {
+                document.getElementById('p-bio-display').innerText = bio;
+                showAlert('বায়ো আপডেট হয়েছে!');
+            }
+        }
+
+        function toggleVerificationBadge() {
+            const badge = document.getElementById('p-verified-badge');
+            if(badge.style.display === 'none' || !badge.style.display) {
+                badge.style.display = 'inline-block';
+                showAlert('ভেরিফাইড ব্যাজ একটিভ করা হয়েছে!');
+            } else {
+                badge.style.display = 'none';
+                showAlert('ভেরিফাইড ব্যাজ সরিয়ে নেওয়া হয়েছে!');
+            }
+        }
+
+        function openSettingsModal() { document.getElementById('settings-modal').style.display = 'flex'; }
+        function closeSettingsModal() { document.getElementById('settings-modal').style.display = 'none'; }
+
+        function toggleMessengerStatus(checkbox) {
+            const dot = document.getElementById('rahim-status-dot');
+            const subStatus = document.getElementById('rahim-sub-status');
+            if(checkbox.checked) {
+                dot.classList.remove('offline');
+                subStatus.innerText = 'সক্রিয় আছেন';
+                showAlert('মেসেঞ্জার একটিভ স্ট্যাটাস চালু হয়েছে।');
+            } else {
+                dot.classList.add('offline');
+                subStatus.innerText = 'অফলাইন';
+                showAlert('মেসেঞ্জার একটিভ স্ট্যাটাস বন্ধ হয়েছে।');
+            }
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-msg-input');
+            if(!input.value.trim()) return;
+            const box = document.getElementById('chat-messages');
+            box.insertAdjacentHTML('beforeend', `<div class="msg-bubble msg-outgoing">${input.value}</div>`);
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+        }
+        function handleChatKey(e) { if(e.key === 'Enter') sendChatMessage(); }
+
+        function changeAIMode(mode) {
+            const titleMap = {
+                'general': 'ShakibYS AI (জেনারেল মোড)',
+                'funny': '😂 ফানি চ্যাটবট মোড',
+                'serious': '🧐 সিরিয়াস এক্সপার্ট মোড',
+                'romantic': '💖 রোমান্টিক মোড',
+                'motivation': '🚀 মোটিভেশনাল গুরু মোড'
+            };
+            document.getElementById('ai-title-mode').innerText = titleMap[mode];
+            showAlert(`এআই মুড পরিবর্তন করে "${titleMap[mode]}" করা হয়েছে!`);
+        }
+
+        function handleAIKey(e) { if(e.key === 'Enter') sendAI(); }
+        function sendAI() {
+            const input = document.getElementById('ai-input');
+            const box = document.getElementById('ai-chat-box');
+            const query = input.value.trim();
+            if(!query) return;
+
+            box.insertAdjacentHTML('beforeend', `<div class="ai-bubble ai-user">${query}</div>`);
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            setTimeout(() => {
+                box.insertAdjacentHTML('beforeend', `<div class="ai-bubble ai-bot">আপনার কথার চমৎকার উত্তর তৈরি! আপনাকে সাহায্য করতে প্রস্তুত।</div>`);
+                box.scrollTop = box.scrollHeight;
+            }, 700);
+        }
+
+        window.onload = checkLogin;
+    </script>
 </body>
 </html>
