@@ -2,179 +2,484 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width,initial-scale=1">
-
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta name="theme-color" content="#ff4fa3">
   <title>ShakibYS</title>
-
   <link rel="stylesheet" href="style.css">
-
-  <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
 
-<div id="authPage" class="authPage">
+<div id="app">
 
-  <div class="authCard">
+  <!-- AUTH -->
+  <section id="authScreen" class="screen auth-screen">
+    <div class="auth-card">
 
-    <div class="brand">ShakibYS</div>
+      <div class="logo">Shakib<span>YS</span></div>
+      <p class="tagline">Connect • Share • Chat • Enjoy</p>
 
-    <h2 id="authTitle">Login</h2>
+      <!-- LOGIN -->
+      <div id="loginBox" class="auth-box">
+        <h1>Welcome Back 💗</h1>
+        <p>আপনার Account-এ Login করুন</p>
 
-    <div id="registerArea" class="hidden">
+        <input id="loginPhone" type="text" placeholder="Phone Number">
+        <input id="loginPassword" type="password" placeholder="Password">
 
-      <input
-        id="registerName"
-        placeholder="আপনার নাম"
-      >
+        <button class="pink-btn" onclick="login()">
+          🔐 Login
+        </button>
+
+        <button class="text-btn" onclick="showAuth('forgot')">
+          Forgot Password?
+        </button>
+
+        <div class="divider">OR</div>
+
+        <button class="pink-outline" onclick="showAuth('register')">
+          👤 Create New Account
+        </button>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="registerBox" class="auth-box hidden">
+        <h1>Create Account</h1>
+
+        <input id="regName" type="text" placeholder="Full Name">
+        <input id="regUsername" type="text" placeholder="Username">
+        <input id="regPhone" type="text" placeholder="Phone Number">
+        <input id="regPassword" type="password" placeholder="Password">
+        <input id="regConfirm" type="password" placeholder="Confirm Password">
+
+        <button class="pink-btn" onclick="register()">
+          ✨ Create Account
+        </button>
+
+        <button class="text-btn" onclick="showAuth('login')">
+          Already have an account? Login
+        </button>
+      </div>
+
+      <!-- FORGOT -->
+      <div id="forgotBox" class="auth-box hidden">
+        <h1>Forgot Password?</h1>
+        <p>আপনার ফোন নম্বর দিন</p>
+
+        <input id="forgotPhone" type="text" placeholder="Phone Number">
+
+        <button class="pink-btn" onclick="forgotPassword()">
+          📱 Send Reset Request
+        </button>
+
+        <button class="text-btn" onclick="showAuth('login')">
+          ← Back to Login
+        </button>
+      </div>
 
     </div>
-
-    <input
-      id="phone"
-      placeholder="মোবাইল নাম্বার"
-    >
-
-    <input
-      id="password"
-      type="password"
-      placeholder="Password"
-    >
-
-    <button
-      class="pinkButton"
-      onclick="login()"
-    >
-      Login
-    </button>
-
-    <button
-      class="outlineButton"
-      onclick="toggleRegister()"
-    >
-      Create New Account
-    </button>
-
-    <button
-      id="registerButton"
-      class="pinkButton hidden"
-      onclick="register()"
-    >
-      Register
-    </button>
-
-  </div>
-
-</div>
+  </section>
 
 
-<div id="app" class="hidden">
+  <!-- MAIN APP -->
+  <section id="mainApp" class="hidden">
 
-  <header class="topbar">
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <button class="icon-btn" onclick="openPage('home')">⌂</button>
 
-    <div class="logo">
-      ShakibYS
-    </div>
+      <div class="top-logo">Shakib<span>YS</span></div>
 
-    <div class="topActions">
+      <div class="top-actions">
+        <button class="icon-btn" onclick="openPage('search')">⌕</button>
+        <button class="icon-btn" onclick="openPage('notifications')">♡</button>
+        <button class="avatar-btn" onclick="openPage('profile')">
+          <span id="topAvatar">S</span>
+        </button>
+      </div>
+    </header>
 
-      <button onclick="showSearch()">⌕</button>
 
-      <button onclick="showNotifications()">♡</button>
+    <!-- PAGE CONTAINER -->
+    <main id="pageContainer">
 
-      <button onclick="showProfile(currentUser.id)">
-        ●
+      <!-- HOME -->
+      <section id="page-home" class="page">
+
+        <div class="welcome-card">
+          <div class="big-avatar" id="homeAvatar">S</div>
+          <div>
+            <h2 id="homeName">Shakib</h2>
+            <p>What's on your mind?</p>
+          </div>
+        </div>
+
+        <div class="quick-create">
+          <button onclick="openCreate('post')">📝 Post</button>
+          <button onclick="openCreate('photo')">📷 Photo</button>
+          <button onclick="openCreate('reel')">🎬 Reel</button>
+          <button onclick="openCreate('story')">⭕ Story</button>
+        </div>
+
+        <div class="feature-grid">
+
+          <button onclick="openPage('reels')">
+            <span>🎬</span>
+            <b>Reels</b>
+            <small>Watch videos</small>
+          </button>
+
+          <button onclick="openPage('marketplace')">
+            <span>🛍️</span>
+            <b>Marketplace</b>
+            <small>Buy & sell</small>
+          </button>
+
+          <button onclick="openPage('friends')">
+            <span>👥</span>
+            <b>Friends</b>
+            <small>Find friends</small>
+          </button>
+
+          <button onclick="openPage('groups')">
+            <span>👨‍👩‍👧‍👦</span>
+            <b>Groups</b>
+            <small>Join groups</small>
+          </button>
+
+          <button onclick="openPage('messenger')">
+            <span>💬</span>
+            <b>Messenger</b>
+            <small>Chat</small>
+          </button>
+
+          <button onclick="openPage('profile')">
+            <span>👤</span>
+            <b>Profile</b>
+            <small>Your account</small>
+          </button>
+
+        </div>
+
+        <div class="section-title">
+          <h2>News Feed</h2>
+          <button onclick="loadFeed()">↻</button>
+        </div>
+
+        <div id="feed"></div>
+
+      </section>
+
+
+      <!-- REELS -->
+      <section id="page-reels" class="page hidden">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <div class="page-header">
+          <h1>🎬 Reels</h1>
+          <p>Short videos</p>
+        </div>
+
+        <div class="empty-state">
+          <div>🎬</div>
+          <h2>Reels</h2>
+          <p>Reel upload system will connect to the media backend.</p>
+          <button class="pink-btn" onclick="openCreate('reel')">＋ Create Reel</button>
+        </div>
+      </section>
+
+
+      <!-- MARKETPLACE -->
+      <section id="page-marketplace" class="page hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <div class="page-header">
+          <h1>🛍️ Marketplace</h1>
+          <p>Buy and sell products</p>
+        </div>
+
+        <input class="search-input" id="productSearch"
+               placeholder="Search products..."
+               oninput="filterProducts()">
+
+        <div id="products" class="product-grid"></div>
+
+      </section>
+
+
+      <!-- FRIENDS -->
+      <section id="page-friends" class="page hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <div class="page-header">
+          <h1>👥 Friends</h1>
+          <p>People you may know</p>
+        </div>
+
+        <div id="friendsList"></div>
+
+      </section>
+
+
+      <!-- GROUPS -->
+      <section id="page-groups" class="page hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <div class="page-header">
+          <h1>👨‍👩‍👧‍👦 Groups</h1>
+        </div>
+
+        <div class="empty-state">
+          <div>👥</div>
+          <h2>Groups</h2>
+          <p>Group creation and membership API will be added in the next module.</p>
+          <button class="pink-btn">＋ Create Group</button>
+        </div>
+
+      </section>
+
+
+      <!-- MESSENGER -->
+      <section id="page-messenger" class="page hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <div class="page-header">
+          <h1>💬 Messenger</h1>
+          <p>Messages</p>
+        </div>
+
+        <input class="search-input" placeholder="Search Messenger...">
+
+        <div class="chat-list">
+
+          <button class="chat-user" onclick="openChat('Rahim')">
+            <div class="chat-avatar">R</div>
+            <div>
+              <b>Rahim</b>
+              <small>Online</small>
+            </div>
+            <span>›</span>
+          </button>
+
+          <button class="chat-user" onclick="openChat('Alif')">
+            <div class="chat-avatar">A</div>
+            <div>
+              <b>Alif</b>
+              <small>Active recently</small>
+            </div>
+            <span>›</span>
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- CHAT -->
+      <section id="page-chat" class="page hidden">
+
+        <button class="back-btn" onclick="openPage('messenger')">← Messenger</button>
+
+        <div class="chat-header">
+          <div class="chat-avatar" id="chatAvatar">R</div>
+          <div>
+            <b id="chatName">Rahim</b>
+            <small>Online</small>
+          </div>
+
+          <div class="chat-call-actions">
+            <button onclick="alert('Voice calling requires WebRTC setup.')">☎</button>
+            <button onclick="alert('Video calling requires WebRTC setup.')">🎥</button>
+          </div>
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <div class="message-input">
+          <input id="messageText" placeholder="Message..."
+                 onkeydown="if(event.key==='Enter') sendMessage()">
+          <button onclick="sendMessage()">➤</button>
+        </div>
+
+      </section>
+
+
+      <!-- PROFILE -->
+      <section id="page-profile" class="page hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <div class="profile-cover"></div>
+
+        <div class="profile-card">
+          <div class="profile-avatar" id="profileAvatar">S</div>
+          <h1 id="profileName">Shakib</h1>
+          <p id="profileUsername">@shakib</p>
+          <p id="profileBio">Welcome to my ShakibYS profile 💗</p>
+
+          <div class="profile-stats">
+            <div><b id="postCount">0</b><small>Posts</small></div>
+            <div><b>0</b><small>Followers</small></div>
+            <div><b>0</b><small>Following</small></div>
+          </div>
+
+          <button class="pink-btn" onclick="openPage('settings')">
+            ⚙️ Edit Profile / Settings
+          </button>
+        </div>
+
+        <div class="profile-tabs">
+          <button>Posts</button>
+          <button>Photos</button>
+          <button>Videos</button>
+          <button>About</button>
+        </div>
+
+      </section>
+
+
+      <!-- SEARCH -->
+      <section id="page-search" class="page hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <div class="page-header">
+          <h1>⌕ Search</h1>
+        </div>
+
+        <input class="search-input"
+               id="globalSearch"
+               placeholder="Search people, posts..."
+               onkeydown="if(event.key==='Enter') doSearch()">
+
+        <div id="searchResults"></div>
+
+      </section>
+
+
+      <!-- NOTIFICATIONS -->
+      <section id="page-notifications" class="page hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <div class="page-header">
+          <h1>♡ Notifications</h1>
+        </div>
+
+        <div class="notification">
+          ❤️ <b>Rahim</b> liked your post.
+        </div>
+
+        <div class="notification">
+          👤 <b>Alif</b> sent you a friend request.
+        </div>
+
+      </section>
+
+
+      <!-- SETTINGS -->
+      <section id="page-settings" class="page hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <div class="page-header">
+          <h1>⚙️ Settings</h1>
+          <p>Manage your ShakibYS account</p>
+        </div>
+
+        <div class="settings-list">
+
+          <button onclick="settingInfo('Account')">
+            👤 <span>Account</span><b>›</b>
+          </button>
+
+          <button onclick="settingInfo('Privacy')">
+            🔒 <span>Privacy</span><b>›</b>
+          </button>
+
+          <button onclick="settingInfo('Security')">
+            🛡️ <span>Security</span><b>›</b>
+          </button>
+
+          <button onclick="settingInfo('Notifications')">
+            🔔 <span>Notifications</span><b>›</b>
+          </button>
+
+          <button onclick="settingInfo('Language')">
+            🌐 <span>Language</span><b>›</b>
+          </button>
+
+          <button onclick="logout()">
+            🚪 <span>Logout</span><b>›</b>
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- CREATE -->
+      <section id="page-create" class="page hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <div class="page-header">
+          <h1 id="createTitle">Create Post</h1>
+        </div>
+
+        <textarea id="postContent"
+                  placeholder="What's on your mind?"
+                  rows="7"></textarea>
+
+        <input id="postImage"
+               type="url"
+               placeholder="Image URL (optional)">
+
+        <button class="pink-btn" onclick="publishPost()">
+          🚀 Publish
+        </button>
+
+      </section>
+
+    </main>
+
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+
+      <button onclick="openPage('home')">
+        <span>⌂</span>
+        <small>Home</small>
       </button>
 
-    </div>
+      <button onclick="openPage('reels')">
+        <span>🎬</span>
+        <small>Reels</small>
+      </button>
 
-  </header>
+      <button class="create-main" onclick="openCreate('post')">
+        ＋
+      </button>
 
+      <button onclick="openPage('messenger')">
+        <span>💬</span>
+        <small>Chat</small>
+      </button>
 
-  <main id="page"></main>
+      <button onclick="openPage('profile')">
+        <span>👤</span>
+        <small>Profile</small>
+      </button>
 
+    </nav>
 
-  <nav class="bottomNav">
-
-    <button onclick="home()">
-      🏠
-      <small>Home</small>
-    </button>
-
-    <button onclick="showSearch()">
-      🔎
-      <small>Search</small>
-    </button>
-
-    <button onclick="openCreate()">
-      ＋
-      <small>Create</small>
-    </button>
-
-    <button onclick="showNotifications()">
-      ♡
-      <small>Alerts</small>
-    </button>
-
-    <button onclick="showProfile(currentUser.id)">
-      ●
-      <small>Profile</small>
-    </button>
-
-  </nav>
+  </section>
 
 </div>
-
-
-<div id="modal" class="modal hidden">
-
-  <div id="modalContent" class="modalContent"></div>
-
-</div>
-
-
-<div id="chat" class="chat hidden">
-
-  <div class="chatTop">
-
-    <button onclick="closeChat()">‹</button>
-
-    <b id="chatName"></b>
-
-    <button onclick="callUser('voice')">
-      ☎
-    </button>
-
-    <button onclick="callUser('video')">
-      🎥
-    </button>
-
-  </div>
-
-  <div id="messages" class="messages"></div>
-
-  <div class="messageBox">
-
-    <input
-      id="messageInput"
-      placeholder="Message..."
-      onkeydown="messageKey(event)"
-    >
-
-    <button onclick="sendMessage()">
-      ➤
-    </button>
-
-  </div>
-
-</div>
-
-
-<div id="toast" class="toast"></div>
-
 
 <script src="app.js"></script>
-
 </body>
 </html>
